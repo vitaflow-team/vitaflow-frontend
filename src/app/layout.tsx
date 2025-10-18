@@ -1,3 +1,4 @@
+import { Motion } from "@/components/layout/motion";
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";
@@ -23,7 +24,7 @@ export default function RootLayout({
       <body
         className={`${lato.variable} font-lato antialiased`}
       >
-        {children}
+        <Motion>{children}</Motion>
       </body>
     </html>
   );
