@@ -9,7 +9,7 @@ export function Motion({
 }>) {
   return (
     <motion.div
-      className="flex w-full h-full"
+      className="flex w-full h-full min-h-dvh"
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
