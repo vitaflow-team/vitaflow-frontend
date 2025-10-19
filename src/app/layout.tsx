@@ -1,4 +1,4 @@
-import { Motion } from "@/components/layout/motion";
+import { Motion } from "@/_components/layout/motion";
 import type { Metadata } from "next";
 import { Lato } from "next/font/google";
 import "./globals.css";

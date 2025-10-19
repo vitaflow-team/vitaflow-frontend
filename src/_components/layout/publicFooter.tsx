@@ -1,5 +1,5 @@
-import { Logo } from "@/components/layout/logo";
-import { cn } from "@/lib/utils";
+import { Logo } from "@/_components/layout/logo";
+import { cn } from "@/_lib/utils";
 import { Great_Vibes } from "next/font/google";
 import { Rights } from "./rights";
 

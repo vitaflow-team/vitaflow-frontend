@@ -3,7 +3,7 @@ import Logodevel from '../../../public/fcvicari.svg';
 
 export function Rights() {
   return (
-    <div className="flex justify-between pt-2 items-center w-full border-t-2 border-primary pb-2 text-[0.625rem] md:text-sm">
+    <div className="flex justify-between pt-2 items-center w-full border-t-[1px] border-secondary pb-2 text-[0.625rem] md:text-sm">
       <div className="flex flex-col">
         <span>All rights reserved.</span>
         <span>&copy; Vitaflow - Saúde personalizada. Vida equilibrada. 2025</span>
