@@ -42,7 +42,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(98% 0.01 95);
+  --background: oklch(97% 0.01 95);
   --background-secondary: oklch(93% 0.015 95);
   --primary: oklch(0.359 0.031 102.6);
   --secondary: oklch(84.7% 0.071 97.6);
