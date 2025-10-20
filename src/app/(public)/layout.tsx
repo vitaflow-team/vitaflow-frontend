@@ -1,12 +1,12 @@
-import { Logo } from "@/_components/layout/logo";
-import { NavLink } from "@/_components/layout/navLink.tsx";
-import { PublicFooter } from "@/_components/layout/publicFooter";
-import { Great_Vibes } from "next/font/google";
+import { Logo } from '@/_components/layout/logo';
+import { NavLink } from '@/_components/layout/navLink.tsx';
+import { PublicFooter } from '@/_components/layout/publicFooter';
+import { Great_Vibes } from 'next/font/google';
 
 const fontGreat = Great_Vibes({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-satisfy",
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-satisfy',
 });
 
 export default function PublicLayout({
@@ -16,7 +16,6 @@ export default function PublicLayout({
 }>) {
   return (
     <div className="flex flex-col w-full py-2 px-2 xl:px-10 2xl:px-36">
-
       <header className="flex w-full justify-between items-center border-b-[1px] border-secondary pb-2">
         <Logo />
 
@@ -28,10 +27,8 @@ export default function PublicLayout({
         </div>
       </header>
 
-      <main className="flex h-full">
-        {children}
-      </main>
-      
+      <main className="flex h-full">{children}</main>
+
       <PublicFooter />
     </div>
   );

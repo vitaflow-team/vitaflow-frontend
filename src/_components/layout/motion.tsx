@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 export function Motion({
   children,
@@ -13,7 +13,7 @@ export function Motion({
       layout
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ ease: "easeInOut", duration: 0.75 }}
+      transition={{ ease: 'easeInOut', duration: 0.75 }}
     >
       {children}
     </motion.div>

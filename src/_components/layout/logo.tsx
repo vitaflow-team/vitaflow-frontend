@@ -8,24 +8,28 @@ interface LogoProps {
   className?: string;
 }
 
-export function Logo({ width = 300, height = 150, className = "w-48 md:w-64" }: LogoProps) {
+export function Logo({
+  width = 300,
+  height = 150,
+  className = 'w-48 md:w-64',
+}: LogoProps) {
   return (
     <Link href="/">
-      <Image 
-        src="/vitaflow.svg" 
-        alt="Vitaflow" 
-        width={width} 
+      <Image
+        src="/vitaflow.svg"
+        alt="Vitaflow"
+        width={width}
         height={height}
-        className={cn("dark:hidden", className)}
+        className={cn('dark:hidden', className)}
         priority
       />
-      
-      <Image 
-        src="/vitaflowdark.svg" 
-        alt="Vitaflow" 
-        width={width} 
+
+      <Image
+        src="/vitaflowdark.svg"
+        alt="Vitaflow"
+        width={width}
         height={height}
-        className={cn("hidden dark:block", className)}
+        className={cn('hidden dark:block', className)}
         priority
       />
     </Link>
