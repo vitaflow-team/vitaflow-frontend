@@ -6,5 +6,8 @@
     "ms-vscode.vscode-typescript-next",
     "formulahendry.auto-rename-tag",
     "christian-kohler.path-intellisense"
+  ],
+  "unwantedRecommendations": [
+    "rvest.vs-code-prettier-eslint"
   ]
 }

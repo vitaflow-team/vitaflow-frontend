@@ -31,6 +31,9 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "prettier.requireConfig": true,
-  "prettier.useEditorConfig": false
+  "prettier.requireConfig": false,
+  "prettier.useEditorConfig": false,
+  "prettier.enable": true,
+  "prettier.disableLanguages": [],
+  "notebook.formatOnSave.enabled": true
 }
