@@ -1,5 +1,6 @@
 import { cn } from '@/_lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface LogoProps {
   width?: number;
@@ -9,7 +10,7 @@ interface LogoProps {
 
 export function Logo({ width = 300, height = 150, className = "w-48 md:w-64" }: LogoProps) {
   return (
-    <div>
+    <Link href="/">
       <Image 
         src="/vitaflow.svg" 
         alt="Vitaflow" 
@@ -27,6 +28,6 @@ export function Logo({ width = 300, height = 150, className = "w-48 md:w-64" }: 
         className={cn("hidden dark:block", className)}
         priority
       />
-    </div>
+    </Link>
   );
 }
