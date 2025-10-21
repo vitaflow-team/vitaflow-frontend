@@ -1,20 +1,62 @@
 import * as React from 'react';
 
 import { cn } from '@/_lib/utils';
+import { LucideProps } from 'lucide-react';
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+export interface InputProps extends React.ComponentProps<'input'> {
+  icon?: React.ComponentType<LucideProps>;
+  onClickIcon?: () => void;
+}
+
+function Input({
+  className,
+  type,
+  required,
+  disabled,
+  id,
+  onClickIcon,
+  icon: Icon,
+  ...props
+}: InputProps) {
+  function handleIconClick() {
+    if (disabled) {
+      return;
+    }
+
+    if (onClickIcon) {
+      onClickIcon();
+    }
+  }
+
   return (
-    <input
-      type={type}
-      data-slot="input"
+    <label
+      htmlFor={id}
       className={cn(
-        'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+        'flex items-center h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+        'focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+        required ? 'border-l-4 border-l-primary' : 'pl-4',
+        disabled ? 'opacity-60' : '',
         className
       )}
-      {...props}
-    />
+    >
+      <input
+        type={type}
+        data-slot="input"
+        className="w-full h-full border-0 outline-none bg-transparent border-hidden"
+        {...props}
+      />
+      {Icon && (
+        <label htmlFor={id} onClick={() => handleIconClick()}>
+          <Icon
+            className={cn(
+              'text-slate-400 size-5',
+              onClickIcon && !disabled ? 'cursor-pointer' : 'cursor-default',
+              className
+            )}
+          />
+        </label>
+      )}
+    </label>
   );
 }
 
