@@ -94,6 +94,25 @@ export default function Home() {
               </Button>
             </form>
           </Form>
+          <div className="flex flex-col items-center w-full gap-3">
+            <Title size="h2">Ou acesse com</Title>
+            <div className="flex gap-4">
+              <Image
+                src="/google.svg"
+                className="bg-white p-2 border-2"
+                width={50}
+                height={50}
+                alt="Google"
+              />
+              <Image
+                src="/instagram.svg"
+                className="bg-white p-1 border-2"
+                width={50}
+                height={50}
+                alt="Instagram"
+              />
+            </div>
+          </div>
           <div className="flex flex-col gap-3">
             <ButtonLink url="/singup" label="Não tem conta?" variant="link" />
             <ButtonLink
