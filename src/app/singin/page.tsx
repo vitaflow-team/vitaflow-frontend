@@ -40,7 +40,7 @@ export default function Home() {
         <div className="w-full h-full relative hidden lg:block border-none border-l-8">
           <Image src="/singin.png" alt="singin" fill />
         </div>
-        <div className="flex flex-col w-full gap-5 p-2 md:p-10 py-16 justify-center items-center">
+        <div className="flex flex-col w-full gap-5 p-4 md:p-10 py-12 justify-center items-center">
           <Logo className="w-64 md:w-80" />
 
           <Title size="h1" className="mb-4">
