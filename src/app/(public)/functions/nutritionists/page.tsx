@@ -13,16 +13,16 @@ export default function Nutritionists() {
     <div>
       <div className="flex flex-col w-full bg-[url('/backgroundLogo.svg')] items-center justify-start bg-cover bg-no-repeat bg-right gap-2">
         <div className="flex flex-col gap-6 w-full py-3 md:py-5 bg-[url('/doctor.png')] bg-contain bg-no-repeat bg-right">
-          <div className="flex flex-col w-full font-bold text-base md:text-3xl lg:text-5xl 2xl:text-7xl">
-            <span>Transforme seu atendimento</span>
-            <span>nutricional em uma</span>
-            <span>experiência completa</span>
+          <div className="flex flex-col w-56 md:w-200 font-bold text-base md:text-3xl lg:text-5xl 2xl:text-7xl">
+            <span>
+              Transforme seu atendimento nutricional em uma experiência completa
+            </span>
           </div>
-          <div className="flex flex-col w-full italic text-[0.85rem] md:text-xl lg:text-2xl 2xl:text-4xl">
-            <span>Prescreva, acompanhe e cresça</span>
-            <span>com uma plataforma feita sob</span>
-            <span>medida para nutricionistas</span>
-            <span>modernos.</span>
+          <div className="flex flex-col w-56 md:w-200 italic text-[0.85rem] md:text-xl lg:text-2xl 2xl:text-4xl">
+            <span>
+              Prescreva, acompanhe e cresça com uma plataforma feita sobre
+              medida para nutricionistas modernos.
+            </span>
           </div>
           <div className="flex flex-row md:flex-row w-full mb-2">
             <Button

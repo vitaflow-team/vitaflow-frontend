@@ -13,16 +13,18 @@ export default function Functions() {
     <div>
       <div className="flex flex-col w-full bg-[url('/backgroundLogo.svg')] items-center justify-start bg-cover bg-no-repeat bg-right gap-2">
         <div className="flex flex-col gap-6 w-full py-3 md:py-5 bg-[url('/personal.png')] bg-contain bg-no-repeat bg-right">
-          <div className="flex flex-col w-full font-bold text-base md:text-3xl lg:text-5xl 2xl:text-7xl">
-            <span>Potencialize seus treinos e</span>
-            <span>transforme o acompanhamento</span>
-            <span>dos seus alunos</span>
+          <div className="flex flex-col w-38 md:w-200 font-bold text-base md:text-3xl lg:text-5xl 2xl:text-7xl">
+            <span>
+              Potencialize seus treinos e transforme o acompanhamento dos seus
+              alunos
+            </span>
           </div>
-          <div className="flex flex-col w-full italic text-[0.85rem] md:text-xl lg:text-2xl 2xl:text-4xl">
-            <span>Planeje, acompanhe e motive seus alunos</span>
-            <span>com uma plataforma inteligente feita</span>
-            <span>para educadores físicos que buscam</span>
-            <span>eficiência e resultados.</span>
+          <div className="flex flex-col w-38 md:w-200 italic text-xs md:text-xl lg:text-2xl 2xl:text-4xl">
+            <span>
+              Planeje, acompanhe e motive seus alunos com uma plataforma
+              inteligente feita para educadores físicos que buscam eficiência e
+              resultados.
+            </span>
           </div>
           <div className="flex flex-row md:flex-row w-full mb-2">
             <Button
