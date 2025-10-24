@@ -1,13 +1,6 @@
 import { Logo } from '@/_components/layout/logo';
 import { NavLink } from '@/_components/layout/navLink';
 import { PublicFooter } from '@/_components/layout/publicFooter';
-import { Great_Vibes } from 'next/font/google';
-
-const fontGreat = Great_Vibes({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-satisfy',
-});
 
 export default function PublicLayout({
   children,
