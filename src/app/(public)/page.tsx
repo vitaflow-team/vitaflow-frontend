@@ -8,6 +8,7 @@ import {
 import { ClipboardList, TrophyIcon, UserRound } from 'lucide-react';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import CelPhone from '../../../public/celphone.png';
 import LineChart from '../../../public/line-chart.svg';
 
@@ -39,48 +40,57 @@ export default function Home() {
           <Image src={CelPhone} height={450} alt="VitaFlow" />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center w-full bg-[var(--background-secondary)] p-4 md:p-8 gap-4 md:gap-10">
-        <Card className="w-full md:w-1/4 h-full hover:shadow-md active:scale-[0.98] transition-all">
-          <CardHeader className="flex items-center gap-4">
-            <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
-              <TrophyIcon className="size-10" />
-            </div>
-            <CardTitle className="text-xl">Educadores físicos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg italic">
-              Crie treinos, defina metas e acompanhe medidas.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="w-full md:w-1/4 h-full hover:shadow-md active:scale-[0.98] transition-all">
-          <CardHeader className="flex items-center gap-4">
-            <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
-              <ClipboardList className="size-10" />
-            </div>
-            <CardTitle className="text-xl">Nutricionistas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg italic">
-              Prescrição de cardápios, evolução nutricional e registro de
-              medidas.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="w-full md:w-1/4 h-full hover:shadow-md active:scale-[0.98] transition-all">
-          <CardHeader className="flex items-center gap-4">
-            <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
-              <UserRound className="size-10" />
-            </div>
-            <CardTitle className="text-xl">Usuários</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-lg italic">
-              Visualize seu plano alimentar, receba notificação, acompanhe sua
-              evolução.
-            </p>
-          </CardContent>
-        </Card>
+      <div className="flex flex-col md:flex-row items-center justify-center w-full bg-(--background-secondary) p-4 md:p-8 gap-4 md:gap-10">
+        <Link href="/functions" className="w-full md:w-1/4 h-full">
+          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+            <CardHeader className="flex items-center gap-4">
+              <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
+                <TrophyIcon className="size-10" />
+              </div>
+              <CardTitle className="text-xl">Educadores físicos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg italic">
+                Crie treinos, defina metas e acompanhe medidas.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link
+          href="/functions/nutritionists"
+          className="w-full md:w-1/4 h-full"
+        >
+          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+            <CardHeader className="flex items-center gap-4">
+              <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
+                <ClipboardList className="size-10" />
+              </div>
+              <CardTitle className="text-xl">Nutricionistas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg italic">
+                Prescrição de cardápios, evolução nutricional e registro de
+                medidas.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/functions/users" className="w-full md:w-1/4 h-full">
+          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+            <CardHeader className="flex items-center gap-4">
+              <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
+                <UserRound className="size-10" />
+              </div>
+              <CardTitle className="text-xl">Usuários</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-lg italic">
+                Visualize seu plano alimentar, receba notificação, acompanhe sua
+                evolução.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
       <div className="flex flex-col md:flex-row w-full items-center justify-center gap-2">
         <div className="flex flex-col items-center justify-center content-center w-full md:w-2/6 pt-2 md:pt-0">
