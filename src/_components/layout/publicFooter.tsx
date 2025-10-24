@@ -11,7 +11,7 @@ const fontGreat = Great_Vibes({
 
 export function PublicFooter() {
   return (
-    <footer className="relative flex flex-col w-full">
+    <footer className="relative flex flex-col w-full border-t-[1px] border-secondary">
       <div className="flex flex-col sm:grid sm:grid-cols-2 xl:grid-cols-4 py-3 w-full">
         <div className="flex flex-col gap-4 p-4 justify-center items-center text-primary">
           <Logo className="w-80" />
