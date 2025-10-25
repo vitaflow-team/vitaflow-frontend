@@ -36,7 +36,7 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="hidden md:flex flex-col pr-16">
+        <div className="hidden sm:flex flex-col pr-16">
           <Image src={CelPhone} height={450} alt="VitaFlow" />
         </div>
       </div>
@@ -49,9 +49,11 @@ export default function Home() {
               </div>
               <CardTitle className="text-xl">Educadores físicos</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-lg italic">
-                Crie treinos, defina metas e acompanhe medidas.
+            <CardContent className="sm:h-36">
+              <p className="text-lg italic text-justify">
+                Planeje, acompanhe e motive seus alunos com uma plataforma
+                inteligente feita para educadores físicos que buscam eficiência
+                e resultados.
               </p>
             </CardContent>
           </Card>
@@ -67,10 +69,10 @@ export default function Home() {
               </div>
               <CardTitle className="text-xl">Nutricionistas</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-lg italic">
-                Prescrição de cardápios, evolução nutricional e registro de
-                medidas.
+            <CardContent className="sm:h-36">
+              <p className="text-lg italic text-justify">
+                Prescreva, acompanhe e cresça com uma plataforma feita sobre
+                medida para nutricionistas modernos.
               </p>
             </CardContent>
           </Card>
@@ -83,10 +85,11 @@ export default function Home() {
               </div>
               <CardTitle className="text-xl">Usuários</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-lg italic">
-                Visualize seu plano alimentar, receba notificação, acompanhe sua
-                evolução.
+            <CardContent className="sm:h-36">
+              <p className="text-lg italic text-justify">
+                Acompanhe treinos, alimentação e evolução em um só lugar. Tenha
+                o apoio de profissionais e veja seus resultados acontecerem de
+                forma simples e organizada.
               </p>
             </CardContent>
           </Card>

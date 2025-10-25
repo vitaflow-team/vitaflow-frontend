@@ -9,15 +9,16 @@ export default function Users() {
       <div className="flex flex-col w-full bg-[url('/backgroundLogo.svg')] items-center justify-start bg-cover bg-no-repeat bg-right gap-2">
         <div className="flex flex-col gap-6 w-full py-3 md:py-5 bg-[url('/users.png')] bg-contain bg-no-repeat bg-left">
           <div className="flex flex-col items-end font-bold w-full text-base md:text-3xl lg:text-5xl 2xl:text-7xl">
-            <span>Cuide da sua saúde com mais</span>
-            <span>clareza e motivação</span>
+            <span className="w-56 sm:w-[70%] text-right">
+              Cuide da sua saúde com mais clareza e motivação
+            </span>
           </div>
           <div className="flex flex-col items-end italic text-[0.85rem] md:text-xl lg:text-2xl 2xl:text-4xl">
-            <span>Acompanhe treinos, alimentação e evolução</span>
-            <span>em um só lugar. Tenha o apoio de</span>
-            <span>profissionais e veja seus resultados</span>
-            <span>acontecerem de forma simples</span>
-            <span>e organizada.</span>
+            <span className="w-48 sm:w-[70%] text-right">
+              Acompanhe treinos, alimentação e evolução em um só lugar. Tenha o
+              apoio de profissionais e veja seus resultados acontecerem de forma
+              simples e organizada.
+            </span>
           </div>
           <div className="flex flex-row justify-end md:flex-row w-full mb-2">
             <Button
