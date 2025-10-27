@@ -16,7 +16,9 @@ import { Title } from '@/_components/ui/title';
 import { singInFormDate, singInSchema } from '@/_schema/singin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail } from 'lucide-react';
+import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -28,10 +30,20 @@ export default function Home() {
       password: '',
     },
   });
+  const router = useRouter();
   const [isPending, startTransaction] = useTransition();
 
-  function submitSingIn({ email, password }: singInFormDate) {
-    startTransaction(async () => {});
+  async function submitSingIn({ email, password }: singInFormDate) {
+    const resp = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
+    if (resp?.ok) {
+      router.push('/restrict');
+    } else {
+      console.log(resp);
+    }
   }
 
   return (
