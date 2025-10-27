@@ -34,54 +34,46 @@ export default function Nutritionists() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-start justify-center w-full bg-(--background-secondary) p-4 md:p-8 gap-4">
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <ClipboardList className="size-6" />
-              Atendimento inteligente
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 md:flex-row items-stretch justify-center w-full bg-(--background-secondary) p-4 gap-3 h-full">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <ClipboardList className="size-6" />
+            Atendimento inteligente
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
             <CardUpgradeItem label="Visualize a evolução nutricional com gráficos automáticos." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <Wallet className="size-6" />
-              Gestão financeira
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <Wallet className="size-6" />
+            Gestão financeira
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
             <CardUpgradeItem label="Visualize a evolução nutricional com gráficos automáticos." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <HeartHandshakeIcon className="size-6" />
-              Relacionamento e fidelização
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <HeartHandshakeIcon className="size-6" />
+            Relacionamento e fidelização
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Comunicação direta com pacientes." />
             <CardUpgradeItem label="Relatórios de evolução e acompanhamento de metas." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full h-10 rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <HandCoins className="size-6" />
-              Tudo em um só lugar
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <HandCoins className="size-6" />
+            Tudo em um só lugar
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Centralize planos, consultas, medidas e relatórios." />
             <CardUpgradeItem label="Acesse de qualquer dispositivo." />
           </CardContent>

@@ -30,52 +30,44 @@ export default function Users() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-start justify-center w-full bg-(--background-secondary) p-4 md:p-8 gap-4">
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <Dumbbell className="size-6" />
-              Treinos personalizados
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 md:flex-row items-stretch justify-center w-full bg-(--background-secondary) p-4 gap-3 h-full">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <Dumbbell className="size-6" />
+            Treinos personalizados
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Visualize seus treinos, receba atualizações em tempo real e acompanhe seu progresso de forma prática e motivadora." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <Apple className="size-6" />
-              Nutrição sob medida
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <Apple className="size-6" />
+            Nutrição sob medida
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Tenha acesso aos planos alimentares criados pelo seu nutricionista e registre suas refeições com facilidade." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <Activity className="size-6" />
-              Evolução em tempo real
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <Activity className="size-6" />
+            Evolução em tempo real
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Acompanhe medidas, peso, metas e relatórios de progresso." />
             <CardUpgradeItem label="Veja sua evolução e mantenha o foco nos resultados." />
           </CardContent>
         </Card>
 
-        <Card className="flex w-full h-full border-2 border-primary p-0 bg-transparent">
-          <div className="w-full h-10 rounded-md rounded-b-none bg-primary p-2">
-            <CardTitle className="flex gap-2 text-secondary tracking-wider text-base px-1">
-              <MessageCircle className="size-6" />
-              Conexão com profissionais
-            </CardTitle>
-          </div>
-          <CardContent className="flex flex-col pb-4 gap-2 text-base md:h-32">
+        <Card className="flex flex-col w-full p-0 gap-0 bg-transparent">
+          <CardTitle className="w-full rounded-t-md bg-primary p-2 px-3 flex gap-2 text-secondary tracking-wider text-base">
+            <MessageCircle className="size-6" />
+            Conexão com profissionais
+          </CardTitle>
+          <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
             <CardUpgradeItem label="Converse com seu treinador e nutricionista em um único lugar." />
             <CardUpgradeItem label="Receba lembretes, notificações e mensagens de incentivo." />
           </CardContent>

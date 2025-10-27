@@ -38,7 +38,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col w-full items-center justify-center content-center p-4">
-      <div className="flex flex-row md:h-5/7 w-full md:w-11/12 xl:w-8/12 2xl:w-6/12 bg-[url('/backgroundLogo.svg')] items-center justify-center bg-cover bg-no-repeat bg-right border-[1px]">
+      <div className="flex flex-row w-full md:w-11/12 xl:w-8/12 2xl:w-6/12 bg-[url('/backgroundLogo.svg')] items-center justify-center bg-cover bg-no-repeat bg-right border-[1px]">
         <div className="w-full h-full relative hidden lg:block border-none border-l-8">
           <Image src="/singin.png" alt="singin" fill />
         </div>

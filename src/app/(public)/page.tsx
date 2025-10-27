@@ -36,21 +36,21 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="hidden sm:flex flex-col pr-16">
+        <div className="hidden md:flex flex-col pr-16">
           <Image src={CelPhone} height={450} alt="VitaFlow" />
         </div>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center w-full bg-(--background-secondary) p-4 md:p-8 gap-4 md:gap-10">
-        <Link href="/functions" className="w-full md:w-1/4 h-full">
-          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+      <div className="grid grid-cols-1 lg:grid-cols-3 items-stretch justify-center w-full bg-(--background-secondary) p-4 lg:p-8 gap-2 lg:gap-10">
+        <Link href="/functions">
+          <Card className="flex flex-col w-full hover:shadow-md active:scale-[0.98] transition-all h-full">
             <CardHeader className="flex items-center gap-4">
               <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
                 <TrophyIcon className="size-10" />
               </div>
               <CardTitle className="text-xl">Educadores físicos</CardTitle>
             </CardHeader>
-            <CardContent className="sm:h-36">
-              <p className="text-lg italic text-justify">
+            <CardContent>
+              <p className="text-lg italic">
                 Planeje, acompanhe e motive seus alunos com uma plataforma
                 inteligente feita para educadores físicos que buscam eficiência
                 e resultados.
@@ -58,35 +58,32 @@ export default function Home() {
             </CardContent>
           </Card>
         </Link>
-        <Link
-          href="/functions/nutritionists"
-          className="w-full md:w-1/4 h-full"
-        >
-          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+        <Link href="/functions/nutritionists">
+          <Card className="flex flex-col w-full hover:shadow-md active:scale-[0.98] transition-all h-full">
             <CardHeader className="flex items-center gap-4">
               <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
                 <ClipboardList className="size-10" />
               </div>
               <CardTitle className="text-xl">Nutricionistas</CardTitle>
             </CardHeader>
-            <CardContent className="sm:h-36">
-              <p className="text-lg italic text-justify">
+            <CardContent>
+              <p className="text-lg italic">
                 Prescreva, acompanhe e cresça com uma plataforma feita sobre
                 medida para nutricionistas modernos.
               </p>
             </CardContent>
           </Card>
         </Link>
-        <Link href="/functions/users" className="w-full md:w-1/4 h-full">
-          <Card className="hover:shadow-md active:scale-[0.98] transition-all">
+        <Link href="/functions/users">
+          <Card className="flex flex-col w-full hover:shadow-md active:scale-[0.98] transition-all h-full">
             <CardHeader className="flex items-center gap-4">
               <div className="flex items-center justify-center content-center bg-secondary p-4 rounded-2xl">
                 <UserRound className="size-10" />
               </div>
               <CardTitle className="text-xl">Usuários</CardTitle>
             </CardHeader>
-            <CardContent className="sm:h-36">
-              <p className="text-lg italic text-justify">
+            <CardContent>
+              <p className="text-lg italic">
                 Acompanhe treinos, alimentação e evolução em um só lugar. Tenha
                 o apoio de profissionais e veja seus resultados acontecerem de
                 forma simples e organizada.

@@ -110,7 +110,7 @@ export default function Contact() {
                         id="message"
                         placeholder="Informe a mensagem"
                         rows={6}
-                        className="h-32"
+                        className="h-32 bg-background"
                         {...field}
                       />
                     </FormControl>
