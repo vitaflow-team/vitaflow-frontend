@@ -1,22 +1,21 @@
 'use client';
 
 import { getInitialsName } from '@/_lib/getInitials';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Mail, Settings } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
 export function UserMenu() {
   const { data: session } = useSession();
-
-  console.log(session);
+  const route = useRouter();
 
   const imageUser: string =
     session &&
@@ -38,13 +37,14 @@ export function UserMenu() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 mx-2">
-          <DropdownMenuLabel className="w-full text-center">
-            Minha conta
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator className="border-b-[2px]" />
-          <DropdownMenuItem icon={User}>Meu perfil</DropdownMenuItem>
-          <DropdownMenuItem icon={Settings}>Configurações</DropdownMenuItem>
-          <DropdownMenuSeparator className="border-b-[2px]" />
+          <DropdownMenuItem icon={Mail}>Notificações</DropdownMenuItem>
+          <DropdownMenuItem
+            icon={Settings}
+            onClick={() => route.push('/restrict/settings')}
+          >
+            Configurações
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className="border-b-2" />
           <DropdownMenuItem icon={LogOut} onClick={() => signOut()}>
             Sair
           </DropdownMenuItem>
