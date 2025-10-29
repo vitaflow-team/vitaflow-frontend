@@ -33,7 +33,7 @@ export function CardUpgrade({
 
   return (
     <Card className="relative flex w-full md:w-80 border-2 border-primary p-0 bg-transparent">
-      {active && (
+      {active && !information && (
         <Image
           src="/selected.png"
           alt="Selected plan"
@@ -61,7 +61,7 @@ export function CardUpgrade({
         </CardContent>
         {!information && (
           <Button className="rounded-t-none px-1 w-full" disabled={active}>
-            {active ? 'Active' : 'Upgrade'}
+            {active ? 'Active' : 'Escolher este plano'}
           </Button>
         )}
       </div>

@@ -1,6 +1,7 @@
+import { UserPlan } from '@/_components/layout/plans/users';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import { CardUpgradeItem } from '@/_components/ui/cardUpgrade';
 import { Activity, Apple, Dumbbell, MessageCircle } from 'lucide-react';
 
 export default function Users() {
@@ -86,21 +87,7 @@ export default function Users() {
         </span>
       </div>
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
-        <CardUpgrade title="Gratuito" information>
-          <CardUpgradeItem label="Visualização de treinos e cardápios enviados pelos profissionais" />
-          <CardUpgradeItem label="Registro de medidas básicas (peso, altura, IMC)" />
-          <CardUpgradeItem label="Gráficos simples de evolução" />
-          <CardUpgradeItem label="Notificações sobre treinos e dieta" />
-        </CardUpgrade>
-
-        <CardUpgrade title="Premium" value={19.9} information>
-          <CardUpgradeItem label="Todas as funcionalidades do plano gratuito" />
-          <CardUpgradeItem label="Acesso a gráficos detalhados de evolução (antropometria, performance, nutrição)" />
-          <CardUpgradeItem label="Integração com smartwatches e apps de saúde (Google Fit, Apple Health)" />
-          <CardUpgradeItem label="Histórico completo de treinos e cardápios" />
-          <CardUpgradeItem label="Chat ilimitado com profissionais (dentro da plataforma)" />
-          <CardUpgradeItem label="Relatórios PDF para compartilhar com médico/nutricionista" />
-        </CardUpgrade>
+        <UserPlan information />
       </div>
     </div>
   );
