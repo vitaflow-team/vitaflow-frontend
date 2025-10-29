@@ -1,6 +1,7 @@
+import { NutritionistPlan } from '@/_components/layout/plans/nutritionist';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import { CardUpgradeItem } from '@/_components/ui/cardUpgrade';
 import {
   ClipboardList,
   HandCoins,
@@ -93,22 +94,7 @@ export default function Nutritionists() {
         </span>
       </div>
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
-        <CardUpgrade title="Profissional" value={79.9} information>
-          <CardUpgradeItem label="Cadastro ilimitado de pacientes" />
-          <CardUpgradeItem label="Prescrição de cardápios e planos alimentares personalizados" />
-          <CardUpgradeItem label="Registro e acompanhamento de medidas nutricionais (peso, circunferências, dobras cutâneas)" />
-          <CardUpgradeItem label="Agenda para consultas presenciais ou online" />
-          <CardUpgradeItem label="Relatórios de evolução nutricional para pacientes" />
-        </CardUpgrade>
-
-        <CardUpgrade title="Premium" value={129.9} information>
-          <CardUpgradeItem label="Todas as funcionalidades do plano anterior" />
-          <CardUpgradeItem label="Gestão financeira: contas a receber, histórico de pagamentos dos alunos" />
-          <CardUpgradeItem label="Integração com PIX e emissão de recibos" />
-          <CardUpgradeItem label="Lembretes automáticos de consulta e pagamento para pacientes" />
-          <CardUpgradeItem label="Criação de grupos de acompanhamento (ex: desafio de emagrecimento)" />
-          <CardUpgradeItem label="Gráficos comparativos de evolução de grupos" />
-        </CardUpgrade>
+        <NutritionistPlan information />
       </div>
     </div>
   );

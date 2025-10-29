@@ -23,9 +23,7 @@ export default function RestrictLayout({
         <main className="flex flex-row h-full">
           <div className="flex flex-row w-full h-full gap-1">
             <MenuApp />
-            <div className="flex flex-col w-full gap-2 lg:px-2">
-              <main className="flex flex-col w-full h-full">{children}</main>
-            </div>
+            {children}
           </div>
         </main>
         <Rights />
