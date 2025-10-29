@@ -193,19 +193,19 @@ export default function Settings() {
         </TabsList>
         <TabsContent
           value="user"
-          className="flex flex-col lg:flex-row px-4 gap-4 justify-center pb-4"
+          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
         >
           <UserPlan />
         </TabsContent>
         <TabsContent
           value="personal"
-          className="flex flex-col lg:flex-row px-4 gap-4 justify-center pb-4"
+          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
         >
           <PersonalPlan />
         </TabsContent>
         <TabsContent
           value="nutritionists"
-          className="flex flex-col lg:flex-row px-4 gap-4 justify-center pb-4"
+          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
         >
           <NutritionistPlan />
         </TabsContent>
