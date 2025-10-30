@@ -21,7 +21,7 @@ export function MenuApp() {
     },
     {
       title: 'Treinos',
-      url: '/restrict',
+      url: '/restrict/workouts',
       icon: Dumbbell,
     },
     {
