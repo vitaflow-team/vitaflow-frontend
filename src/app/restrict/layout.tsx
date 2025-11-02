@@ -17,7 +17,7 @@ export default function RestrictLayout({
           <div className="flex flex-row items-center gap-2">
             <SidebarTrigger className="p-2 md:hidden" />
             <Logo />
-          </div>{' '}
+          </div>
           <UserMenu />
         </header>
         <main className="flex flex-row h-full">
