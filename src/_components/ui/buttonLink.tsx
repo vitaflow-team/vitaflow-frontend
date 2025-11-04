@@ -2,10 +2,10 @@
 
 import { LucideProps } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { ComponentType } from 'react';
+import { ButtonHTMLAttributes, ComponentType } from 'react';
 import { Button } from './button';
 
-interface ButtonLinkProps {
+interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   url: string;
   icon?: ComponentType<LucideProps>;
@@ -17,11 +17,17 @@ export function ButtonLink({
   url,
   variant = 'default',
   icon: Icon,
+  ...props
 }: ButtonLinkProps) {
   const router = useRouter();
 
   return (
-    <Button variant={variant} size="default" onClick={() => router.push(url)}>
+    <Button
+      variant={variant}
+      size="default"
+      onClick={() => router.push(url)}
+      {...props}
+    >
       {Icon && (
         <Icon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
       )}
