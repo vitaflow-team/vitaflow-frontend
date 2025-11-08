@@ -1,14 +1,15 @@
 import { cn } from '@/_lib/utils';
-import { LabelHTMLAttributes, ReactNode } from 'react';
+import { HTMLAttributes } from 'react';
 
-interface TitleProps extends LabelHTMLAttributes<HTMLLabelElement> {
+interface TitleProps extends HTMLAttributes<HTMLDivElement> {
   size?: 'h1' | 'h2' | 'h3';
-  children: ReactNode;
+  label: string;
 }
 
 export function Title({
   size = 'h1',
   className,
+  label,
   children,
   ...props
 }: TitleProps) {
@@ -21,7 +22,7 @@ export function Title({
   };
 
   return (
-    <label
+    <div
       {...props}
       className={cn(
         'w-full text-center font-semibold',
@@ -29,7 +30,8 @@ export function Title({
         className
       )}
     >
+      <span className="flex w-full">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }

@@ -12,18 +12,18 @@ export default function RestrictLayout({
 }>) {
   return (
     <UserSessionProvider>
-      <SidebarProvider className="flex flex-col w-full py-2 px-2 xl:px-10 2xl:px-36">
+      <SidebarProvider className="flex flex-col w-full py-2 px-2 xl:px-10 2xl:px-36 max-w-full">
         <header className="flex flex-row w-full justify-between items-center border-b-[1px] border-secondary pb-2">
           <div className="flex flex-row items-center gap-2">
             <SidebarTrigger className="p-2 md:hidden" />
             <Logo />
-          </div>{' '}
+          </div>
           <UserMenu />
         </header>
-        <main className="flex flex-row h-full">
-          <div className="flex flex-row w-full h-full gap-1">
+        <main className="flex flex-row flex-1 w-full max-w-full overflow-hidden">
+          <div className="flex flex-row flex-1 w-full gap-1 max-w-full overflow-hidden">
             <MenuApp />
-            {children}
+            <div className="flex-1 overflow-auto">{children}</div>
           </div>
         </main>
         <Rights />

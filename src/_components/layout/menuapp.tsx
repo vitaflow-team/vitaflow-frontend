@@ -21,7 +21,7 @@ export function MenuApp() {
     },
     {
       title: 'Treinos',
-      url: '/restrict',
+      url: '/restrict/workouts',
       icon: Dumbbell,
     },
     {
@@ -48,7 +48,7 @@ export function MenuApp() {
   return (
     <Sidebar
       collapsible="icon"
-      className="relative min-h-min h-full justify-center px-2"
+      className="relative min-h-min h-full justify-center px-2 mr-0 md:mr-4"
     >
       {((isMobile && !openMobile) || (!isMobile && !open)) && (
         <SidebarTrigger className="w-full bg-transparent hover:bg-primary hover:text-secondary rounded-none" />
