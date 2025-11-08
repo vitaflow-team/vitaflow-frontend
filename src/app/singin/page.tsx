@@ -55,9 +55,7 @@ export default function Home() {
         <div className="flex flex-col w-full gap-5 p-4 md:p-10 py-12 justify-center items-center">
           <Logo className="w-64 md:w-80" />
 
-          <Title size="h1" className="mb-4">
-            Acesse sua conta
-          </Title>
+          <Title label="Acesse sua conta" size="h1" className="mb-4" />
 
           <Form {...methods}>
             <form
@@ -107,7 +105,7 @@ export default function Home() {
             </form>
           </Form>
           <div className="flex flex-col items-center w-full gap-3">
-            <Title size="h2">Ou acesse com</Title>
+            <Title label="Ou acesse com" size="h2" />
             <div className="flex gap-4">
               <Image
                 src="/google.svg"

@@ -50,7 +50,7 @@ export default function Settings() {
 
   return (
     <DefaultLayout>
-      <Title className="border-b border-primary text-left">Meu perfil</Title>
+      <Title label="Meu perfil" className="border-b border-primary text-left" />
       <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center">
         <Form {...methods}>
           <form
@@ -184,7 +184,7 @@ export default function Settings() {
           <UserAvatar size="lg" />
         </div>
       </div>
-      <Title className="border-b border-primary text-left">Meu plano</Title>
+      <Title label="Meu plano" className="border-b border-primary text-left" />
       <Tabs defaultValue="user" className="w-full bg-secondary/30 rounded-md">
         <TabsList className="w-full bg-secondary">
           <TabsTrigger value="user">Usuário</TabsTrigger>
