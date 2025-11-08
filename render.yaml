@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: vitaflow-frontend
+    env: docker
+    plan: free
+    autoDeploy: true
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: NEXTAUTH_URL
+        fromSecret: NEXTAUTH_URL
+      - key: NEXTAUTH_SECRET
+        fromSecret: NEXTAUTH_SECRET
