@@ -4,9 +4,9 @@ export default function DefaultLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex flex-col w-full h-full">
-      <div className="flex flex-row w-full items-center justify-center gap-20">
-        <div className="flex flex-col w-full gap-2 md:gap-4 pt-2">
+    <main className="flex flex-col max-w-full h-full">
+      <div className="flex flex-row max-w-full w-full gap-20 h-full">
+        <div className="relative flex flex-col max-w-full w-full gap-2 pt-2 h-full">
           {children}
         </div>
       </div>
