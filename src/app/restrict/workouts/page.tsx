@@ -32,82 +32,9 @@ export default function WorkoutsPage() {
         mobile: true,
       },
     },
-    {
-      accessorKey: 'description2',
-      header: 'Descrição2',
-      cell: ({ row }) => {
-        return <div>{row.getValue('description2')}</div>;
-      },
-      meta: {
-        align: 'left',
-        mobile: true,
-      },
-    },
   ];
 
-  const workouts: workoutFormData[] = [
-    {
-      id: '1',
-      description: 'description1',
-      description2: 'description1',
-    },
-    {
-      id: '2',
-      description: 'description2',
-      description2: 'description1',
-    },
-    {
-      id: '3',
-      description: 'description3',
-      description2: 'description1',
-    },
-    {
-      id: '4',
-      description: 'description4',
-      description2: 'description1',
-    },
-    {
-      id: '5',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '6',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '7',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '8',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '9',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '10',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '11',
-      description: 'description5',
-      description2: 'description1',
-    },
-    {
-      id: '12',
-      description:
-        'Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari Fernando Cezar Vicari',
-      description2: 'description1',
-    },
-  ];
+  const workouts: workoutFormData[] = [];
 
   return (
     <DefaultLayout>
