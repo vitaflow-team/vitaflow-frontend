@@ -39,6 +39,7 @@ interface DataTableProps<TData, TValue> {
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
     align?: 'left' | 'right';
+    mobile: boolean;
   }
 }
 
@@ -81,7 +82,7 @@ export function DataTable<TData, TValue>({
   const settingsColumn: ColumnDef<TData, TValue> = {
     id: 'settings',
     header: ({ table }) => (
-      <div className="flex justify-center content-center items-center max-w-14 w-14">
+      <div className="flex justify-center items-center max-w-14 w-14">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Settings2 className="size-4 cursor-pointer" />
@@ -89,23 +90,38 @@ export function DataTable<TData, TValue>({
           <DropdownMenuContent align="center">
             {table
               .getAllLeafColumns()
-              .filter(column => column.getCanHide())
-              .map(column => {
-                const visibleCount = table
+              .filter(col => col.id !== 'select' && col.id !== 'settings')
+              .map(col => {
+                const isMobile =
+                  typeof window !== 'undefined' && window.innerWidth < 640;
+
+                const visibleDataColumns = table
                   .getAllLeafColumns()
-                  .filter(col => col.getIsVisible()).length;
+                  .filter(c => {
+                    if (c.id === 'select' || c.id === 'settings') return false;
+                    if (isMobile && shouldHideOnMobile(c)) return false;
+                    return c.getIsVisible();
+                  }).length;
+
+                const label =
+                  typeof col.columnDef.header === 'function'
+                    ? col.columnDef.header({ table, column: col } as any)
+                    : (col.columnDef.header ?? String(col.id));
 
                 return (
                   <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={value => {
-                      if (!value && visibleCount <= 1) return;
-                      column.toggleVisibility(!!value);
+                    key={col.id}
+                    className={cn(
+                      'capitalize',
+                      shouldHideOnMobile(col) ? 'hidden sm:flex' : ''
+                    )}
+                    checked={col.getIsVisible()}
+                    onCheckedChange={(checked: boolean) => {
+                      if (!checked && visibleDataColumns <= 1) return;
+                      col.toggleVisibility(checked);
                     }}
                   >
-                    {column.id}
+                    {label}
                   </DropdownMenuCheckboxItem>
                 );
               })}
@@ -126,8 +142,6 @@ export function DataTable<TData, TValue>({
     return isVisible;
   }).length;
 
-  const shouldExpandSingleColumn = visibleUserColumnsCount === 1;
-
   const allColumns = useMemo(() => {
     const columnsWithoutSize = columns.filter(c => !c.size);
     const hasFlexibleColumns = columnsWithoutSize.length > 0;
@@ -143,6 +157,7 @@ export function DataTable<TData, TValue>({
         meta: {
           ...col.meta,
           grow: hasFlexibleColumns ? 1 : 0,
+          mobile: col.meta?.mobile ?? false,
         },
       };
     });
@@ -168,13 +183,15 @@ export function DataTable<TData, TValue>({
           (col as any).accessorKey ??
           String((col as any).header ?? '');
 
-        const visibleCount = allColumns.reduce((count, col) => {
-          const id = getColId(col);
-          const isVisible = merged[id] !== undefined ? !!merged[id] : true;
-          return count + (isVisible ? 1 : 0);
-        }, 0);
+        const visibleDataColumnsCount = allColumns
+          .filter(col => col.id !== 'select' && col.id !== 'settings')
+          .reduce((count, col) => {
+            const id = getColId(col);
+            const isVisible = merged[id] !== undefined ? !!merged[id] : true;
+            return count + (isVisible ? 1 : 0);
+          }, 0);
 
-        if (visibleCount === 2) return old;
+        if (visibleDataColumnsCount === 0) return old;
 
         return merged;
       });
@@ -184,19 +201,26 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const shouldHideOnMobile = (column: any) => {
+    const isSelectOrSettings =
+      column.id === 'select' || column.id === 'settings';
+
+    return !isSelectOrSettings && column.columnDef.meta?.mobile === false;
+  };
+
   return table.getRowModel().rows?.length ? (
     <div className="flex flex-col w-full max-w-full h-full">
-      <div className="overflow-hidden rounded-md border w-full m-0 p-0 max-w-full  table-fixed">
-        <Table className="w-full max-w-full">
-          <TableHeader className="bg-secondary m-0 max-w-full table-fixed">
+      <div className="overflow-hidden rounded-md border w-full m-0 p-0 max-w-full">
+        <Table className="w-full max-w-full table-fixed">
+          <TableHeader className="bg-secondary m-0 max-w-full table-header-group">
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
                 className="flex w-full gap-2 items-center"
               >
                 {headerGroup.headers.map(header => {
-                  const isSettingsColumn = header.column.id === 'settings';
                   const isSelectColumn = header.column.id === 'select';
+                  const isSettingsColumn = header.column.id === 'settings';
 
                   const alignClass =
                     header.column.columnDef.meta?.align === 'right'
@@ -210,7 +234,10 @@ export function DataTable<TData, TValue>({
                         alignClass,
                         isSelectColumn ? 'max-w-9' : '',
                         isSettingsColumn ? 'ml-auto max-w-14 w-14' : '',
-                        'overflow-hidden truncate whitespace-nowrap'
+                        'overflow-hidden truncate whitespace-nowrap',
+                        shouldHideOnMobile(header.column)
+                          ? 'hidden sm:flex'
+                          : ''
                       )}
                       style={{
                         flexGrow: header.column.columnDef.size ? 0 : 1,
@@ -238,13 +265,23 @@ export function DataTable<TData, TValue>({
                 className="flex gap-2 w-full hover:bg-secondary/40"
               >
                 {row.getVisibleCells().map(cell => {
-                  const isSettingsColumn = cell.column.id === 'settings';
                   const isSelectColumn = cell.column.id === 'select';
+                  const isSettingsColumn = cell.column.id === 'settings';
 
                   const alignClass =
                     cell.column.columnDef.meta?.align === 'right'
                       ? 'justify-center items-center text-right'
                       : 'justify-center items-center text-left';
+
+                  const cellContent = flexRender(
+                    cell.column.columnDef.cell,
+                    cell.getContext()
+                  );
+
+                  const cellStringValue =
+                    typeof cellContent === 'string'
+                      ? cellContent
+                      : String(row.getValue(cell.column.id));
 
                   return (
                     <TableCell
@@ -255,7 +292,9 @@ export function DataTable<TData, TValue>({
                         isSettingsColumn
                           ? 'ml-auto max-w-14 w-14 flex-none'
                           : '',
-                        'overflow-hidden truncate whitespace-nowrap'
+                        'overflow-hidden truncate whitespace-nowrap',
+                        'px-2 py-1',
+                        shouldHideOnMobile(cell.column) ? 'hidden sm:flex' : ''
                       )}
                       style={{
                         flexGrow: cell.column.columnDef.size ? 0 : 1,
@@ -264,9 +303,15 @@ export function DataTable<TData, TValue>({
                           : '0',
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {cell.column.getCanHide() ? (
+                        <div
+                          title={cellStringValue}
+                          className="overflow-hidden truncate whitespace-nowrap w-full"
+                        >
+                          {cellContent}
+                        </div>
+                      ) : (
+                        cellContent
                       )}
                     </TableCell>
                   );

@@ -6,6 +6,10 @@ export const workoutSchema = z.object({
     .string()
     .min(2, 'A descrição do treino é obrigatótia')
     .max(200, 'Descrição muito longa'),
+  description2: z
+    .string()
+    .min(2, 'A descrição do treino é obrigatótia')
+    .max(200, 'Descrição muito longa'),
 });
 
 export type workoutFormData = z.infer<typeof workoutSchema>;

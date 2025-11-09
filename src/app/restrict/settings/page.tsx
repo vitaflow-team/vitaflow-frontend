@@ -51,7 +51,7 @@ export default function Settings() {
   return (
     <DefaultLayout>
       <Title label="Meu perfil" className="border-b border-primary text-left" />
-      <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center">
+      <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center mt-2">
         <Form {...methods}>
           <form
             onSubmit={methods.handleSubmit(submitSingUp)}
@@ -185,7 +185,10 @@ export default function Settings() {
         </div>
       </div>
       <Title label="Meu plano" className="border-b border-primary text-left" />
-      <Tabs defaultValue="user" className="w-full bg-secondary/30 rounded-md">
+      <Tabs
+        defaultValue="user"
+        className="w-full bg-secondary/30 rounded-md mt-2"
+      >
         <TabsList className="w-full bg-secondary">
           <TabsTrigger value="user">Usuário</TabsTrigger>
           <TabsTrigger value="personal">Educadores físicos</TabsTrigger>
