@@ -46,6 +46,17 @@ export default function Home() {
     }
   }
 
+  async function submitSingInSocial(socialMedia: string) {
+    const resp = await signIn(socialMedia, {
+      redirect: false,
+    });
+    if (resp?.ok) {
+      router.push('/restrict');
+    } else {
+      console.log(resp);
+    }
+  }
+
   return (
     <div className="flex flex-col w-full items-center justify-center content-center p-4">
       <div className="flex flex-row w-full md:w-11/12 xl:w-8/12 2xl:w-6/12 bg-[url('/backgroundLogo.svg')] items-center justify-center bg-cover bg-no-repeat bg-right border-[1px]">
@@ -119,17 +130,19 @@ export default function Home() {
             <div className="flex gap-4">
               <Image
                 src="/google.svg"
-                className="bg-white p-2 border-2"
+                className="bg-white p-2 border-2 hover:cursor-pointer"
                 width={50}
                 height={50}
                 alt="Google"
+                onClick={() => submitSingInSocial('google')}
               />
               <Image
                 src="/instagram.svg"
-                className="bg-white p-1 border-2"
+                className="bg-white p-1 border-2 hover:cursor-pointer"
                 width={50}
                 height={50}
                 alt="Instagram"
+                onClick={() => submitSingInSocial('instagram')}
               />
             </div>
           </div>
