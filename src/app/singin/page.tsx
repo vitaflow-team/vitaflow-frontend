@@ -141,14 +141,6 @@ export default function Home() {
                 alt="Google"
                 onClick={() => submitSingInSocial('google')}
               />
-              <Image
-                src="/instagram.svg"
-                className="bg-white p-1 border-2 hover:cursor-pointer"
-                width={50}
-                height={50}
-                alt="Instagram"
-                onClick={() => submitSingInSocial('instagram')}
-              />
             </div>
           </div>
           <div className="flex flex-col gap-3">
