@@ -34,26 +34,31 @@ export default function Home() {
   const [isPending, startTransaction] = useTransition();
 
   async function submitSingIn({ email, password }: singInFormDate) {
-    const resp = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-    if (resp?.ok) {
-      router.push('/restrict');
-    } else {
-      console.log(resp);
+    try {
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: '/restrict',
+      });
+    } catch (error) {
+      console.error('Sign in failed:', error);
+
+      alert('Sign-in failed, please try again.');
     }
   }
 
   async function submitSingInSocial(socialMedia: string) {
-    const resp = await signIn(socialMedia, {
-      redirect: false,
-    });
-    if (resp?.ok) {
-      router.push('/restrict');
-    } else {
-      console.log(resp);
+    console.log(socialMedia);
+    try {
+      await signIn(socialMedia, {
+        redirect: false,
+        callbackUrl: '/restrict',
+      });
+    } catch (error) {
+      console.error('Sign in failed:', error);
+
+      alert('Sign-in failed, please try again.');
     }
   }
 
