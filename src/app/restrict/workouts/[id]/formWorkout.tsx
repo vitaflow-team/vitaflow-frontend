@@ -29,19 +29,7 @@ export default function FormWorkout() {
       daysOfWeek: [],
       warmUp: '',
       restBetweenExercises: 0,
-      exercises: [
-        {
-          name: '',
-          videoLink: '',
-          variations: [
-            {
-              weight: 0,
-              reps: 0,
-              restBetweenReps: 0,
-            },
-          ],
-        },
-      ],
+      exercises: [],
     },
   });
 
@@ -53,7 +41,7 @@ export default function FormWorkout() {
     { id: 'Thu', label: 'Quinta' },
     { id: 'Fri', label: 'Sexta' },
     { id: 'Sat', label: 'Sábado' },
-  ];
+  ] as const;
 
   async function submitWorking(data: workoutFormData) {
     console.log(data);
