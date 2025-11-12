@@ -5,13 +5,13 @@ export const workoutSchema = z
     id: z.string().optional(),
     description: z
       .string()
-      .min(2, 'Campo obrigatório')
+      .min(2, 'Obrigatório')
       .max(200, 'Descrição muito longa'),
-    startDate: z.date('Campo obrigatório'),
-    endDate: z.date('Campo obrigatório'),
+    startDate: z.date('Obrigatório'),
+    endDate: z.date('Obrigatório'),
     daysOfWeek: z
       .array(z.enum(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']))
-      .min(1, 'Selecione pelo menos um dia da semana'),
+      .min(1, 'Mínimo um dia da semana'),
     warmUp: z.string().optional(),
     restBetweenExercises: z
       .number()
@@ -20,7 +20,7 @@ export const workoutSchema = z
     exercises: z
       .array(
         z.object({
-          name: z.string().min(1, 'Campo obrigatório'),
+          name: z.string().min(1, 'Obrigatório'),
 
           videoLink: z
             .url('Link do vídeo inválido')
@@ -44,7 +44,7 @@ export const workoutSchema = z
       .min(1, 'Adicione pelo menos um exercício'),
   })
   .refine(data => data.endDate >= data.startDate, {
-    message: 'A data final deve ser maior ou igual à data inicial',
+    message: 'Deve ser maior ou igual à inicial',
     path: ['endDate'],
   });
 

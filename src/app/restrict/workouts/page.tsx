@@ -40,7 +40,8 @@ export default function WorkoutsPage() {
     <DefaultLayout>
       <Title
         label="Treinos"
-        className="flex items-center justify-between border-b border-primary text-left py-1"
+        styled="form"
+        className="flex items-center justify-between border-b border-primary text-left py-1 flex-row"
       >
         <ButtonLink
           url="/restrict/workouts/0"
@@ -48,7 +49,7 @@ export default function WorkoutsPage() {
           className="w-32"
         />
       </Title>
-      <div className="flex w-full h-full ">
+      <div className="flex w-full h-full">
         <DataTable columns={columns} data={workouts} pageSize={6} />
       </div>
     </DefaultLayout>

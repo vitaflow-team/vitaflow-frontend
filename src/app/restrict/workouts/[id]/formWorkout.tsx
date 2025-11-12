@@ -47,15 +47,17 @@ export default function FormWorkout() {
 
   const DAYS_OF_WEEK = [
     { id: 'Sun', label: 'Domingo' },
-    { id: 'Mon', label: 'Segunda-feira' },
-    { id: 'Tue', label: 'Terça-feira' },
-    { id: 'Wed', label: 'Quarta-feira' },
-    { id: 'Thu', label: 'Quinta-feira' },
-    { id: 'Fri', label: 'Sexta-feira' },
+    { id: 'Mon', label: 'Segunda' },
+    { id: 'Tue', label: 'Terça' },
+    { id: 'Wed', label: 'Quarta' },
+    { id: 'Thu', label: 'Quinta' },
+    { id: 'Fri', label: 'Sexta' },
     { id: 'Sat', label: 'Sábado' },
-  ] as const;
+  ];
 
-  async function submitWorking({ description }: workoutFormData) {}
+  async function submitWorking(data: workoutFormData) {
+    console.log(data);
+  }
 
   return (
     <Form {...methods}>
@@ -109,7 +111,7 @@ export default function FormWorkout() {
             name="daysOfWeek"
             render={({ field }) => (
               <FormItem className="relative col-span-full xl:col-span-3 w-full">
-                <FormLabel>Selecione os dias do treino</FormLabel>
+                <FormLabel>Dias do treino</FormLabel>
                 <div className="w-full rounded-md border border-input px-4 md:col-span-3 min-h-28 gap-0">
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full gap-0 py-3 items-center content-between">
                     {DAYS_OF_WEEK.map(day => (
@@ -178,13 +180,13 @@ export default function FormWorkout() {
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={methods.control}
                 name="restBetweenExercises"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Intervalo (seg)</FormLabel>
+                    <FormLabel>Intervalo entre exercícios (seg)</FormLabel>
                     <FormControl>
                       <Input
                         id="restBetweenExercises"
