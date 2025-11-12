@@ -5,28 +5,22 @@ export const workoutSchema = z
     id: z.string().optional(),
     description: z
       .string()
-      .min(2, 'A descrição do treino é obrigatótia')
+      .min(2, 'Campo obrigatório')
       .max(200, 'Descrição muito longa'),
-    startDate: z.date('A data inicial é obrigatória'),
-    endDate: z.date('A data final é obrigatória'),
+    startDate: z.date('Campo obrigatório'),
+    endDate: z.date('Campo obrigatório'),
     daysOfWeek: z
-      .array(
-        z.enum([
-          'Segunda-feira',
-          'Terça-feira',
-          'Quarta-feira',
-          'Quinta-feira',
-          'Sexta-feira',
-          'Sábado',
-          'Domingo',
-        ])
-      )
+      .array(z.enum(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']))
       .min(1, 'Selecione pelo menos um dia da semana'),
     warmUp: z.string().optional(),
+    restBetweenExercises: z
+      .number()
+      .min(0, 'Tempo de descanso inválido')
+      .optional(),
     exercises: z
       .array(
         z.object({
-          name: z.string().min(1, 'O nome do exercício é obrigatório'),
+          name: z.string().min(1, 'Campo obrigatório'),
 
           videoLink: z
             .url('Link do vídeo inválido')
@@ -39,10 +33,6 @@ export const workoutSchema = z
                 weight: z.number().min(0, 'Peso inválido').optional(),
                 reps: z.number().min(1, 'Número de repetições inválido'),
                 restBetweenReps: z
-                  .number()
-                  .min(0, 'Tempo de descanso inválido')
-                  .optional(),
-                restBetweenExercises: z
                   .number()
                   .min(0, 'Tempo de descanso inválido')
                   .optional(),

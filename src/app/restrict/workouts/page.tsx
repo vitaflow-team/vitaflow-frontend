@@ -43,7 +43,7 @@ export default function WorkoutsPage() {
         className="flex items-center justify-between border-b border-primary text-left py-1"
       >
         <ButtonLink
-          url="/restrict/workouts/null"
+          url="/restrict/workouts/0"
           label="Adicionar"
           className="w-32"
         />
