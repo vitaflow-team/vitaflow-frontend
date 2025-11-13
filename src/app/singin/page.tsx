@@ -34,15 +34,31 @@ export default function Home() {
   const [isPending, startTransaction] = useTransition();
 
   async function submitSingIn({ email, password }: singInFormDate) {
-    const resp = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    });
-    if (resp?.ok) {
-      router.push('/restrict');
-    } else {
-      console.log(resp);
+    try {
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: '/restrict',
+      });
+    } catch (error) {
+      console.error('Sign in failed:', error);
+
+      alert('Sign-in failed, please try again.');
+    }
+  }
+
+  async function submitSingInSocial(socialMedia: string) {
+    console.log(socialMedia);
+    try {
+      await signIn(socialMedia, {
+        redirect: false,
+        callbackUrl: '/restrict',
+      });
+    } catch (error) {
+      console.error('Sign in failed:', error);
+
+      alert('Sign-in failed, please try again.');
     }
   }
 
@@ -55,7 +71,12 @@ export default function Home() {
         <div className="flex flex-col w-full gap-5 p-4 md:p-10 py-12 justify-center items-center">
           <Logo className="w-64 md:w-80" />
 
-          <Title label="Acesse sua conta" size="h1" className="mb-4" />
+          <Title
+            label="Acesse sua conta"
+            size="h1"
+            className="mb-4"
+            titlePosition="center"
+          />
 
           <Form {...methods}>
             <form
@@ -107,21 +128,20 @@ export default function Home() {
             </form>
           </Form>
           <div className="flex flex-col items-center w-full gap-3">
-            <Title label="Ou acesse com" size="h2" />
+            <Title
+              label="Ou acesse com"
+              size="h2"
+              className=""
+              titlePosition="center"
+            />
             <div className="flex gap-4">
               <Image
                 src="/google.svg"
-                className="bg-white p-2 border-2"
+                className="bg-white p-2 border-2 hover:cursor-pointer"
                 width={50}
                 height={50}
                 alt="Google"
-              />
-              <Image
-                src="/instagram.svg"
-                className="bg-white p-1 border-2"
-                width={50}
-                height={50}
-                alt="Instagram"
+                onClick={() => submitSingInSocial('google')}
               />
             </div>
           </div>

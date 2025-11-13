@@ -5,6 +5,7 @@ interface TitleProps extends HTMLAttributes<HTMLDivElement> {
   size?: 'h1' | 'h2' | 'h3';
   styled?: 'default' | 'form';
   label: string;
+  titlePosition?: 'left' | 'center' | 'right';
 }
 
 export function Title({
@@ -13,6 +14,7 @@ export function Title({
   label,
   styled = 'default',
   children,
+  titlePosition = 'left',
   ...props
 }: TitleProps) {
   const buttonClass = {
@@ -30,14 +32,17 @@ export function Title({
   return (
     <div
       {...props}
-      className={cn(
-        'flex flex-col md:flex-row items-center w-full text-center font-semibold mb-2',
-        buttonClass.size[size],
-        buttonClass.styled[styled],
-        className
-      )}
+      className={cn('w-full font-semibold', buttonClass.size[size], className)}
     >
-      <span className="w-full">{label}</span>
+      <span
+        className={cn(
+          'flex w-full',
+          titlePosition === 'center' ? 'justify-center' : '',
+          titlePosition === 'right' ? 'justify-end' : ''
+        )}
+      >
+        {label}
+      </span>
       {children}
     </div>
   );

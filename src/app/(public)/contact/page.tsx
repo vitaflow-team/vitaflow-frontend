@@ -128,7 +128,7 @@ export default function Contact() {
               </div>
             </Link>
 
-            <Link href="https://www.instagram.com/VitaFlow/" target="_blank">
+            <Link href="https://www.instagram.com/vitaflowapp/" target="_blank">
               <div className="flex gap-2 items-center">
                 <Image
                   src="/instagram.svg"

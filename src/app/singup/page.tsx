@@ -45,7 +45,12 @@ export default function Home() {
         <div className="flex flex-col w-full gap-6 p-4 md:p-10 py-6 md:py-16 justify-center items-center">
           <Logo className="w-64 md:w-80" />
 
-          <Title label="Crie sua conta" size="h1" className="mb-4" />
+          <Title
+            label="Crie sua conta"
+            size="h1"
+            className="mb-4"
+            titlePosition="center"
+          />
 
           <Form {...methods}>
             <form
