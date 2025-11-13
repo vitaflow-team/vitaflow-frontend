@@ -9,7 +9,7 @@ interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   url: string;
   icon?: ComponentType<LucideProps>;
-  variant?: 'default' | 'link';
+  variant?: 'default' | 'link' | 'outline';
 }
 
 export function ButtonLink({
