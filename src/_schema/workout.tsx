@@ -15,10 +15,9 @@ export const workoutSchema = z
       .array(z.enum(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']))
       .min(1, 'Mínimo um dia da semana'),
     warmUp: z.string().optional(),
-    restBetweenExercises: z
+    restBetweenExercises: z.coerce
       .number()
-      .min(0, 'Tempo de descanso inválido')
-      .optional(),
+      .min(0, 'Tempo de descanso inválido'),
     exercises: z
       .array(z.object(exerciseSchema))
       .min(1, 'Adicione pelo menos um exercício'),

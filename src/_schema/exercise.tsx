@@ -4,9 +4,9 @@ import { z } from 'zod';
 export const exerciseSchema = z.object({
   name: z.string().min(1, 'Obrigatório'),
   videoLink: z.url('Link do vídeo inválido').optional().or(z.literal('')),
-  weight: z.number().min(0, 'Peso inválido').optional(),
-  reps: z.number().min(1, 'Número de repetições inválido'),
-  restBetweenReps: z.number().min(0, 'Tempo de descanso inválido').optional(),
+  weight: z.coerce.number().min(0, 'Inválido'),
+  reps: z.coerce.number().min(0, 'Inválido'),
+  restBetweenReps: z.coerce.number().min(0, 'Tempo de descanso inválido'),
 });
 
 export type exerciseFormData = z.infer<typeof exerciseSchema>;

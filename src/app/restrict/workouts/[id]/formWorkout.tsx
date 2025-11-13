@@ -3,6 +3,7 @@
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import { Checkbox } from '@/_components/ui/checkbox';
+import { DataTable } from '@/_components/ui/dataTable';
 import {
   Form,
   FormControl,
@@ -13,14 +14,17 @@ import {
 import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
 import { Title } from '@/_components/ui/title';
+import { DAYS_OF_WEEK } from '@/_enumerator/daysOfWeek';
 import { formatDateToISO } from '@/_lib/formatDateToISO';
+import { zodResolverFixed } from '@/_lib/zodResolverHelper';
+import { exerciseColumnDef, exerciseFormData } from '@/_schema/exercise';
 import { workoutFormData, workoutSchema } from '@/_schema/workout';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import FormExercice from './formExercise';
 
 export default function FormWorkout() {
   const methods = useForm<workoutFormData>({
-    resolver: zodResolver(workoutSchema),
+    resolver: zodResolverFixed(workoutSchema),
     defaultValues: {
       id: undefined,
       description: '',
@@ -33,19 +37,11 @@ export default function FormWorkout() {
     },
   });
 
-  const DAYS_OF_WEEK = [
-    { id: 'Sun', label: 'Domingo' },
-    { id: 'Mon', label: 'Segunda' },
-    { id: 'Tue', label: 'Terça' },
-    { id: 'Wed', label: 'Quarta' },
-    { id: 'Thu', label: 'Quinta' },
-    { id: 'Fri', label: 'Sexta' },
-    { id: 'Sat', label: 'Sábado' },
-  ] as const;
-
   async function submitWorking(data: workoutFormData) {
     console.log(data);
   }
+
+  const exerciseData: exerciseFormData[] = [];
 
   return (
     <Form {...methods}>
@@ -59,6 +55,7 @@ export default function FormWorkout() {
               Salvar
             </Button>
             <ButtonLink
+              variant="outline"
               url="/restrict/workouts"
               label="Cancelar"
               className="w-32"
@@ -179,7 +176,6 @@ export default function FormWorkout() {
                       <Input
                         id="restBetweenExercises"
                         type="number"
-                        placeholder="Intervalo (seg)"
                         {...field}
                       />
                     </FormControl>
@@ -192,8 +188,16 @@ export default function FormWorkout() {
       </form>
 
       <Title size="h2" styled="form" label="Exercícios" className="flex-row">
-        <Button variant="link">Adicionar</Button>
+        <FormExercice />
       </Title>
+
+      <div className="flex w-full h-full">
+        <DataTable
+          columns={exerciseColumnDef}
+          data={exerciseData}
+          pageSize={6}
+        />
+      </div>
     </Form>
   );
 }
