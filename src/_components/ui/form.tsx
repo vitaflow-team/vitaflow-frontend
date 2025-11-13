@@ -80,7 +80,7 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
     <FormItemContext.Provider value={{ id }}>
       <div
         data-slot="form-item"
-        className={cn('flex flex-col min-h-16 mb-2', className)}
+        className={cn('flex flex-col mb-2', className)}
         {...props}
       />
     </FormItemContext.Provider>
@@ -89,6 +89,7 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
 
 function FormLabel({
   className,
+  children,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
   const { error, formItemId } = useFormField();
@@ -97,10 +98,13 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn('data-[error=true]:text-destructive', className)}
+      className={cn('h-6', className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {children}
+      <FormMessage />
+    </Label>
   );
 }
 

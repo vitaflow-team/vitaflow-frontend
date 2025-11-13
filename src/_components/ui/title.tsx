@@ -3,6 +3,7 @@ import { HTMLAttributes } from 'react';
 
 interface TitleProps extends HTMLAttributes<HTMLDivElement> {
   size?: 'h1' | 'h2' | 'h3';
+  styled?: 'default' | 'form';
   label: string;
   titlePosition?: 'left' | 'center' | 'right';
 }
@@ -11,6 +12,7 @@ export function Title({
   size = 'h1',
   className,
   label,
+  styled = 'default',
   children,
   titlePosition = 'left',
   ...props
@@ -20,6 +22,10 @@ export function Title({
       h1: 'text-xl pt-2',
       h2: 'text-base pt-1',
       h3: 'text-xs',
+    },
+    styled: {
+      default: '',
+      form: 'justify-between border-b border-primary text-left py-1',
     },
   };
 

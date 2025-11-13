@@ -6,7 +6,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  FormLabel,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { Textarea } from '@/_components/ui/textarea';
@@ -53,14 +53,10 @@ export default function Contact() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Nome:</FormLabel>
                     <FormControl>
-                      <Input
-                        id="name"
-                        placeholder="Informe seu nome"
-                        {...field}
-                      />
+                      <Input id="name" {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -70,15 +66,10 @@ export default function Contact() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>E-mail:</FormLabel>
                     <FormControl>
-                      <Input
-                        id="email"
-                        placeholder="Informe seu e-mail"
-                        {...field}
-                        icon={Mail}
-                      />
+                      <Input id="email" {...field} icon={Mail} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -88,14 +79,10 @@ export default function Contact() {
                 name="subject"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Assunto:</FormLabel>
                     <FormControl>
-                      <Input
-                        id="subject"
-                        placeholder="Informe o assunto"
-                        {...field}
-                      />
+                      <Input id="subject" {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -105,16 +92,15 @@ export default function Contact() {
                 name="message"
                 render={({ field }) => (
                   <FormItem className="h-40">
+                    <FormLabel>Mensagem:</FormLabel>
                     <FormControl>
                       <Textarea
                         id="message"
-                        placeholder="Informe a mensagem"
                         rows={6}
                         className="h-32 bg-background"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />

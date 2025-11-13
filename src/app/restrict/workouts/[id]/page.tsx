@@ -8,9 +8,12 @@ export default async function WorkoutsPage({
 }) {
   const { id } = await params;
 
+  if (id !== '0') {
+    console.log('buscar usuário');
+  }
+
   return (
     <DefaultLayout>
-      <span>{id}</span>
       <FormWorkout />
     </DefaultLayout>
   );

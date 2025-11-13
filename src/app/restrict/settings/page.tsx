@@ -10,7 +10,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  FormLabel,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import {
@@ -51,7 +51,7 @@ export default function Settings() {
   return (
     <DefaultLayout>
       <Title label="Meu perfil" className="border-b border-primary text-left" />
-      <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center mt-2">
+      <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center px-2 mt-2">
         <Form {...methods}>
           <form
             onSubmit={methods.handleSubmit(submitSingUp)}
@@ -62,15 +62,10 @@ export default function Settings() {
               name="name"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input
-                      id="name"
-                      placeholder="Informe seu nome"
-                      {...field}
-                      disabled={isPending}
-                    />
+                    <Input id="name" {...field} disabled={isPending} />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -81,16 +76,15 @@ export default function Settings() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="xl:col-span-2">
+                    <FormLabel>E-Mail</FormLabel>
                     <FormControl>
                       <Input
                         id="email"
-                        placeholder="Informe seu e-mail"
                         {...field}
                         icon={Mail}
                         disabled={isPending}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -100,77 +94,59 @@ export default function Settings() {
                 name="phone"
                 render={({ field }) => (
                   <FormItem className="xl:col-span-1">
+                    <FormLabel>Telefone</FormLabel>
                     <FormControl>
-                      <Input
-                        id="phone"
-                        placeholder="Informe o telefone"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <Input id="phone" {...field} disabled={isPending} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="grid grid-rows-3 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
-              <FormField
-                control={methods.control}
-                name="address.zip"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        id="zip"
-                        placeholder="Informe o CEP"
-                        {...field}
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <div className="grid grid-rows-2 grid-cols-1 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
+              <div className="flex gap-4 w-full col-span-2">
+                <FormField
+                  control={methods.control}
+                  name="address.zip"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>CEP</FormLabel>
+                      <FormControl>
+                        <Input id="zip" {...field} disabled={isPending} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={methods.control}
-                name="address.state"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        id="state"
-                        placeholder="Informe o estado"
-                        {...field}
-                        disabled={isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={methods.control}
+                  name="address.state"
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel>Estado</FormLabel>
+                      <FormControl>
+                        <Input id="state" {...field} disabled={isPending} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={methods.control}
                 name="address.city"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Cidade</FormLabel>
                     <FormControl>
-                      <Input
-                        id="city"
-                        placeholder="Informe a cidade"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <Input id="city" {...field} disabled={isPending} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
 
-            <div className="flex w-full justify-between">
+            <div className="flex w-full justify-between mt-4">
               <Button type="submit" className="w-40" disabled={isPending}>
                 Salvar
               </Button>
@@ -180,7 +156,7 @@ export default function Settings() {
             </div>
           </form>
         </Form>
-        <div className="flex justify-center w-full lg:w-44">
+        <div className="flex justify-center w-full lg:w-44 mx-1">
           <UserAvatar size="lg" />
         </div>
       </div>

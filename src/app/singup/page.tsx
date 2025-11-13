@@ -8,7 +8,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  FormLabel,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
@@ -62,15 +62,10 @@ export default function Home() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Nome:</FormLabel>
                     <FormControl>
-                      <Input
-                        id="name"
-                        placeholder="Informe seu nome"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <Input id="name" {...field} disabled={isPending} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -80,16 +75,15 @@ export default function Home() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>E-mail:</FormLabel>
                     <FormControl>
                       <Input
                         id="email"
-                        placeholder="Informe seu e-mail"
                         {...field}
                         icon={Mail}
                         disabled={isPending}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -99,15 +93,14 @@ export default function Home() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Senha:</FormLabel>
                     <FormControl>
                       <InputPassword
                         id="password"
-                        placeholder="Informe sua senha"
                         {...field}
                         disabled={isPending}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -117,20 +110,23 @@ export default function Home() {
                 name="checkPassword"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel>Confirme sua senha:</FormLabel>
                     <FormControl>
                       <InputPassword
                         id="checkPassword"
-                        placeholder="Confirme sua senha"
                         {...field}
                         disabled={isPending}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button
+                type="submit"
+                className="mt-4 w-full"
+                disabled={isPending}
+              >
                 Entrar
               </Button>
             </form>
