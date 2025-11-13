@@ -3,38 +3,10 @@ import DefaultLayout from '@/_components/layout/defaultLayout';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import { DataTable } from '@/_components/ui/dataTable';
 import { Title } from '@/_components/ui/title';
-import { workoutFormData } from '@/_schema/workout';
-import { ColumnDef } from '@tanstack/react-table';
+import { workoutColumnDef, workoutFormData } from '@/_schema/workout';
 
 export default function WorkoutsPage() {
-  const columns: ColumnDef<workoutFormData>[] = [
-    {
-      accessorKey: 'id',
-      header: 'ID',
-      cell: ({ row }) => {
-        return <div>{row.getValue('id')}</div>;
-      },
-      size: 60,
-      minSize: 60,
-      meta: {
-        align: 'right',
-        mobile: false,
-      },
-    },
-    {
-      accessorKey: 'description',
-      header: 'Descrição',
-      cell: ({ row }) => {
-        return <div>{row.getValue('description')}</div>;
-      },
-      meta: {
-        align: 'left',
-        mobile: true,
-      },
-    },
-  ];
-
-  const workouts: workoutFormData[] = [];
+  const workoutsData: workoutFormData[] = [];
 
   return (
     <DefaultLayout>
@@ -50,7 +22,11 @@ export default function WorkoutsPage() {
         />
       </Title>
       <div className="flex w-full h-full">
-        <DataTable columns={columns} data={workouts} pageSize={6} />
+        <DataTable
+          columns={workoutColumnDef}
+          data={workoutsData}
+          pageSize={50}
+        />
       </div>
     </DefaultLayout>
   );
