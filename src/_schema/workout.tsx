@@ -1,14 +1,6 @@
+import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
-
-export const exerciseSchema = z.object({
-  name: z.string().min(1, 'Obrigatório'),
-  videoLink: z.url('Link do vídeo inválido').optional().or(z.literal('')),
-  weight: z.number().min(0, 'Peso inválido').optional(),
-  reps: z.number().min(1, 'Número de repetições inválido'),
-  restBetweenReps: z.number().min(0, 'Tempo de descanso inválido').optional(),
-});
-
-export type exerciseFormData = z.infer<typeof exerciseSchema>;
+import { exerciseSchema } from './exercise';
 
 export const workoutSchema = z
   .object({
@@ -37,3 +29,30 @@ export const workoutSchema = z
   });
 
 export type workoutFormData = z.infer<typeof workoutSchema>;
+
+export const workoutColumnDef: ColumnDef<workoutFormData>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: ({ row }) => {
+      return <div>{row.getValue('id')}</div>;
+    },
+    size: 60,
+    minSize: 60,
+    meta: {
+      align: 'right',
+      mobile: false,
+    },
+  },
+  {
+    accessorKey: 'description',
+    header: 'Descrição',
+    cell: ({ row }) => {
+      return <div>{row.getValue('description')}</div>;
+    },
+    meta: {
+      align: 'left',
+      mobile: true,
+    },
+  },
+];
