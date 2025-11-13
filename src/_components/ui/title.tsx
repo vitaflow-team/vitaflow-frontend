@@ -32,20 +32,14 @@ export function Title({
   return (
     <div
       {...props}
-      className={cn('w-full font-semibold', buttonClass.size[size], className)}
+      className={cn(
+        'flex flex-col md:flex-row items-center w-full text-center font-semibold mb-2',
+        buttonClass.size[size],
+        buttonClass.styled[styled],
+        className
+      )}
     >
-      <span
-        className={cn(
-          'flex flex-col md:flex-row items-center w-full text-center font-semibold mb-2',
-          titlePosition === 'center' ? 'justify-center' : '',
-          titlePosition === 'right' ? 'justify-end' : '',
-          buttonClass.size[size],
-          buttonClass.styled[styled],
-          className
-        )}
-      >
-        {label}
-      </span>
+      <span className="w-full">{label}</span>
       {children}
     </div>
   );
