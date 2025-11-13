@@ -39,7 +39,7 @@ export function Title({
           'flex flex-col md:flex-row items-center w-full text-center font-semibold mb-2',
           titlePosition === 'center' ? 'justify-center' : '',
           titlePosition === 'right' ? 'justify-end' : '',
-          buttonClass.size[size]
+          buttonClass.size[size],
           buttonClass.styled[styled],
           className
         )}
