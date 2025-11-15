@@ -196,6 +196,7 @@ export default function FormWorkout() {
           columns={exerciseColumnDef}
           data={exerciseData}
           pageSize={6}
+          messageNotFound="Nenhum exercício cadastrado."
         />
       </div>
     </Form>
