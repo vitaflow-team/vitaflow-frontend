@@ -32,11 +32,11 @@ export function ModalAdd({
         {children}
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" className="w-full md:w-32">
+            <Button variant="outline" className="w-full sm:w-32">
               Cancelar
             </Button>
           </DialogClose>
-          <Button type="submit" form={formId} className="w-full md:w-32">
+          <Button type="submit" form={formId} className="w-full sm:w-32">
             Salvar
           </Button>
         </DialogFooter>
