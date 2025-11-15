@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   pageSize?: number;
+  messageNotFound?: string;
 }
 
 declare module '@tanstack/react-table' {
@@ -47,6 +48,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   pageSize = 50,
+  messageNotFound = 'Sem resultados',
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -347,6 +349,6 @@ export function DataTable<TData, TValue>({
       </div>
     </div>
   ) : (
-    <span>Sem resultados</span>
+    <span className="w-full italic text-center">{messageNotFound}</span>
   );
 }
