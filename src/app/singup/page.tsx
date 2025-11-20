@@ -1,5 +1,6 @@
 'use client';
 
+import { actionSingUp } from '@/_actions/singup';
 import { Logo } from '@/_components/layout/logo';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
@@ -13,14 +14,20 @@ import {
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { Title } from '@/_components/ui/title';
+import { useAlertHook } from '@/_hooks/alert_hook';
 import { singUpFormData, singUpSchema } from '@/_schema/singup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Image from 'next/image';
-import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useServerAction } from 'zsa-react';
 
 export default function Home() {
+  const { isPending, execute } = useServerAction(actionSingUp);
+  const router = useRouter();
+  const { openError } = useAlertHook();
+
   const methods = useForm<singUpFormData>({
     resolver: zodResolver(singUpSchema),
     defaultValues: {
@@ -30,10 +37,29 @@ export default function Home() {
       checkPassword: '',
     },
   });
-  const [isPending, startTransaction] = useTransition();
 
-  function submitSingUp({ name, email, password }: singUpFormData) {
-    startTransaction(async () => {});
+  async function submitSingUp(values: singUpFormData) {
+    const returnMessage = await execute(values);
+    console.log(returnMessage);
+
+    const [data, error] = returnMessage;
+    if (error) {
+      openError(
+        error.message || 'Erro desconhecido no cadastro.',
+        'Atenção!',
+        'error'
+      );
+      return;
+    }
+
+    if (data) {
+      openError(
+        'As instruções de ativação foram enviadas para o seu e-mail.',
+        'Cadastro realizado com sucesso!',
+        'success'
+      );
+      router.push('/singin');
+    }
   }
 
   return (
