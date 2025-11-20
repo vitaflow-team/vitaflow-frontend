@@ -1,19 +1,28 @@
 'use client';
 
+import { useAlertHook } from '@/_hooks/alert_hook';
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
 
 export function LoginByGoogle() {
+  const { openError } = useAlertHook();
+
   async function submitSingInGoogle() {
     try {
-      await signIn('google', {
+      const resp = await signIn('google', {
         redirect: false,
-        callbackUrl: '/restrict',
       });
+      if (!resp) {
+        openError('Falha ao autenticar via Google', 'Atenção!', 'error');
+      }
     } catch (error) {
-      console.error('Sign in failed:', error);
-
-      alert('Sign-in failed, please try again.');
+      let mensagem;
+      if (error instanceof Error) {
+        mensagem = error.message;
+      } else {
+        mensagem = 'Falha ao autenticar via Google';
+      }
+      openError(mensagem, 'Atenção!', 'error');
     }
   }
 
