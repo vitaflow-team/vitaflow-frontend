@@ -1,3 +1,4 @@
+import { AlertError } from '@/_components/ui/alert-error';
 import type { Metadata } from 'next';
 import { Lato } from 'next/font/google';
 import './globals.css';
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lato.variable} font-lato antialiased max-w-full`}>
         <div className="flex w-full max-w-full h-full min-h-dvh">
-          {children}
+          <AlertError>{children}</AlertError>
         </div>
       </body>
     </html>
