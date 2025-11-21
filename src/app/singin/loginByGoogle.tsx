@@ -8,21 +8,17 @@ export function LoginByGoogle() {
   const { openError } = useAlertHook();
 
   async function submitSingInGoogle() {
-    try {
-      const resp = await signIn('google', {
-        redirect: false,
-      });
-      if (!resp) {
-        openError('Falha ao autenticar via Google', 'Atenção!', 'error');
-      }
-    } catch (error) {
-      let mensagem;
-      if (error instanceof Error) {
-        mensagem = error.message;
-      } else {
-        mensagem = 'Falha ao autenticar via Google';
-      }
-      openError(mensagem, 'Atenção!', 'error');
+    const resp = await signIn('google', {
+      redirect: true,
+      callbackUrl: '/restrict',
+    });
+
+    if (!resp || !resp.ok) {
+      openError(
+        resp!.error || 'Falha ao autenticar com Google',
+        'Atenção!',
+        'error'
+      );
     }
   }
 

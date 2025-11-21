@@ -49,12 +49,22 @@ export const options: NextAuthOptions = {
           email: credentials!.email,
           password: credentials!.password,
           socialLogin: false,
+        }).catch(error => {
+          let mensagem;
+          if (error instanceof Error) {
+            mensagem = error.message;
+          } else {
+            mensagem = 'Falha ao autenticar o usuário.';
+          }
+          console.log('error', mensagem);
+          throw new Error(mensagem);
         });
-        if (user) {
-          return user;
+
+        if (!user) {
+          throw new Error('Falha ao autenticar o usuário.');
         }
 
-        return null;
+        return user;
       },
     }),
   ],

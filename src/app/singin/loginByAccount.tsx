@@ -10,6 +10,7 @@ import {
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
+import { useAlertHook } from '@/_hooks/alert_hook';
 import { singInFormDate, singInSchema } from '@/_schema/singin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
@@ -18,6 +19,7 @@ import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
 export function LoginByAccount() {
+  const { openError } = useAlertHook();
   const methods = useForm<singInFormDate>({
     resolver: zodResolver(singInSchema),
     defaultValues: {
@@ -28,17 +30,23 @@ export function LoginByAccount() {
   const [isPending] = useTransition();
 
   async function submitSingIn({ email, password }: singInFormDate) {
-    try {
-      await signIn('credentials', {
-        email,
-        password,
-        redirect: true,
-        callbackUrl: '/restrict',
-      });
-    } catch (error) {
-      console.error('Sign in failed:', error);
+    const resp = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: '/restrict',
+    });
 
-      alert('Sign-in failed, please try again.');
+    if (!resp?.ok) {
+      openError(
+        resp?.error || 'Falha ao autenticar com email e senha',
+        'Atenção!',
+        'error'
+      );
+      return;
+    }
+    if (resp.url) {
+      window.location.href = resp.url;
     }
   }
 

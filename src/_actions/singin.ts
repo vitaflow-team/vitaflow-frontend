@@ -15,12 +15,15 @@ export async function actionSignIn({
   password: string;
   socialLogin?: boolean;
 }): Promise<SignInResponse | undefined> {
-  const resp = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/singin', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, socialLogin }),
-    cache: 'no-store',
-  });
+  const resp = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/users/singin',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, socialLogin }),
+      cache: 'no-store',
+    }
+  );
 
   if (!resp.ok) {
     const error = await resp.json();
