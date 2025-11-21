@@ -1,3 +1,4 @@
+import { actionSignIn } from '@/_actions/singin';
 import { getEnv } from '@/_lib/getenv';
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -8,39 +9,62 @@ export const options: NextAuthOptions = {
     GoogleProvider({
       clientId: getEnv('GOOGLE_CLIENT_ID'),
       clientSecret: getEnv('GOOGLE_CLIENT_SECRET'),
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
+      async profile(profile) {
+        const user = await actionSignIn({
           email: profile.email,
-          image: profile.picture,
+          password: profile.sub,
+          socialLogin: true,
+        }).catch(error => {
+          let mensagem;
+          if (error instanceof Error) {
+            mensagem = error.message;
+          } else {
+            mensagem = 'Falha ao autenticar via Google';
+          }
+          throw new Error(mensagem);
+        });
+
+        if (!user) {
+          throw new Error('Falha ao autenticar via Google');
+        }
+
+        return {
+          ...user,
+          picture: profile.picture ?? profile.image ?? user.picture ?? null,
         };
       },
     }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: {},
-        password: {},
+        email: { label: 'Email', type: 'email', placeholder: 'Seu email' },
+        password: {
+          label: 'Senha',
+          type: 'password',
+          placeholder: 'Sua senha',
+        },
       },
       async authorize(credentials) {
-        const userCredential = {
-          password: credentials?.password,
-          email: credentials?.email,
-        };
+        const user = await actionSignIn({
+          email: credentials!.email,
+          password: credentials!.password,
+          socialLogin: false,
+        }).catch(error => {
+          let mensagem;
+          if (error instanceof Error) {
+            mensagem = error.message;
+          } else {
+            mensagem = 'Falha ao autenticar o usuário.';
+          }
+          console.log('error', mensagem);
+          throw new Error(mensagem);
+        });
 
-        if (
-          userCredential.email === 'fcvicari@gmail.com' &&
-          userCredential.password === '12345678'
-        ) {
-          return {
-            id: '1',
-            name: 'Fulano de Tal',
-            email: 'fcvicari@gmail.com',
-          };
+        if (!user) {
+          throw new Error('Falha ao autenticar o usuário.');
         }
 
-        return null;
+        return user;
       },
     }),
   ],
@@ -55,17 +79,24 @@ export const options: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      const jwtReturn = {
-        ...token,
-        ...user,
-      };
+      if (user) {
+        token = {
+          ...token,
+          ...user,
+        };
+      }
 
-      return jwtReturn;
+      return token;
     },
 
     async session({ session, token }) {
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-      session.user = token as any;
+      session.user = {
+        id: token.id,
+        name: token.name!,
+        email: token.email!,
+        picture: token.picture as string | null,
+        accessToken: token.accessToken,
+      };
 
       return session;
     },

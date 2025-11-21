@@ -86,7 +86,7 @@ export function AlertError({ children }: AlertErrorProps) {
                 className="w-full h-full py-4 border-0 hover:bg-slate-200 text-primary font-bold hover:text-primary/80"
                 onClick={close}
               >
-                Close
+                Fechar
               </AlertDialogCancel>
             </AlertDialogFooter>
           </div>

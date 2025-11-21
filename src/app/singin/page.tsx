@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { LoginByAccount } from './loginByAccount';
 import { LoginByGoogle } from './loginByGoogle';
+import ResetPassword from './resetPassword';
 
 export default function Home() {
   return (
@@ -36,8 +37,9 @@ export default function Home() {
               <LoginByGoogle />
             </div>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <ButtonLink url="/singup" label="Não tem conta?" variant="link" />
+            <ResetPassword />
             <ButtonLink
               variant="link"
               url="/"
