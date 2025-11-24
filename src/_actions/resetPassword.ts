@@ -6,7 +6,7 @@ import { createServerAction, ZSAError } from 'zsa';
 export const actionResetPassword = createServerAction()
   .input(resetPasswordSchema)
   .handler(async ({ input: { email } }) => {
-    await fetch(process.env.BACKEND_URL + '/recoverpass', {
+    await fetch(process.env.BACKEND_URL + '/users/recoverpass', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

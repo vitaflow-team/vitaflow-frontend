@@ -85,7 +85,7 @@ export default function ResetPassword() {
                 <AlertDialogCancel className="w-full sm:w-32">
                   Fechar
                 </AlertDialogCancel>
-                <AlertDialogAction className="w-full sm:w-32">
+                <AlertDialogAction type="submit" className="w-full sm:w-32">
                   Enviar
                 </AlertDialogAction>
               </AlertDialogFooter>
