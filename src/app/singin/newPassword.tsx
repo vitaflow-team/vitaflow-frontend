@@ -66,7 +66,7 @@ export function NewPassword() {
   return (
     <RemoveParams>
       <Dialog defaultOpen={true}>
-        <DialogContent className="border-2 shadow-2xl border-primary w-full sm:w-3/4 lg:w-2/4 xl:w-1/3">
+        <DialogContent className="border-2 shadow-2xl border-primary w-full sm:w-3/4 lg:w-2/4 xl:w-1/3 2xl:w-1/4">
           <DialogHeader>
             <DialogDescription className="flex flex-col font-semibold w-full text-base">
               <span>Quase lá!</span>
@@ -116,7 +116,7 @@ export function NewPassword() {
                 )}
               />
 
-              <DialogFooter>
+              <DialogFooter className="mt-2">
                 <DialogClose asChild>
                   <Button variant="outline" className="w-full sm:w-32">
                     Cancelar
