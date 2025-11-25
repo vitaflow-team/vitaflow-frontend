@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { LoginByAccount } from './loginByAccount';
 import { LoginByGoogle } from './loginByGoogle';
+import { NewPassword } from './newPassword';
 import ResetPassword from './resetPassword';
 
 export default function Home() {
@@ -49,6 +50,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <NewPassword />
     </div>
   );
 }
