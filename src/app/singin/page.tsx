@@ -4,10 +4,9 @@ import { ButtonLink } from '@/_components/ui/buttonLink';
 import { Title } from '@/_components/ui/title';
 import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
-import { Suspense } from 'react';
 import { LoginByAccount } from './loginByAccount';
 import { LoginByGoogle } from './loginByGoogle';
-import { NewPassword } from './newPassword';
+import { NewPasswordWrapper } from './newPasswordWrapper';
 import ResetPassword from './resetPassword';
 
 export default function Home() {
@@ -51,9 +50,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Suspense fallback={<div>Aguarde, carregando...</div>}>
-        <NewPassword />
-      </Suspense>
+      <NewPasswordWrapper />
     </div>
   );
 }

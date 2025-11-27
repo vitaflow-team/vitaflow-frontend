@@ -23,6 +23,7 @@ import { useAlertHook } from '@/_hooks/alert_hook';
 import { newPasswordFormData, newPasswordSchema } from '@/_schema/newPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 
@@ -37,8 +38,12 @@ export function NewPassword() {
   const router = useRouter();
   const { isPending, execute } = useServerAction(actionNewPassword);
   const { openError } = useAlertHook();
+
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
+  const initialToken = searchParams.get('token');
+
+  const [token, setToken] = useState(initialToken);
+  const [isDialogOpen, setIsDialogOpen] = useState(!!initialToken);
 
   if (!token) {
     return null;
@@ -48,7 +53,7 @@ export function NewPassword() {
     password,
     checkPassword,
   }: newPasswordFormData) {
-    const [data, error] = await execute({ password, checkPassword, token });
+    const [error] = await execute({ password, checkPassword, token });
     if (error) {
       console.log('Erro ao alterar a senha', error);
       openError(
@@ -59,12 +64,20 @@ export function NewPassword() {
       return;
     }
 
-    router.push('/singin');
+    setIsDialogOpen(false);
   }
 
   return (
     <RemoveParams>
-      <Dialog defaultOpen={true}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={open => {
+          if (!open) {
+            setToken(null);
+          }
+          setIsDialogOpen(open);
+        }}
+      >
         <DialogContent className="border-2 shadow-2xl border-primary w-full sm:w-3/4 lg:w-2/4 xl:w-1/3 2xl:w-1/4">
           <DialogHeader>
             <DialogDescription className="flex flex-col font-semibold w-full text-base">
