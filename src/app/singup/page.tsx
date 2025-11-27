@@ -39,10 +39,7 @@ export default function Home() {
   });
 
   async function submitSingUp(values: singUpFormData) {
-    const returnMessage = await execute(values);
-    console.log(returnMessage);
-
-    const [data, error] = returnMessage;
+    const [data, error] = await execute(values);
     if (error) {
       openError(
         error.message || 'Erro desconhecido no cadastro.',
