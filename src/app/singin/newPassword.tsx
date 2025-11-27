@@ -1,5 +1,6 @@
 'use client';
 
+import { actionNewPassword } from '@/_actions/actionNewPassword';
 import { RemoveParams } from '@/_components/layout/removeParams';
 import { Button } from '@/_components/ui/button';
 import {
@@ -21,10 +22,9 @@ import { InputPassword } from '@/_components/ui/inputPass';
 import { useAlertHook } from '@/_hooks/alert_hook';
 import { newPasswordFormData, newPasswordSchema } from '@/_schema/newPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
-import { useTransition } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useServerAction } from 'zsa-react';
 
 export function NewPassword() {
   const methods = useForm<newPasswordFormData>({
@@ -34,8 +34,9 @@ export function NewPassword() {
       checkPassword: '',
     },
   });
+  const router = useRouter();
+  const { isPending, execute } = useServerAction(actionNewPassword);
   const { openError } = useAlertHook();
-  const [isPending] = useTransition();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
@@ -47,20 +48,18 @@ export function NewPassword() {
     password,
     checkPassword,
   }: newPasswordFormData) {
-    const resp = await signIn('credentials', {
-      password,
-      checkPassword,
-      redirect: false,
-      callbackUrl: '/singin',
-    });
-
-    if (!resp?.ok) {
-      openError(resp?.error || 'Falha ao alterar a senha', 'Atenção!', 'error');
+    const [data, error] = await execute({ password, checkPassword, token });
+    if (error) {
+      console.log('Erro ao alterar a senha', error);
+      openError(
+        error.message || 'Erro desconhecido ao salvar a senha do usuário.',
+        'Atenção!',
+        'error'
+      );
       return;
     }
-    if (resp.url) {
-      window.location.href = resp.url;
-    }
+
+    router.push('/singin');
   }
 
   return (
