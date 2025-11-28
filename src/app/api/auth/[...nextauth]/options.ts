@@ -56,7 +56,6 @@ export const options: NextAuthOptions = {
           } else {
             mensagem = 'Falha ao autenticar o usuário.';
           }
-          console.log('error', mensagem);
           throw new Error(mensagem);
         });
 

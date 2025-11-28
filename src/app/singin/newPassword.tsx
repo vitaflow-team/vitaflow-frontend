@@ -55,7 +55,6 @@ export function NewPassword() {
   }: newPasswordFormData) {
     const [error] = await execute({ password, checkPassword, token });
     if (error) {
-      console.log('Erro ao alterar a senha', error);
       openError(
         error.message || 'Erro desconhecido ao salvar a senha do usuário.',
         'Atenção!',
