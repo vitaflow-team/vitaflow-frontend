@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-const streetNumberRegex = /^[0-9]+[A-Za-z0-9\-]*$/;
 const zipRegex = /^\d{5}-?\d{3}$/;
 const phoneRegex = /^\(?[1-9]{2}\)?\s?(?:9\d{4}|\d{4})-?\d{4}$/;
 
@@ -13,20 +12,41 @@ export const profileSchema = z.object({
     .regex(phoneRegex, 'Inválido')
     .min(10, 'Número muito curto')
     .max(20, 'Número muito longo'),
+  birthDate: z
+    .string()
+    .trim()
+    .refine(
+      value => {
+        const date = new Date(value);
+        return !isNaN(date.getTime());
+      },
+      { message: 'Data inválida' }
+    )
+    .refine(
+      value => {
+        const date = new Date(value);
+        const maxDate = new Date();
+        maxDate.setHours(0, 0, 0, 0);
+        maxDate.setDate(maxDate.getDate() - 1);
+
+        return date <= maxDate;
+      },
+      {
+        message: 'Data inválida',
+      }
+    ),
+  avatar: z.url('URL inválida').optional().nullable(),
   address: z
     .object({
-      streetName: z
+      addressLine1: z
         .string()
         .trim()
         .min(1, 'Campo obrigatório')
         .max(100, 'Nome da rua muito longo'),
-      streetNumber: z
-        .string()
-        .trim()
-        .min(1, 'Campo obrigatório')
-        .regex(streetNumberRegex, 'Número inválido (ex: 1234, 123A, 12-3)'),
-      zip: z.string().trim().regex(zipRegex, 'Inválido'),
-      state: z.string().trim().toUpperCase().length(2, 'Inválido (sigla)'),
+      addressLine2: z.string().trim(),
+      district: z.string().trim().min(4, 'Campo obrigatório'),
+      postalCode: z.string().trim().regex(zipRegex, 'Inválido'),
+      region: z.string().trim().toUpperCase().length(2, 'Inválido (sigla)'),
       city: z
         .string()
         .trim()
@@ -34,11 +54,12 @@ export const profileSchema = z.object({
         .max(100, 'Nome da cidade muito longo'),
     })
     .transform(obj => ({
-      streetNumber: obj.streetNumber.trim(),
-      streetName: obj.streetName.trim(),
+      addressLine1: obj.addressLine1.trim(),
+      addressLine2: obj.addressLine2.trim(),
+      district: obj.district.trim(),
       city: obj.city.trim(),
-      state: obj.state.toUpperCase(),
-      zip: obj.zip.trim(),
+      region: obj.region.toUpperCase(),
+      postalCode: obj.postalCode.trim(),
     })),
 });
 
