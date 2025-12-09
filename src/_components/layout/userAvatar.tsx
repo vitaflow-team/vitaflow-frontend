@@ -3,7 +3,6 @@
 import { getInitialsName } from '@/_lib/getInitials';
 import { cn } from '@/_lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { useSession } from 'next-auth/react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const avatarVariants = cva('border-2', {
@@ -19,21 +18,16 @@ const avatarVariants = cva('border-2', {
   },
 });
 
-export function UserAvatar({ size }: VariantProps<typeof avatarVariants>) {
-  const { data: session } = useSession();
+interface UserAvatarProps extends VariantProps<typeof avatarVariants> {
+  src: string | undefined;
+  name?: string | null;
+}
 
-  const imageUser: string =
-    session &&
-    session.user &&
-    session.user.image !== null &&
-    session.user.image !== undefined
-      ? session.user.image
-      : '';
-
+export function UserAvatar({ size, src, name }: UserAvatarProps) {
   return (
     <Avatar className={cn(avatarVariants({ size }))}>
-      <AvatarImage src={imageUser} />
-      <AvatarFallback>{getInitialsName(session?.user?.name)}</AvatarFallback>
+      <AvatarImage src={src} />
+      <AvatarFallback>{getInitialsName(name)}</AvatarFallback>
     </Avatar>
   );
 }

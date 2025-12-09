@@ -30,7 +30,7 @@ export const options: NextAuthOptions = {
 
         return {
           ...user,
-          picture: profile.picture ?? profile.image ?? user.picture ?? null,
+          avatar: profile.picture ?? profile.image ?? user.picture ?? undefined,
         };
       },
     }),
@@ -63,7 +63,7 @@ export const options: NextAuthOptions = {
           throw new Error('Falha ao autenticar o usuário.');
         }
 
-        return user;
+        return { ...user, avatar: user.picture ? user.picture : undefined };
       },
     }),
   ],
@@ -93,7 +93,7 @@ export const options: NextAuthOptions = {
         id: token.id,
         name: token.name!,
         email: token.email!,
-        picture: token.picture as string | null,
+        avatar: token.avatar as string | undefined,
         accessToken: token.accessToken,
       };
 
