@@ -2,7 +2,6 @@ import DefaultLayout from '@/_components/layout/defaultLayout';
 import { NutritionistPlan } from '@/_components/layout/plans/nutritionist';
 import { PersonalPlan } from '@/_components/layout/plans/personal';
 import { UserPlan } from '@/_components/layout/plans/users';
-import { UserAvatar } from '@/_components/layout/userAvatar';
 import {
   Tabs,
   TabsContent,
@@ -37,9 +36,6 @@ export default async function Settings() {
       <Title label="Meu perfil" className="border-b border-primary text-left" />
       <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-8 w-full justify-center px-2 mt-2">
         <FormSettings profile={profile} />
-        <div className="flex justify-center w-full lg:w-44 mx-1">
-          <UserAvatar size="lg" />
-        </div>
       </div>
       <Title label="Meu plano" className="border-b border-primary text-left" />
       <Tabs

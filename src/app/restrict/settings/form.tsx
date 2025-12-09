@@ -51,141 +51,56 @@ export default function FormSettings({ profile }: FormSettingsProps) {
     <Form {...methods}>
       <form
         onSubmit={methods.handleSubmit(submitProfile)}
-        className="flex flex-col w-full"
+        className="flex flex-col-reverse lg:flex-row w-full gap-6"
       >
-        <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
-          <FormField
-            control={methods.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-2">
-                <FormLabel>Nome</FormLabel>
-                <FormControl>
-                  <Input id="name" {...field} disabled={isPending} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={methods.control}
-            name="birthDate"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-1">
-                <FormLabel>Data de nascimento</FormLabel>
-                <FormControl>
-                  <Input
-                    id="birthDate"
-                    {...field}
-                    disabled={isPending}
-                    type="date"
-                    max={formatDate(new Date().toString(), 'en-CA')}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
-          <FormField
-            control={methods.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-2">
-                <FormLabel>E-Mail</FormLabel>
-                <FormControl>
-                  <Input
-                    id="email"
-                    {...field}
-                    icon={Mail}
-                    disabled={isPending}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={methods.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-1">
-                <FormLabel>Telefone</FormLabel>
-                <FormControl>
-                  <Input
-                    id="phone"
-                    {...field}
-                    disabled={isPending}
-                    onBlur={e => {
-                      const formatted = formatPhone(e.target.value);
-                      field.onChange(formatted);
-                    }}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={methods.control}
-          name="address.addressLine1"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel>Endereço</FormLabel>
-              <FormControl>
-                <Input id="addressLine1" {...field} disabled={isPending} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-rows-2 grid-cols-1 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
-          <FormField
-            control={methods.control}
-            name="address.addressLine2"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-2">
-                <FormLabel>Complemento</FormLabel>
-                <FormControl>
-                  <Input id="addressLine2" {...field} disabled={isPending} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={methods.control}
-            name="address.district"
-            render={({ field }) => (
-              <FormItem className="xl:col-span-1">
-                <FormLabel>Bairro</FormLabel>
-                <FormControl>
-                  <Input id="district" {...field} disabled={isPending} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-rows-2 grid-cols-1 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
-          <div className="flex gap-4 w-full col-span-2">
+        <div className="flex flex-col w-full">
+          <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
             <FormField
               control={methods.control}
-              name="address.postalCode"
+              name="name"
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>CEP</FormLabel>
+                <FormItem className="xl:col-span-2">
+                  <FormLabel>Nome</FormLabel>
+                  <FormControl>
+                    <Input id="name" {...field} disabled={isPending} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={methods.control}
+              name="birthDate"
+              render={({ field }) => (
+                <FormItem className="xl:col-span-1">
+                  <FormLabel>Data de nascimento</FormLabel>
                   <FormControl>
                     <Input
-                      id="postalCode"
+                      id="birthDate"
                       {...field}
                       disabled={isPending}
-                      onBlur={e => {
-                        const formatted = formatCep(e.target.value);
-                        field.onChange(formatted);
-                      }}
+                      type="date"
+                      max={formatDate(new Date().toString(), 'en-CA')}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
+            <FormField
+              control={methods.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="xl:col-span-2">
+                  <FormLabel>E-Mail</FormLabel>
+                  <FormControl>
+                    <Input
+                      id="email"
+                      {...field}
+                      icon={Mail}
+                      disabled={isPending}
                     />
                   </FormControl>
                 </FormItem>
@@ -194,12 +109,20 @@ export default function FormSettings({ profile }: FormSettingsProps) {
 
             <FormField
               control={methods.control}
-              name="address.region"
+              name="phone"
               render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Estado</FormLabel>
+                <FormItem className="xl:col-span-1">
+                  <FormLabel>Telefone</FormLabel>
                   <FormControl>
-                    <Input id="region" {...field} disabled={isPending} />
+                    <Input
+                      id="phone"
+                      {...field}
+                      disabled={isPending}
+                      onBlur={e => {
+                        const formatted = formatPhone(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}
@@ -208,30 +131,113 @@ export default function FormSettings({ profile }: FormSettingsProps) {
 
           <FormField
             control={methods.control}
-            name="address.city"
+            name="address.addressLine1"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cidade</FormLabel>
+              <FormItem className="w-full">
+                <FormLabel>Endereço</FormLabel>
                 <FormControl>
-                  <Input id="city" {...field} disabled={isPending} />
+                  <Input id="addressLine1" {...field} disabled={isPending} />
                 </FormControl>
               </FormItem>
             )}
           />
-        </div>
 
-        <div className="flex w-full justify-between mt-4">
-          <Button type="submit" className="w-40" disabled={isPending}>
-            Salvar
-          </Button>
-          <Button type="submit" variant="link" disabled={isPending}>
-            Excluir meu perfil
-          </Button>
+          <div className="grid grid-rows-2 grid-cols-1 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
+            <FormField
+              control={methods.control}
+              name="address.addressLine2"
+              render={({ field }) => (
+                <FormItem className="xl:col-span-2">
+                  <FormLabel>Complemento</FormLabel>
+                  <FormControl>
+                    <Input id="addressLine2" {...field} disabled={isPending} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={methods.control}
+              name="address.district"
+              render={({ field }) => (
+                <FormItem className="xl:col-span-1">
+                  <FormLabel>Bairro</FormLabel>
+                  <FormControl>
+                    <Input id="district" {...field} disabled={isPending} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-rows-2 grid-cols-1 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
+            <div className="flex gap-4 w-full col-span-2">
+              <FormField
+                control={methods.control}
+                name="address.postalCode"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>CEP</FormLabel>
+                    <FormControl>
+                      <Input
+                        id="postalCode"
+                        {...field}
+                        disabled={isPending}
+                        onBlur={e => {
+                          const formatted = formatCep(e.target.value);
+                          field.onChange(formatted);
+                        }}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={methods.control}
+                name="address.region"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Estado</FormLabel>
+                    <FormControl>
+                      <Input id="region" {...field} disabled={isPending} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={methods.control}
+              name="address.city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input id="city" {...field} disabled={isPending} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex w-full justify-between mt-4">
+            <Button type="submit" className="w-40" disabled={isPending}>
+              Salvar
+            </Button>
+            <Button type="submit" variant="link" disabled={isPending}>
+              Excluir meu perfil
+            </Button>
+          </div>
+        </div>
+        <div className="flex justify-center w-full lg:w-44 mx-1">
+          <UserAvatar
+            size="lg"
+            src={profile.avatar ? profile.avatar : undefined}
+            name={profile.name}
+          />
         </div>
       </form>
-      <div className="flex justify-center w-full lg:w-44 mx-1">
-        <UserAvatar size="lg" />
-      </div>
     </Form>
   );
 }
