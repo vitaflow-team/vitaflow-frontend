@@ -1,4 +1,6 @@
 'use client';
+import { actionChangeProfile } from '@/_actions/changeProfile';
+import { UserAvatar } from '@/_components/layout/userAvatar';
 import { Button } from '@/_components/ui/button';
 import {
   Form,
@@ -12,14 +14,16 @@ import { formatDate } from '@/_lib/stringUtils';
 import { profileFormData, profileSchema } from '@/_schema/profile';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
-import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
+import { useServerAction } from 'zsa-react';
 
 interface FormSettingsProps {
   profile: profileFormData;
 }
 
 export default function FormSettings({ profile }: FormSettingsProps) {
+  const { isPending, execute } = useServerAction(actionChangeProfile);
+
   const methods = useForm<profileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -38,23 +42,15 @@ export default function FormSettings({ profile }: FormSettingsProps) {
       },
     },
   });
-  const [isPending, startTransaction] = useTransition();
 
-  function submitSingUp({
-    name,
-    email,
-    birthDate,
-    avatar,
-    phone,
-    address,
-  }: profileFormData) {
-    startTransaction(async () => {});
+  async function submitProfile(data: profileFormData) {
+    await execute(data);
   }
 
   return (
     <Form {...methods}>
       <form
-        onSubmit={methods.handleSubmit(submitSingUp)}
+        onSubmit={methods.handleSubmit(submitProfile)}
         className="flex flex-col w-full"
       >
         <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
@@ -217,6 +213,9 @@ export default function FormSettings({ profile }: FormSettingsProps) {
           </Button>
         </div>
       </form>
+      <div className="flex justify-center w-full lg:w-44 mx-1">
+        <UserAvatar size="lg" />
+      </div>
     </Form>
   );
 }
