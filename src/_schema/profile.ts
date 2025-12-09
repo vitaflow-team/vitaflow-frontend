@@ -35,7 +35,14 @@ export const profileSchema = z.object({
         message: 'Data inválida',
       }
     ),
-  avatar: z.url('URL inválida').optional().nullable(),
+  avatar: z
+    .any()
+    .refine(file => file instanceof File, 'Selecione uma imagem.')
+    .refine(
+      file => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+      'O arquivo deve ser uma imagem JPG, PNG ou WEBP.'
+    )
+    .refine(file => file.size <= 2 * 1024 * 1024, 'Máximo 2MB.'),
   address: z
     .object({
       addressLine1: z

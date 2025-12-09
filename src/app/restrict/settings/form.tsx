@@ -14,6 +14,7 @@ import { formatCep, formatDate, formatPhone } from '@/_lib/stringUtils';
 import { profileFormData, profileSchema } from '@/_schema/profile';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
+import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 
@@ -42,6 +43,8 @@ export default function FormSettings({ profile }: FormSettingsProps) {
       },
     },
   });
+
+  const fileRef = useRef<HTMLInputElement>(null);
 
   async function submitProfile(data: profileFormData) {
     await execute(data);
@@ -231,11 +234,42 @@ export default function FormSettings({ profile }: FormSettingsProps) {
           </div>
         </div>
         <div className="flex justify-center w-full lg:w-44 mx-1">
-          <UserAvatar
-            size="lg"
-            src={profile.avatar ? profile.avatar : undefined}
-            name={profile.name}
-          />
+          <FormField
+            control={methods.control}
+            name="avatar"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl className="flex flex-col gap-2 w-full">
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={fileRef}
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) field.onChange(file);
+                      }}
+                    />
+
+                    <UserAvatar
+                      size="lg"
+                      src={URL.createObjectURL(field.value)}
+                      name={profile.name}
+                    />
+
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => fileRef.current?.click()}
+                    >
+                      Selecionar imagem
+                    </Button>
+                  </div>
+                </FormControl>
+              </FormItem>
+            )}
+          />{' '}
         </div>
       </form>
     </Form>
