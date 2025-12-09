@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { Logo } from '@/_components/layout/logo';
 import { RemoveParams } from '@/_components/layout/removeParams';
 import { ButtonLink } from '@/_components/ui/buttonLink';
