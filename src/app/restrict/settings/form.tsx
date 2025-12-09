@@ -10,7 +10,7 @@ import {
   FormLabel,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
-import { formatDate } from '@/_lib/stringUtils';
+import { formatCep, formatDate, formatPhone } from '@/_lib/stringUtils';
 import { profileFormData, profileSchema } from '@/_schema/profile';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
@@ -113,7 +113,15 @@ export default function FormSettings({ profile }: FormSettingsProps) {
               <FormItem className="xl:col-span-1">
                 <FormLabel>Telefone</FormLabel>
                 <FormControl>
-                  <Input id="phone" {...field} disabled={isPending} />
+                  <Input
+                    id="phone"
+                    {...field}
+                    disabled={isPending}
+                    onBlur={e => {
+                      const formatted = formatPhone(e.target.value);
+                      field.onChange(formatted);
+                    }}
+                  />
                 </FormControl>
               </FormItem>
             )}
@@ -170,7 +178,15 @@ export default function FormSettings({ profile }: FormSettingsProps) {
                 <FormItem className="w-full">
                   <FormLabel>CEP</FormLabel>
                   <FormControl>
-                    <Input id="postalCode" {...field} disabled={isPending} />
+                    <Input
+                      id="postalCode"
+                      {...field}
+                      disabled={isPending}
+                      onBlur={e => {
+                        const formatted = formatCep(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
                   </FormControl>
                 </FormItem>
               )}
