@@ -16,6 +16,8 @@ export function UserMenu() {
   const { data: session } = useSession();
   const route = useRouter();
 
+  console.log('session', session?.user);
+
   return (
     <div className="flex items-center gap-4 sm:gap-8 w-fit">
       <DropdownMenu>

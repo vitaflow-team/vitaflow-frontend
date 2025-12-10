@@ -1,6 +1,6 @@
 import { actionSignIn } from '@/_actions/singin';
 import { getEnv } from '@/_lib/getenv';
-import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -30,8 +30,8 @@ export const options: NextAuthOptions = {
 
         return {
           ...user,
-          avatar: profile.picture ?? profile.image ?? user.picture ?? undefined,
-        };
+          avatar: profile.picture ?? profile.image ?? user.avatar ?? undefined,
+        } as User;
       },
     }),
     CredentialsProvider({
@@ -63,7 +63,7 @@ export const options: NextAuthOptions = {
           throw new Error('Falha ao autenticar o usuário.');
         }
 
-        return { ...user, avatar: user.picture ? user.picture : undefined };
+        return { ...user } as User;
       },
     }),
   ],
@@ -79,10 +79,11 @@ export const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token = {
-          ...token,
-          ...user,
-        };
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.avatar = user.avatar;
+        token.accessToken = user.accessToken;
       }
 
       return token;
@@ -93,7 +94,7 @@ export const options: NextAuthOptions = {
         id: token.id,
         name: token.name!,
         email: token.email!,
-        avatar: token.avatar as string | undefined,
+        avatar: token.avatar,
         accessToken: token.accessToken,
       };
 

@@ -228,7 +228,12 @@ export default function FormSettings({ profile }: FormSettingsProps) {
             <Button type="submit" className="w-40" disabled={isPending}>
               Salvar
             </Button>
-            <Button type="submit" variant="link" disabled={isPending}>
+            <Button
+              type="submit"
+              className="w-40"
+              variant="destructive"
+              disabled={isPending}
+            >
               Excluir meu perfil
             </Button>
           </div>
@@ -254,7 +259,11 @@ export default function FormSettings({ profile }: FormSettingsProps) {
 
                     <UserAvatar
                       size="lg"
-                      src={URL.createObjectURL(field.value)}
+                      src={
+                        field.value instanceof File
+                          ? URL.createObjectURL(field.value)
+                          : field.value
+                      }
                       name={profile.name}
                     />
 
@@ -269,7 +278,7 @@ export default function FormSettings({ profile }: FormSettingsProps) {
                 </FormControl>
               </FormItem>
             )}
-          />{' '}
+          />
         </div>
       </form>
     </Form>
