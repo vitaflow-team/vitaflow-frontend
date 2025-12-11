@@ -11,13 +11,27 @@ export const actionChangeProfile = createServerAction()
     const session = await getServerSession(options);
     if (!session) return null;
 
+    const formData = new FormData();
+    formData.append('name', userProfile.name);
+    formData.append('email', userProfile.email);
+    formData.append('phone', userProfile.phone);
+    formData.append('birthDate', userProfile.birthDate);
+    formData.append('addressLine1', userProfile.address.addressLine1);
+    formData.append('addressLine2', userProfile.address.addressLine2);
+    formData.append('district', userProfile.address.district);
+    formData.append('city', userProfile.address.city);
+    formData.append('region', userProfile.address.region);
+    formData.append('postalCode', userProfile.address.postalCode);
+    if (userProfile.avatar instanceof File) {
+      formData.append('avatar', userProfile.avatar);
+    }
+
     await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/profile/profile', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${session.user.accessToken}`,
       },
-      body: JSON.stringify(userProfile),
+      body: formData,
       cache: 'no-store',
     }).catch(() => {
       throw new ZSAError(
