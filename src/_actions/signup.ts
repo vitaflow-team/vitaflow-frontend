@@ -1,13 +1,13 @@
 'use server';
 
 import { createServerAction, ZSAError } from 'zsa';
-import { singUpSchema } from '../_schema/singup';
+import { signUpSchema } from '../_schema/signup';
 
-export const actionSingUp = createServerAction()
-  .input(singUpSchema)
+export const actionSignUp = createServerAction()
+  .input(signUpSchema)
   .handler(async ({ input: { name, email, password, checkPassword } }) => {
     const response = await fetch(
-      process.env.NEXT_PUBLIC_BACKEND_URL + '/users/singup',
+      process.env.NEXT_PUBLIC_BACKEND_URL + '/users/signup',
       {
         method: 'POST',
         headers: {

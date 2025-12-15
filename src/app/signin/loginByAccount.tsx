@@ -11,7 +11,7 @@ import {
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { useAlertHook } from '@/_hooks/alert_hook';
-import { singInFormDate, singInSchema } from '@/_schema/singin';
+import { signInFormDate, signInSchema } from '@/_schema/signin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import { signIn } from 'next-auth/react';
@@ -20,8 +20,8 @@ import { useForm } from 'react-hook-form';
 
 export function LoginByAccount() {
   const { openError } = useAlertHook();
-  const methods = useForm<singInFormDate>({
-    resolver: zodResolver(singInSchema),
+  const methods = useForm<signInFormDate>({
+    resolver: zodResolver(signInSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -29,7 +29,7 @@ export function LoginByAccount() {
   });
   const [isPending] = useTransition();
 
-  async function submitSingIn({ email, password }: singInFormDate) {
+  async function submitSignIn({ email, password }: signInFormDate) {
     const resp = await signIn('credentials', {
       email,
       password,
@@ -53,7 +53,7 @@ export function LoginByAccount() {
   return (
     <Form {...methods}>
       <form
-        onSubmit={methods.handleSubmit(submitSingIn)}
+        onSubmit={methods.handleSubmit(submitSignIn)}
         className="flex flex-col w-full"
       >
         <FormField

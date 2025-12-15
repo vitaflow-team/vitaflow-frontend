@@ -16,7 +16,7 @@ export default function PublicLayout({
           <NavLink url="/">Home</NavLink>
           <NavLink url="/functions">Funcionalidades</NavLink>
           <NavLink url="/contact">Contato</NavLink>
-          <NavLink url="/singin">Login</NavLink>
+          <NavLink url="/signin">Login</NavLink>
         </div>
       </header>
       <main className="flex h-full">{children}</main>

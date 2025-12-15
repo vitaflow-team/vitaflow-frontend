@@ -7,7 +7,7 @@ import Image from 'next/image';
 export function LoginByGoogle() {
   const { openError } = useAlertHook();
 
-  async function submitSingInGoogle() {
+  async function submitSignInGoogle() {
     const resp = await signIn('google', {
       redirect: true,
       callbackUrl: '/restrict',
@@ -29,7 +29,7 @@ export function LoginByGoogle() {
       width={50}
       height={50}
       alt="Google"
-      onClick={() => submitSingInGoogle()}
+      onClick={() => submitSignInGoogle()}
     />
   );
 }

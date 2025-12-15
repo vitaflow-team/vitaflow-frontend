@@ -1,4 +1,4 @@
-import { actionSignIn } from '@/_actions/singin';
+import { actionSignIn } from '@/_actions/signin';
 import { getEnv } from '@/_lib/getenv';
 import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -72,7 +72,7 @@ export const options: NextAuthOptions = {
     strategy: 'jwt',
   },
   pages: {
-    signIn: '/singin',
+    signIn: '/signin',
     signOut: '/',
     error: '/',
   },

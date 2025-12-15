@@ -1,6 +1,6 @@
 'use client';
 
-import { actionSingUp } from '@/_actions/singup';
+import { actionSignUp } from '@/_actions/signup';
 import { Logo } from '@/_components/layout/logo';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
@@ -15,7 +15,7 @@ import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { Title } from '@/_components/ui/title';
 import { useAlertHook } from '@/_hooks/alert_hook';
-import { singUpFormData, singUpSchema } from '@/_schema/singup';
+import { signUpFormData, signUpSchema } from '@/_schema/signup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Image from 'next/image';
@@ -24,12 +24,12 @@ import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 
 export default function Home() {
-  const { isPending, execute } = useServerAction(actionSingUp);
+  const { isPending, execute } = useServerAction(actionSignUp);
   const router = useRouter();
   const { openError } = useAlertHook();
 
-  const methods = useForm<singUpFormData>({
-    resolver: zodResolver(singUpSchema),
+  const methods = useForm<signUpFormData>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -38,7 +38,7 @@ export default function Home() {
     },
   });
 
-  async function submitSingUp(values: singUpFormData) {
+  async function submitSignUp(values: signUpFormData) {
     const [data, error] = await execute(values);
     if (error) {
       openError(
@@ -55,7 +55,7 @@ export default function Home() {
         'Cadastro realizado com sucesso!',
         'success'
       );
-      router.push('/singin');
+      router.push('/signin');
     }
   }
 
@@ -63,7 +63,7 @@ export default function Home() {
     <div className="flex flex-col w-full items-center justify-center content-center p-4">
       <div className="flex flex-row w-full md:w-11/12 xl:w-8/12 2xl:w-6/12 bg-[url('/backgroundLogo.svg')] items-center justify-center bg-cover bg-no-repeat bg-right border-[1px]">
         <div className="w-full h-full relative hidden lg:block border-none border-l-8">
-          <Image src="/singin.png" alt="singin" fill />
+          <Image src="/signin.png" alt="signin" fill />
         </div>
         <div className="flex flex-col w-full gap-6 p-4 md:p-10 py-6 md:py-16 justify-center items-center">
           <Logo className="w-64 md:w-80" />
@@ -77,7 +77,7 @@ export default function Home() {
 
           <Form {...methods}>
             <form
-              onSubmit={methods.handleSubmit(submitSingUp)}
+              onSubmit={methods.handleSubmit(submitSignUp)}
               className="flex flex-col w-full"
             >
               <FormField
@@ -156,7 +156,7 @@ export default function Home() {
           </Form>
           <ButtonLink
             variant="link"
-            url="/singin"
+            url="/signin"
             label="Voltar para o login"
             icon={ArrowLeft}
           />

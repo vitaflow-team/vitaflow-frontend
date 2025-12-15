@@ -54,7 +54,7 @@ export default async function ActivatePage({
             <span className="text-lg w-full">Estamos juntos! 💪✨</span>
             <ButtonLink
               label="Ir para o login"
-              url="/singin"
+              url="/signin"
               variant="default"
               className="w-full py-6 text-lg"
             />

@@ -16,7 +16,7 @@ export async function actionSignIn({
   socialLogin?: boolean;
 }): Promise<SignInResponse | undefined> {
   const resp = await fetch(
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/users/singin',
+    process.env.NEXT_PUBLIC_BACKEND_URL + '/users/signin',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

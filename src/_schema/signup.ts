@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const singUpSchema = z
+export const signUpSchema = z
   .object({
     name: z.string().min(2, 'Informe seu nome').max(100, 'Nome muito longo'),
     email: z.email('Informe um e-mail válido').toLowerCase(),
@@ -27,4 +27,4 @@ export const singUpSchema = z
     }
   });
 
-export type singUpFormData = z.infer<typeof singUpSchema>;
+export type signUpFormData = z.infer<typeof signUpSchema>;
