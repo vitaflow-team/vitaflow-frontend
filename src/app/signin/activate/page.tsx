@@ -16,7 +16,7 @@ export default async function ActivatePage({
 }: ActivatePageProps) {
   const token = searchParams.token;
 
-  await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/users/activate', {
+  await fetch(process.env.BACKEND_URL + '/users/activate', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -6,17 +6,14 @@ import { signUpSchema } from '../_schema/signup';
 export const actionSignUp = createServerAction()
   .input(signUpSchema)
   .handler(async ({ input: { name, email, password, checkPassword } }) => {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_BACKEND_URL + '/users/signup',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name, email, password, checkPassword }),
-        cache: 'no-store',
-      }
-    ).catch(() => {
+    const response = await fetch(process.env.BACKEND_URL + '/users/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password, checkPassword }),
+      cache: 'no-store',
+    }).catch(() => {
       throw new ZSAError(
         'ERROR',
         'Erro ao acessar o serviço de cadastro de novo usuário.'

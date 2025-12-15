@@ -7,7 +7,7 @@ import { createServerAction, ZSAError } from 'zsa';
 export const actionNewPassword = createServerAction()
   .input(newPasswordSchema.and(z.object({ token: z.string() })))
   .handler(async ({ input: { password, checkPassword, token } }) => {
-    await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/users/newpassword', {
+    await fetch(process.env.BACKEND_URL + '/users/newpassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

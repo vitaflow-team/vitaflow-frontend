@@ -17,17 +17,14 @@ export default async function Settings() {
   const session = await getServerSession(options);
   if (!session) return null;
 
-  const resp = await fetch(
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/profile/profile',
-    {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.user.accessToken}`,
-      },
-      cache: 'no-store',
-    }
-  );
+  const resp = await fetch(process.env.BACKEND_URL + '/profile/profile', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.user.accessToken}`,
+    },
+    cache: 'no-store',
+  });
 
   const profile = await resp.json();
 

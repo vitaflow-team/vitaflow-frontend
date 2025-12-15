@@ -26,7 +26,7 @@ export const actionChangeProfile = createServerAction()
       formData.append('avatar', userProfile.avatar);
     }
 
-    await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/profile/profile', {
+    await fetch(process.env.BACKEND_URL + '/profile/profile', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${session.user.accessToken}`,

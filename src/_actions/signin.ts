@@ -15,21 +15,34 @@ export async function actionSignIn({
   password: string;
   socialLogin?: boolean;
 }): Promise<SignInResponse | undefined> {
-  const resp = await fetch(
-    process.env.NEXT_PUBLIC_BACKEND_URL + '/users/signin',
-    {
+  try {
+    const resp = await fetch(process.env.BACKEND_URL + '/users/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, socialLogin }),
       cache: 'no-store',
+    });
+
+    if (!resp.ok) {
+      let errorMessage = 'Erro ao realizar login.';
+      try {
+        const errorData = await resp.json();
+        if (errorData && typeof errorData.message === 'string') {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // Falha ao fazer parse do JSON de erro, mantém mensagem genérica
+      }
+      throw new Error(errorMessage);
     }
-  );
 
-  if (!resp.ok) {
-    const error = await resp.json();
-
-    throw new Error(error.message);
+    return await resp.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(
+      'Ocorreu um erro inesperado ao tentar conectar ao servidor.'
+    );
   }
-
-  return await resp.json();
 }
