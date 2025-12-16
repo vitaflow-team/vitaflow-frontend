@@ -1,41 +1,45 @@
 import { actionSignIn } from '@/_actions/signin';
 import { APP_ROUTES } from '@/_constants/routes';
 import { AppError } from '@/_lib/AppError';
-import { getEnv } from '@/_lib/getenv';
 import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google({
-      clientId: getEnv('GOOGLE_CLIENT_ID'),
-      clientSecret: getEnv('GOOGLE_CLIENT_SECRET'),
-      async profile(profile) {
-        const user = await actionSignIn({
-          email: profile.email,
-          password: profile.sub,
-          socialLogin: true,
-        }).catch(error => {
-          let mensagem;
-          if (error instanceof Error) {
-            mensagem = error.message;
-          } else {
-            mensagem = 'Falha ao autenticar via Google';
-          }
-          throw new AppError(mensagem);
-        });
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            async profile(profile) {
+              const user = await actionSignIn({
+                email: profile.email,
+                password: profile.sub,
+                socialLogin: true,
+              }).catch(error => {
+                let mensagem;
+                if (error instanceof Error) {
+                  mensagem = error.message;
+                } else {
+                  mensagem = 'Falha ao autenticar via Google';
+                }
+                throw new AppError(mensagem);
+              });
 
-        if (!user) {
-          throw new AppError('Falha ao autenticar via Google');
-        }
+              if (!user) {
+                throw new AppError('Falha ao autenticar via Google');
+              }
 
-        return {
-          ...user,
-          avatar: profile.picture ?? profile.image ?? user.avatar ?? undefined,
-        } as User;
-      },
-    }),
+              return {
+                ...user,
+                avatar:
+                  profile.picture ?? profile.image ?? user.avatar ?? undefined,
+              } as User;
+            },
+          }),
+        ]
+      : []),
     Credentials({
       name: 'Credentials',
       credentials: {
