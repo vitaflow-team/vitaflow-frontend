@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 
 interface FormSettingsProps {
-  profile: profileFormData;
+  profile: Omit<profileFormData, 'avatar'> & { avatar?: string | null };
 }
 
 export default function FormSettings({ profile }: FormSettingsProps) {
@@ -246,7 +246,7 @@ export default function FormSettings({ profile }: FormSettingsProps) {
               const avatarSrc: string | undefined =
                 field.value instanceof File
                   ? URL.createObjectURL(field.value)
-                  : profile.avatar;
+                  : (profile.avatar ?? undefined);
 
               return (
                 <FormItem>
