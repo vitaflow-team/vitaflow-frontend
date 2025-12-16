@@ -1,3 +1,5 @@
+'use server';
+
 import { apiClient } from '@/_lib/apiClient';
 
 interface SignInResponse {

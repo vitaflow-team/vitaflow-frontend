@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import { AppError } from './AppError';
 import { getEnv } from './getenv';
 
@@ -10,11 +9,18 @@ export async function apiClient<T = unknown>(
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${normalizedPath}`;
 
+  console.log('url', url);
+
   const headers = new Headers(init?.headers);
 
-  const session = await auth();
-  if (session?.user?.accessToken) {
-    headers.set('Authorization', `Bearer ${session.user.accessToken}`);
+  try {
+    const { auth } = await import('@/auth');
+    const session = await auth();
+    if (session?.user?.accessToken) {
+      headers.set('Authorization', `Bearer ${session.user.accessToken}`);
+    }
+  } catch (error) {
+    console.warn('Failed to retrieve session in apiClient:', error);
   }
 
   if (

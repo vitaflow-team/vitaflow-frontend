@@ -1,3 +1,5 @@
+'use server';
+
 import { apiClient } from '@/_lib/apiClient';
 import { createServerAction, ZSAError } from 'zsa';
 import { signUpSchema } from '../_schema/signup';

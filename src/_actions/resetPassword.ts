@@ -1,3 +1,5 @@
+'use server';
+
 import { apiClient } from '@/_lib/apiClient';
 import { resetPasswordSchema } from '@/_schema/resetPassword';
 import { createServerAction, ZSAError } from 'zsa';
