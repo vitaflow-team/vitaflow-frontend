@@ -1,5 +1,6 @@
 'use server';
 
+import { getEnv } from '@/_lib/getenv';
 import { profileSchema } from '@/_schema/profile';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
@@ -26,7 +27,7 @@ export const actionChangeProfile = createServerAction()
       formData.append('avatar', userProfile.avatar);
     }
 
-    await fetch(process.env.BACKEND_URL + '/profile/profile', {
+    await fetch(getEnv('BACKEND_URL') + '/profile/profile', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${session.user.accessToken}`,

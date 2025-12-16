@@ -9,6 +9,7 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { Title } from '@/_components/ui/title';
+import { getEnv } from '@/_lib/getenv';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
 import FormSettings from './form';
@@ -17,7 +18,7 @@ export default async function Settings() {
   const session = await getServerSession(options);
   if (!session) return null;
 
-  const resp = await fetch(process.env.BACKEND_URL + '/profile/profile', {
+  const resp = await fetch(getEnv('BACKEND_URL') + '/profile/profile', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

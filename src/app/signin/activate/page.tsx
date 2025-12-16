@@ -4,6 +4,7 @@ import { Logo } from '@/_components/layout/logo';
 import { RemoveParams } from '@/_components/layout/removeParams';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import { Title } from '@/_components/ui/title';
+import { getEnv } from '@/_lib/getenv';
 
 interface ActivatePageProps {
   searchParams: {
@@ -16,7 +17,7 @@ export default async function ActivatePage({
 }: ActivatePageProps) {
   const token = searchParams.token;
 
-  await fetch(process.env.BACKEND_URL + '/users/activate', {
+  await fetch(getEnv('BACKEND_URL') + '/users/activate', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

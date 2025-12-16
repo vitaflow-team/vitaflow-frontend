@@ -1,12 +1,13 @@
 'use server';
 
+import { getEnv } from '@/_lib/getenv';
 import { resetPasswordSchema } from '@/_schema/resetPassword';
 import { createServerAction, ZSAError } from 'zsa';
 
 export const actionResetPassword = createServerAction()
   .input(resetPasswordSchema)
   .handler(async ({ input: { email } }) => {
-    await fetch(process.env.BACKEND_URL + '/users/recoverpass', {
+    await fetch(getEnv('BACKEND_URL') + '/users/recoverpass', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

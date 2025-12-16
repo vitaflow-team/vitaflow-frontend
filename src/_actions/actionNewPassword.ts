@@ -1,5 +1,6 @@
 'use server';
 
+import { getEnv } from '@/_lib/getenv';
 import { newPasswordSchema } from '@/_schema/newPassword';
 import { z } from 'zod';
 import { createServerAction, ZSAError } from 'zsa';
@@ -7,7 +8,7 @@ import { createServerAction, ZSAError } from 'zsa';
 export const actionNewPassword = createServerAction()
   .input(newPasswordSchema.and(z.object({ token: z.string() })))
   .handler(async ({ input: { password, checkPassword, token } }) => {
-    await fetch(process.env.BACKEND_URL + '/users/newpassword', {
+    await fetch(getEnv('BACKEND_URL') + '/users/newpassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

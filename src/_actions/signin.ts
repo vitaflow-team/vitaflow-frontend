@@ -1,3 +1,5 @@
+import { getEnv } from '@/_lib/getenv';
+
 interface SignInResponse {
   id: string;
   name: string;
@@ -16,7 +18,7 @@ export async function actionSignIn({
   socialLogin?: boolean;
 }): Promise<SignInResponse | undefined> {
   try {
-    const resp = await fetch(process.env.BACKEND_URL + '/users/signin', {
+    const resp = await fetch(getEnv('BACKEND_URL') + '/users/signin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, socialLogin }),

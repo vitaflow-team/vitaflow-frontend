@@ -1,12 +1,13 @@
 'use server';
 
+import { getEnv } from '@/_lib/getenv';
 import { createServerAction, ZSAError } from 'zsa';
 import { signUpSchema } from '../_schema/signup';
 
 export const actionSignUp = createServerAction()
   .input(signUpSchema)
   .handler(async ({ input: { name, email, password, checkPassword } }) => {
-    const response = await fetch(process.env.BACKEND_URL + '/users/signup', {
+    const response = await fetch(getEnv('BACKEND_URL') + '/users/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
