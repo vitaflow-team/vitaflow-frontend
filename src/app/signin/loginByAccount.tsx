@@ -10,6 +10,7 @@ import {
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
+import { APP_ROUTES } from '@/_constants/routes';
 import { useAlertHook } from '@/_hooks/alert_hook';
 import { signInFormDate, signInSchema } from '@/_schema/signin';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +35,7 @@ export function LoginByAccount() {
       email,
       password,
       redirect: false,
-      callbackUrl: '/restrict',
+      callbackUrl: APP_ROUTES.PRIVATE.DASHBOARD,
     });
 
     if (!resp?.ok) {

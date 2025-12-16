@@ -9,6 +9,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/_components/ui/sidebar';
+import { APP_ROUTES } from '@/_constants/routes';
 import { Apple, ChartNoAxesCombined, Dumbbell, Home } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -16,22 +17,22 @@ export function MenuApp() {
   const items = [
     {
       title: 'Início',
-      url: '/restrict',
+      url: APP_ROUTES.PRIVATE.DASHBOARD,
       icon: Home,
     },
     {
       title: 'Treinos',
-      url: '/restrict/workouts',
+      url: APP_ROUTES.PRIVATE.WORKOUTS,
       icon: Dumbbell,
     },
     {
       title: 'Nutrição',
-      url: '/restrict',
+      url: APP_ROUTES.PRIVATE.DASHBOARD,
       icon: Apple,
     },
     {
       title: 'Evolução',
-      url: '/restrict',
+      url: APP_ROUTES.PRIVATE.DASHBOARD,
       icon: ChartNoAxesCombined,
     },
   ];

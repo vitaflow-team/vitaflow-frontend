@@ -14,6 +14,7 @@ import {
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { Title } from '@/_components/ui/title';
+import { APP_ROUTES } from '@/_constants/routes';
 import { useAlertHook } from '@/_hooks/alert_hook';
 import { signUpFormData, signUpSchema } from '@/_schema/signup';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,7 +56,7 @@ export default function Home() {
         'Cadastro realizado com sucesso!',
         'success'
       );
-      router.push('/signin');
+      router.push(APP_ROUTES.SIGN_IN);
     }
   }
 

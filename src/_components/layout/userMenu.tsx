@@ -1,5 +1,6 @@
 'use client';
 
+import { APP_ROUTES } from '@/_constants/routes';
 import { Bell, LogOut, Settings } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -29,7 +30,7 @@ export function UserMenu() {
           <DropdownMenuItem icon={Bell}>Notificações</DropdownMenuItem>
           <DropdownMenuItem
             icon={Settings}
-            onClick={() => route.push('/restrict/settings')}
+            onClick={() => route.push(APP_ROUTES.PRIVATE.SETTINGS)}
           >
             Configurações
           </DropdownMenuItem>

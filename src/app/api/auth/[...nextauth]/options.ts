@@ -1,4 +1,5 @@
 import { actionSignIn } from '@/_actions/signin';
+import { APP_ROUTES } from '@/_constants/routes';
 import { getEnv } from '@/_lib/getenv';
 import type { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
@@ -72,9 +73,9 @@ export const options: NextAuthOptions = {
     strategy: 'jwt',
   },
   pages: {
-    signIn: '/signin',
-    signOut: '/',
-    error: '/',
+    signIn: APP_ROUTES.SIGN_IN,
+    signOut: APP_ROUTES.HOME,
+    error: APP_ROUTES.HOME,
   },
   callbacks: {
     async jwt({ token, user }) {
