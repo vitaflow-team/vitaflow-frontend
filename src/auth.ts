@@ -1,5 +1,6 @@
 import { actionSignIn } from '@/_actions/signin';
 import { APP_ROUTES } from '@/_constants/routes';
+import { AppError } from '@/_lib/AppError';
 import { getEnv } from '@/_lib/getenv';
 import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -22,11 +23,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             mensagem = 'Falha ao autenticar via Google';
           }
-          throw new Error(mensagem);
+          throw new AppError(mensagem);
         });
 
         if (!user) {
-          throw new Error('Falha ao autenticar via Google');
+          throw new AppError('Falha ao autenticar via Google');
         }
 
         return {
@@ -57,11 +58,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             mensagem = 'Falha ao autenticar o usuário.';
           }
-          throw new Error(mensagem);
+          throw new AppError(mensagem);
         });
 
         if (!user) {
-          throw new Error('Falha ao autenticar o usuário.');
+          throw new AppError('Falha ao autenticar o usuário.');
         }
 
         return { ...user } as User;

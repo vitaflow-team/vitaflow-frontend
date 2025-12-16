@@ -1,4 +1,5 @@
 import { auth } from '@/auth';
+import { AppError } from './AppError';
 import { getEnv } from './getenv';
 
 export async function apiClient<T = unknown>(
@@ -41,7 +42,7 @@ export async function apiClient<T = unknown>(
           errorMessage = data.message;
         }
       } catch {}
-      throw new Error(errorMessage);
+      throw new AppError(errorMessage, response.status);
     }
 
     if (response.status === 204) {
@@ -51,9 +52,12 @@ export async function apiClient<T = unknown>(
     return await response.json();
   } catch (error) {
     console.error(`[API Client Error] URL: ${url}`, error);
-    if (error instanceof Error) {
+    if (error instanceof AppError) {
       throw error;
     }
-    throw new Error('Erro ao conectar com o servidor.');
+    if (error instanceof Error) {
+      throw new AppError(error.message);
+    }
+    throw new AppError('Erro ao conectar com o servidor.');
   }
 }
