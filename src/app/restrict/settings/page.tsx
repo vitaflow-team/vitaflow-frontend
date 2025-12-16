@@ -25,9 +25,6 @@ export default async function Settings() {
     Omit<profileFormData, 'avatar'> & { avatar?: string | null }
   >('/profile/profile', {
     method: 'GET',
-    headers: {
-      Authorization: `Bearer ${session.user.accessToken}`,
-    },
   });
 
   return (

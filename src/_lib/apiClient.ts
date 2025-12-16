@@ -1,3 +1,4 @@
+import { auth } from '@/auth';
 import { getEnv } from './getenv';
 
 export async function apiClient<T = unknown>(
@@ -9,6 +10,11 @@ export async function apiClient<T = unknown>(
   const url = `${baseUrl}${normalizedPath}`;
 
   const headers = new Headers(init?.headers);
+
+  const session = await auth();
+  if (session?.user?.accessToken) {
+    headers.set('Authorization', `Bearer ${session.user.accessToken}`);
+  }
 
   if (
     init?.body &&

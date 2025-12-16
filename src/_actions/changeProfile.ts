@@ -29,9 +29,6 @@ export const actionChangeProfile = createServerAction()
     try {
       await apiClient('/profile/profile', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session.user.accessToken}`,
-        },
         body: formData,
       });
     } catch (error) {
