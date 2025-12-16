@@ -31,7 +31,7 @@ export default function FormSettings({ profile }: FormSettingsProps) {
       name: profile.name,
       phone: profile.phone,
       birthDate: formatDate(profile.birthDate, 'en-CA'),
-      avatar: profile.avatar,
+      avatar: undefined,
       email: profile.email,
       address: {
         addressLine1: profile.address.addressLine1,
@@ -229,7 +229,7 @@ export default function FormSettings({ profile }: FormSettingsProps) {
               Salvar
             </Button>
             <Button
-              type="submit"
+              type="button"
               className="w-40"
               variant="destructive"
               disabled={isPending}
@@ -242,42 +242,45 @@ export default function FormSettings({ profile }: FormSettingsProps) {
           <FormField
             control={methods.control}
             name="avatar"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl className="flex flex-col gap-2 w-full">
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      ref={fileRef}
-                      onChange={e => {
-                        const file = e.target.files?.[0];
-                        if (file) field.onChange(file);
-                      }}
-                    />
+            render={({ field }) => {
+              const avatarSrc: string | undefined =
+                field.value instanceof File
+                  ? URL.createObjectURL(field.value)
+                  : profile.avatar;
 
-                    <UserAvatar
-                      size="lg"
-                      src={
-                        field.value instanceof File
-                          ? URL.createObjectURL(field.value)
-                          : field.value
-                      }
-                      name={profile.name}
-                    />
+              return (
+                <FormItem>
+                  <FormControl className="flex flex-col gap-2 w-full">
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        ref={fileRef}
+                        onChange={e => {
+                          const file = e.target.files?.[0];
+                          if (file) field.onChange(file);
+                        }}
+                      />
 
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => fileRef.current?.click()}
-                    >
-                      Selecionar imagem
-                    </Button>
-                  </div>
-                </FormControl>
-              </FormItem>
-            )}
+                      <UserAvatar
+                        size="lg"
+                        src={avatarSrc}
+                        name={profile.name}
+                      />
+
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => fileRef.current?.click()}
+                      >
+                        Selecionar imagem
+                      </Button>
+                    </div>
+                  </FormControl>
+                </FormItem>
+              );
+            }}
           />
         </div>
       </form>
