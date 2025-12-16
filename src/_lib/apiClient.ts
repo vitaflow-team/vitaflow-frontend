@@ -9,8 +9,6 @@ export async function apiClient<T = unknown>(
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${normalizedPath}`;
 
-  console.log('url', url);
-
   const headers = new Headers(init?.headers);
 
   try {

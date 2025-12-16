@@ -8,7 +8,6 @@ import { createServerAction, ZSAError } from 'zsa';
 export const actionNewPassword = createServerAction()
   .input(newPasswordSchema.and(z.object({ token: z.string() })))
   .handler(async ({ input: { password, checkPassword, token } }) => {
-    console.log('api', '/users/newpassword');
     try {
       await apiClient('/users/newpassword', {
         method: 'POST',
