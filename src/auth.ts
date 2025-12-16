@@ -1,14 +1,13 @@
 import { actionSignIn } from '@/_actions/signin';
 import { APP_ROUTES } from '@/_constants/routes';
 import { getEnv } from '@/_lib/getenv';
-import type { NextAuthConfig, Session, User } from 'next-auth';
-import type { JWT } from 'next-auth/jwt';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
+import NextAuth, { type User } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 
-export const options: NextAuthConfig = {
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    GoogleProvider({
+    Google({
       clientId: getEnv('GOOGLE_CLIENT_ID'),
       clientSecret: getEnv('GOOGLE_CLIENT_SECRET'),
       async profile(profile) {
@@ -36,7 +35,7 @@ export const options: NextAuthConfig = {
         } as User;
       },
     }),
-    CredentialsProvider({
+    Credentials({
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email', placeholder: 'Seu email' },
@@ -48,8 +47,8 @@ export const options: NextAuthConfig = {
       },
       async authorize(credentials) {
         const user = await actionSignIn({
-          email: credentials?.email as string,
-          password: credentials?.password as string,
+          email: credentials!.email as string,
+          password: credentials!.password as string,
           socialLogin: false,
         }).catch(error => {
           let mensagem;
@@ -79,28 +78,30 @@ export const options: NextAuthConfig = {
     error: APP_ROUTES.HOME,
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        token.avatar = user.avatar;
+        token.avatar = user.avatar ?? user.image;
         token.accessToken = user.accessToken;
       }
 
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      session.user = {
-        id: token.id,
-        name: token.name!,
-        email: token.email!,
-        avatar: token.avatar,
-        accessToken: token.accessToken,
-      };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: { session: any; token: any }) {
+      if (token && session.user) {
+        session.user.id = token.id;
+        session.user.name = token.name;
+        session.user.email = token.email;
+        session.user.avatar = token.avatar;
+        session.user.accessToken = token.accessToken;
+      }
 
       return session;
     },
   },
-};
+});

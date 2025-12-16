@@ -19,14 +19,14 @@ const avatarVariants = cva('border-2', {
 });
 
 interface UserAvatarProps extends VariantProps<typeof avatarVariants> {
-  src: string | undefined;
+  src: string | null | undefined;
   name?: string | null;
 }
 
 export function UserAvatar({ size, src, name }: UserAvatarProps) {
   return (
     <Avatar className={cn(avatarVariants({ size }))}>
-      <AvatarImage src={src} />
+      <AvatarImage src={src ?? undefined} />
       <AvatarFallback>{getInitialsName(name)}</AvatarFallback>
     </Avatar>
   );

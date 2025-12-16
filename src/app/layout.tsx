@@ -15,6 +15,8 @@ export const metadata: Metadata = {
     'Vitaflow é uma plataforma de gerenciamento de saúde que permite aos usuários gerenciar suas saúde de forma fácil e eficiente.',
 };
 
+import { AuthProvider } from '@/_components/providers/auth-provider';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lato.variable} font-lato antialiased max-w-full`}>
-        <div className="flex w-full max-w-full h-full min-h-dvh">
-          <AlertError>{children}</AlertError>
-        </div>
+        <AuthProvider>
+          <div className="flex w-full max-w-full h-full min-h-dvh">
+            <AlertError>{children}</AlertError>
+          </div>
+        </AuthProvider>
       </body>
     </html>
   );

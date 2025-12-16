@@ -22,8 +22,8 @@ export function UserMenu() {
       <DropdownMenu>
         <DropdownMenuTrigger>
           <UserAvatar
-            src={session ? session.user.avatar : undefined}
-            name={session?.user.name}
+            src={session ? session.user!.avatar : undefined}
+            name={session ? session.user!.name : undefined}
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 mx-2">

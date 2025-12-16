@@ -10,8 +10,7 @@ import {
 } from '@/_components/ui/tabs';
 import { Title } from '@/_components/ui/title';
 import { apiClient } from '@/_lib/apiClient';
-import { options } from '@/app/api/auth/[...nextauth]/options';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import FormSettings from './form';
 
 import { profileFormData } from '@/_schema/profile';
@@ -19,7 +18,7 @@ import { profileFormData } from '@/_schema/profile';
 // ... imports
 
 export default async function Settings() {
-  const session = await getServerSession(options);
+  const session = await auth();
   if (!session) return null;
 
   const profile = await apiClient<

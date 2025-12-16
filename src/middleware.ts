@@ -1,21 +1,16 @@
 import { APP_ROUTES } from '@/_constants/routes';
-import { NextRequestWithAuth, withAuth } from 'next-auth/middleware';
+import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 
-export default withAuth(
-  function middleware(req: NextRequestWithAuth) {
-    const path = req.nextUrl.pathname;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default auth((req: any) => {
+  const path = req.nextUrl.pathname;
+  const isLogged = !!req.auth;
 
-    if (path.startsWith(APP_ROUTES.PRIVATE.DASHBOARD) && !req.nextauth.token) {
-      return NextResponse.rewrite(new URL(APP_ROUTES.HOME, req.url));
-    }
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
+  if (path.startsWith(APP_ROUTES.PRIVATE.DASHBOARD) && !isLogged) {
+    return NextResponse.rewrite(new URL(APP_ROUTES.HOME, req.url));
   }
-);
+});
 
 export const config = {
   matcher: ['/restrict/:path*'],

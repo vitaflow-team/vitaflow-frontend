@@ -44,6 +44,7 @@ export async function apiClient<T = unknown>(
 
     return await response.json();
   } catch (error) {
+    console.error(`[API Client Error] URL: ${url}`, error);
     if (error instanceof Error) {
       throw error;
     }

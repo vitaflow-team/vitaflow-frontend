@@ -2,14 +2,13 @@
 
 import { apiClient } from '@/_lib/apiClient';
 import { profileSchema } from '@/_schema/profile';
-import { options } from '@/app/api/auth/[...nextauth]/options';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
 
 export const actionChangeProfile = createServerAction()
   .input(profileSchema)
   .handler(async ({ input: userProfile }) => {
-    const session = await getServerSession(options);
+    const session = await auth();
     if (!session) return null;
 
     const formData = new FormData();
