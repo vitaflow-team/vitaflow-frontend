@@ -1,6 +1,6 @@
 'use server';
 
-import { getEnv } from '@/_lib/getenv';
+import { apiClient } from '@/_lib/apiClient';
 import { profileSchema } from '@/_schema/profile';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
@@ -27,17 +27,18 @@ export const actionChangeProfile = createServerAction()
       formData.append('avatar', userProfile.avatar);
     }
 
-    await fetch(getEnv('BACKEND_URL') + '/profile/profile', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${session.user.accessToken}`,
-      },
-      body: formData,
-      cache: 'no-store',
-    }).catch(() => {
-      throw new ZSAError(
-        'ERROR',
-        'Error accessing the new user registration service.'
-      );
-    });
+    try {
+      await apiClient('/profile/profile', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.user.accessToken}`,
+        },
+        body: formData,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new ZSAError('ERROR', error.message);
+      }
+      throw new ZSAError('ERROR', 'Erro ao atualizar perfil.');
+    }
   });

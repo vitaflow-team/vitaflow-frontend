@@ -1,23 +1,19 @@
-'use server';
-
-import { getEnv } from '@/_lib/getenv';
+import { apiClient } from '@/_lib/apiClient';
 import { resetPasswordSchema } from '@/_schema/resetPassword';
 import { createServerAction, ZSAError } from 'zsa';
 
 export const actionResetPassword = createServerAction()
   .input(resetPasswordSchema)
   .handler(async ({ input: { email } }) => {
-    await fetch(getEnv('BACKEND_URL') + '/users/recoverpass', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-      cache: 'no-store',
-    }).catch(() => {
-      throw new ZSAError(
-        'ERROR',
-        'Error accessing the new user registration service.'
-      );
-    });
+    try {
+      await apiClient('/users/recoverpass', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new ZSAError('ERROR', error.message);
+      }
+      throw new ZSAError('ERROR', 'Erro ao solicitar recuperação de senha.');
+    }
   });

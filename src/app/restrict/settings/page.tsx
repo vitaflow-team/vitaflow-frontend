@@ -9,25 +9,27 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { Title } from '@/_components/ui/title';
-import { getEnv } from '@/_lib/getenv';
+import { apiClient } from '@/_lib/apiClient';
 import { options } from '@/app/api/auth/[...nextauth]/options';
 import { getServerSession } from 'next-auth';
 import FormSettings from './form';
+
+import { profileFormData } from '@/_schema/profile';
+
+// ... imports
 
 export default async function Settings() {
   const session = await getServerSession(options);
   if (!session) return null;
 
-  const resp = await fetch(getEnv('BACKEND_URL') + '/profile/profile', {
+  const profile = await apiClient<
+    Omit<profileFormData, 'avatar'> & { avatar?: string | null }
+  >('/profile/profile', {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${session.user.accessToken}`,
     },
-    cache: 'no-store',
   });
-
-  const profile = await resp.json();
 
   return (
     <DefaultLayout>

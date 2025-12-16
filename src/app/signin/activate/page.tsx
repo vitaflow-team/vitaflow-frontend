@@ -4,7 +4,7 @@ import { Logo } from '@/_components/layout/logo';
 import { RemoveParams } from '@/_components/layout/removeParams';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import { Title } from '@/_components/ui/title';
-import { getEnv } from '@/_lib/getenv';
+import { apiClient } from '@/_lib/apiClient';
 
 interface ActivatePageProps {
   searchParams: {
@@ -17,13 +17,9 @@ export default async function ActivatePage({
 }: ActivatePageProps) {
   const token = searchParams.token;
 
-  await fetch(getEnv('BACKEND_URL') + '/users/activate', {
+  await apiClient('/users/activate', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify({ token }),
-    cache: 'no-store',
   }).catch(() => {
     throw new Error('Erro ao ativar sua conta.');
   });
