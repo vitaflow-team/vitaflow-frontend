@@ -1,101 +1,101 @@
 # Vitaflow Frontend
 
-Bem-vindo ao repositório frontend do **Vitaflow**, uma aplicação moderna construída com **Next.js 16** e focada em performance e segurança.
+Welcome to the **Vitaflow** frontend repository, a modern application built with **Next.js 16** focused on performance and security.
 
 ## 🚀 Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router + Turbopack)
-- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
-- **Estilização**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
-- **Autenticação**: [Auth.js (NextAuth v5)](https://authjs.dev/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/ui](https://ui.shadcn.com/)
+- **Authentication**: [Auth.js (NextAuth v5)](https://authjs.dev/)
 - **Server Actions**: [ZSA](https://zsa.dev/) (Type-safe Server Actions)
-- **Validação**: [Zod](https://zod.dev/)
+- **Validation**: [Zod](https://zod.dev/)
 
-## 🏃 Sobre a Aplicação
+## 🏃 About the Application
 
-O **Vitaflow** conecta alunos a profissionais de saúde (Personal Trainers e Nutricionistas). A plataforma oferece funcionalidades específicas para cada perfil:
+**Vitaflow** connects students with health professionals (Personal Trainers and Nutritionists). The platform offers specific features for each profile:
 
-### Para Alunos
+### For Students
 
-- **Gratuito**: Visualização de treinos/dietas, registro de medidas básicas e notificações.
-- **Premium**: Gráficos detalhados (antropometria, performance), integração com smartwatches (Google Fit, Apple Health), chat ilimitado com profissionais e relatórios em PDF.
+- **Free**: View workouts/diets, record basic measurements, notifications.
+- **Premium**: Detailed charts (anthropometry, performance), smartwatch integration (Google Fit, Apple Health), unlimited chat with professionals, and PDF reports.
 
-### Para Personal Trainers
+### For Personal Trainers
 
-- **Profissional**: Cadastro ilimitado de alunos, prescrição de treinos personalizados, agenda de gestão e relatórios de evolução.
-- **Premium**: Tudo do anterior + Gestão Financeira (contas a receber, emissão de recibos, integração PIX), gráficos de receita e criação de pacotes de planos.
+- **Professional**: Unlimited student registration, prescribe personalized workouts, management agenda, and evolution reports.
+- **Premium**: All previous + Financial Management (receivables, receipt issuance, PIX integration), revenue charts, and creation of plan packages.
 
-### Para Nutricionistas
+### For Nutritionists
 
-- **Profissional**: Cadastro de pacientes, prescrição de cardápios, acompanhamento de medidas (dobras cutâneas) e agenda.
-- **Premium**: Tudo do anterior + Gestão Financeira completa, lembretes automáticos para pacientes, criação de grupos de desafios e gráficos comparativos.
+- **Professional**: Register patients, prescribe menus/meal plans, track measurements (skinfolds), and agenda.
+- **Premium**: All previous + Complete Financial Management, automatic reminders for patients, creation of challenge groups, and comparative charts.
 
-## 🛡️ Segurança
+## 🛡️ Security
 
-Este projeto segue práticas rigorosas de segurança:
+This project follows strict security practices:
 
-1.  **Rate Limiting**: Proteção contra força bruta em rotas de login/signup via Middleware (`src/middleware.ts`) usando Redis.
-2.  **Validação de Input**: Todos os dados (formulários, uploads) são validados no servidor com Zod.
-3.  **Security Headers**: Configurados em `next.config.ts` (X-Frame-Options, CSP, etc.).
-4.  **Server Actions**: Uso exclusivo de `use server` para isolar lógica de negócio e chaves de API.
+1.  **Rate Limiting**: Brute-force protection on login/signup routes via Middleware (`src/middleware.ts`) using Redis.
+2.  **Input Validation**: All data (forms, uploads) is validated server-side using Zod.
+3.  **Security Headers**: Configured in `next.config.ts` (X-Frame-Options, CSP, etc.).
+4.  **Server Actions**: Exclusive use of `use server` to isolate business logic and API keys.
 
-## 🛠️ Instalação e Configuração
+## 🛠️ Installation and Setup
 
-### 1. Pré-requisitos
+### 1. Prerequisites
 
 - Node.js 20+
-- Yarn ou NPM
+- Yarn or NPM
 
-### 2. Variáveis de Ambiente
+### 2. Environment Variables
 
-Crie um arquivo `.env` na raiz baseado no exemplo abaixo:
+Create a `.env` file in the root directory based on the example below:
 
 ```env
-# URL do Backend (API)
-BACKEND_URL=https://api.seurendereco.com
+# Backend URL (API)
+BACKEND_URL=https://api.youraddress.com
 
 # NextAuth
-AUTH_SECRET="sua-chave-secreta-gerada-com-openssl"
+AUTH_SECRET="your-secret-key-generated-with-openssl"
 
-# (Opcional) Google Auth
+# (Optional) Google Auth
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 
-# (Opcional) Rate Limiting (Vercel KV / Upstash)
+# (Optional) Rate Limiting (Vercel KV / Upstash)
 KV_REST_API_URL=...
 KV_REST_API_TOKEN=...
 ```
 
-### 3. Rodando o Projeto
+### 3. Running the Project
 
 ```bash
-# Instalar dependências
+# Install dependencies
 yarn install
 
-# Rodar servidor de desenvolvimento
+# Run development server
 yarn dev
 ```
 
-Acesse [http://localhost:3000](http://localhost:3000).
+Access [http://localhost:3000](http://localhost:3000).
 
-## 📂 Estrutura do Projeto
+## 📂 Project Structure
 
 ```
 src/
-├── _actions/      # Server Actions (Lógica de negócio)
-├── _components/   # Componentes React (UI e Layouts)
-├── _constants/    # Constantes globais (Rotas, Configs)
-├── _lib/          # Utilitários (API Client, Error Handling)
-├── _schema/       # Schemas de validação Zod
-├── app/           # App Router (Páginas e Rotas)
-└── middleware.ts  # Proteção de rotas e Rate Limiting
+├── _actions/      # Server Actions (Business Logic)
+├── _components/   # React Components (UI and Layouts)
+├── _constants/    # Global Constants (Routes, Configs)
+├── _lib/          # Utilities (API Client, Error Handling)
+├── _schema/       # Zod Validation Schemas
+├── app/           # App Router (Pages and Routes)
+└── middleware.ts  # Route Protection and Rate Limiting
 ```
 
-## 📝 Convenções
+## 📝 Conventions
 
-- **Arquivos**: camelCase (ex: `userMenu.tsx`, `apiClient.ts`).
-- **Commits**: Conventional Commits (ex: `feat: add new login page`).
+- **Files**: camelCase (e.g., `userMenu.tsx`, `apiClient.ts`).
+- **Commits**: Conventional Commits (e.g., `feat: add new login page`).
 
 ---
 
-Desenvolvido pela equipe Vitaflow.
+Developed by the Vitaflow team.
