@@ -29,7 +29,7 @@ export function UserPlan({ information = false, plan = 0 }: UserPlansProps) {
         <CardUpgradeItem label="Acesso a gráficos detalhados de evolução (antropometria, performance, nutrição)" />
         <CardUpgradeItem label="Integração com smartwatches e apps de saúde (Google Fit, Apple Health)" />
         <CardUpgradeItem label="Histórico completo de treinos e cardápios" />
-        <CardUpgradeItem label="Chat ilimitado com profissionais (dentro da plataforma)" />
+        <CardUpgradeItem label="Chat ilimitado com seus profissionais contratados (dentro da plataforma)" />
         <CardUpgradeItem label="Relatórios PDF para compartilhar com médico/nutricionista" />
       </CardUpgrade>
     </>

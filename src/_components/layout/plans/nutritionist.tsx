@@ -32,7 +32,6 @@ export function NutritionistPlan({
       >
         <CardUpgradeItem label="Todas as funcionalidades do plano anterior" />
         <CardUpgradeItem label="Gestão financeira: contas a receber, histórico de pagamentos dos alunos" />
-        <CardUpgradeItem label="Integração com PIX e emissão de recibos" />
         <CardUpgradeItem label="Lembretes automáticos de consulta e pagamento para pacientes" />
         <CardUpgradeItem label="Criação de grupos de acompanhamento (ex: desafio de emagrecimento)" />
         <CardUpgradeItem label="Gráficos comparativos de evolução de grupos" />

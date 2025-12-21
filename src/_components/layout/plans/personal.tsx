@@ -32,10 +32,8 @@ export function PersonalPlan({
       >
         <CardUpgradeItem label="Todas as funcionalidades do plano anterior" />
         <CardUpgradeItem label="Gestão financeira: contas a receber, histórico de pagamentos dos alunos" />
-        <CardUpgradeItem label="Integração com PIX e emissão de recibos" />
         <CardUpgradeItem label="Gráficos financeiros (receita mensal, inadimplência, projeções)" />
         <CardUpgradeItem label="Lembretes automáticos para alunos sobre treinos e pagamentos" />
-        <CardUpgradeItem label="Possibilidade de criar pacotes de planos (mensal, trimestral, anual)" />
       </CardUpgrade>{' '}
     </>
   );
