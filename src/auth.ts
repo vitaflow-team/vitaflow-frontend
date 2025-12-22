@@ -1,9 +1,9 @@
-import { actionSignIn } from '@/_actions/signin';
 import { APP_ROUTES } from '@/_constants/routes';
 import { AppError } from '@/_lib/AppError';
 import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
+import { actionSignIn } from './_actions/users/postSignin';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

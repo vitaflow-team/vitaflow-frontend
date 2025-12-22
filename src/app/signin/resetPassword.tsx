@@ -1,6 +1,6 @@
 'use client';
 
-import { actionResetPassword } from '@/_actions/resetPassword';
+import { actionResetPassword } from '@/_actions/users/postResetPassword';
 import {
   AlertDialog,
   AlertDialogAction,

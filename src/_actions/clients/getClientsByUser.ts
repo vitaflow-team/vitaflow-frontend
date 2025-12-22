@@ -16,7 +16,7 @@ export interface Client {
 
 export const actionGetClientsByUser = createServerAction().handler(async () => {
   try {
-    const clients = await apiClient<Client[]>('/clients/clients');
+    const clients = await apiClient<Client[]>('/clients', { method: 'GET' });
     return clients;
   } catch (error) {
     if (error instanceof Error) {

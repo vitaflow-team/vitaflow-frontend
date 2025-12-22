@@ -1,6 +1,6 @@
 'use client';
 
-import { actionSignUp } from '@/_actions/signup';
+import { actionSignUp } from '@/_actions/users/postSignup';
 import { Logo } from '@/_components/layout/logo';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
