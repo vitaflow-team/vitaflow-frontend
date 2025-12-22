@@ -1,4 +1,5 @@
 'use client';
+
 import { actionChangeProfile } from '@/_actions/users/postChangeProfile';
 import { UserAvatar } from '@/_components/layout/userAvatar';
 import { Button } from '@/_components/ui/button';

@@ -1,7 +1,6 @@
+import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import DefaultLayout from '@/_components/layout/defaultLayout';
-import { NutritionistPlan } from '@/_components/layout/plans/nutritionist';
-import { PersonalPlan } from '@/_components/layout/plans/personal';
-import { UserPlan } from '@/_components/layout/plans/users';
+import { CardUpgrade } from '@/_components/ui/cardUpgrade';
 import {
   Tabs,
   TabsContent,
@@ -18,11 +17,20 @@ export default async function Settings() {
   const session = await auth();
   if (!session) return null;
 
-  const profile = await apiClient<
-    Omit<profileFormData, 'avatar'> & { avatar?: string | null }
-  >('/profile/profile', {
-    method: 'GET',
-  });
+  let profile;
+  try {
+    profile = await apiClient<
+      Omit<profileFormData, 'avatar'> & { avatar?: string | null }
+    >('/profile', {
+      method: 'GET',
+    });
+  } catch (error) {
+    console.error('Falha ao carregar perfil:', error);
+    return <div>Erro ao carregar perfil. Tente novamente mais tarde.</div>;
+  }
+
+  const [productsPlans, err] = await actionGetProductsPlans();
+  const plans = productsPlans || [];
 
   return (
     <DefaultLayout>
@@ -36,28 +44,30 @@ export default async function Settings() {
         className="w-full bg-secondary/30 rounded-md mt-2"
       >
         <TabsList className="w-full bg-secondary">
-          <TabsTrigger value="user">Usuário</TabsTrigger>
-          <TabsTrigger value="personal">Educadores físicos</TabsTrigger>
-          <TabsTrigger value="nutritionists">Nutricionistas</TabsTrigger>
+          {plans.map(plan => (
+            <TabsTrigger key={plan.id} value={plan.id}>
+              {plan.name}
+            </TabsTrigger>
+          ))}
         </TabsList>
-        <TabsContent
-          value="user"
-          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
-        >
-          <UserPlan />
-        </TabsContent>
-        <TabsContent
-          value="personal"
-          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
-        >
-          <PersonalPlan />
-        </TabsContent>
-        <TabsContent
-          value="nutritionists"
-          className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
-        >
-          <NutritionistPlan />
-        </TabsContent>
+        {plans.map(plan => (
+          <TabsContent
+            key={plan.id}
+            value={plan.id}
+            className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
+          >
+            {plan.products.map(product => (
+              <CardUpgrade
+                key={product.id}
+                title={product.name}
+                value={product.price}
+                information={false}
+                active={true}
+                itens={product.productInfos.map(info => info.description)}
+              />
+            ))}
+          </TabsContent>
+        ))}
       </Tabs>
     </DefaultLayout>
   );
