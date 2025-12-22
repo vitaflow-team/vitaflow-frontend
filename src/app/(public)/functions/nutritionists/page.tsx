@@ -1,7 +1,9 @@
-import { NutritionistPlan } from '@/_components/layout/plans/nutritionist';
+'use server';
+
+import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
 import {
   ClipboardList,
   HandCoins,
@@ -9,7 +11,15 @@ import {
   Wallet,
 } from 'lucide-react';
 
-export default function Nutritionists() {
+export default async function Nutritionists() {
+  const [productsPlans, err] = await actionGetProductsPlans();
+  const plans = productsPlans || [];
+
+  const nutritionistPlanGroup = plans.find(
+    plan => plan.name === 'Nutricionistas'
+  );
+  const nutritionistProducts = nutritionistPlanGroup?.products || [];
+
   return (
     <div>
       <div className="flex flex-col w-full bg-[url('/backgroundLogo.svg')] items-center justify-start bg-cover bg-no-repeat bg-right gap-2">
@@ -94,7 +104,16 @@ export default function Nutritionists() {
         </span>
       </div>
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
-        <NutritionistPlan information />
+        {nutritionistProducts.map(product => (
+          <CardUpgrade
+            key={product.id}
+            title={product.name}
+            value={product.price}
+            information={true}
+            active={false}
+            itens={product.productInfos.map(info => info.description)}
+          />
+        ))}
       </div>
     </div>
   );
