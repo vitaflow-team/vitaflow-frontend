@@ -1,4 +1,4 @@
-import { actionSignIn } from '@/_actions/signin';
+import { actionSignIn } from '@/_actions/users/postSignin';
 import { APP_ROUTES } from '@/_constants/routes';
 import { getEnv } from '@/_lib/getenv';
 import type { NextAuthConfig, Session, User } from 'next-auth';
