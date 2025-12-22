@@ -1,8 +1,8 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { signUpSchema } from '@/_schema/signup';
 import { createServerAction, ZSAError } from 'zsa';
-import { signUpSchema } from '../_schema/signup';
 
 export const actionSignUp = createServerAction()
   .input(signUpSchema)

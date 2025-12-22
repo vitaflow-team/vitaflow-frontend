@@ -1,6 +1,6 @@
 'use client';
 
-import { actionNewPassword } from '@/_actions/newPassword';
+import { actionNewPassword } from '@/_actions/users/postNewPassword';
 import { RemoveParams } from '@/_components/layout/removeParams';
 import { Button } from '@/_components/ui/button';
 import {

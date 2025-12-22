@@ -1,6 +1,6 @@
 'use client';
 
-import { actionGetClientsByUser } from '@/_actions/getClientsByUser';
+import { actionGetClientsByUser } from '@/_actions/clients/getClientsByUser';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import { DataTable } from '@/_components/ui/dataTable';
