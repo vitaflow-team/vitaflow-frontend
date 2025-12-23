@@ -84,6 +84,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.name = user.name;
         token.email = user.email;
         token.avatar = user.avatar ?? user.image;
+        token.productId = user.productId;
+        token.productGroupId = user.productGroupId;
         token.accessToken = user.accessToken;
       }
 
@@ -97,6 +99,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.avatar = token.avatar;
+        session.user.productId = token.productId;
+        session.user.productGroupId = token.productGroupId;
         session.user.accessToken = token.accessToken;
       }
 

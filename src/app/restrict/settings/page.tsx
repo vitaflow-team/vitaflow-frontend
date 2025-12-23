@@ -40,7 +40,7 @@ export default async function Settings() {
       </div>
       <Title label="Meu plano" className="border-b border-primary text-left" />
       <Tabs
-        defaultValue="user"
+        defaultValue={session.user.productGroupId || plans[0].id}
         className="w-full bg-secondary/30 rounded-md mt-2"
       >
         <TabsList className="w-full bg-secondary">
@@ -62,7 +62,11 @@ export default async function Settings() {
                 title={product.name}
                 value={product.price}
                 information={false}
-                active={true}
+                active={
+                  session.user.productId === product.id ||
+                  (session.user.productId === null &&
+                    plans[0].products[0].id === product.id)
+                }
                 itens={product.productInfos.map(info => info.description)}
               />
             ))}
