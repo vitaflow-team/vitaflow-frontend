@@ -12,6 +12,7 @@ import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { APP_ROUTES } from '@/_constants/routes';
 import { useAlertHook } from '@/_hooks/alert_hook';
+import { AppError } from '@/_lib/AppError';
 import { signInFormDate, signInSchema } from '@/_schema/signin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
@@ -31,23 +32,33 @@ export function LoginByAccount() {
   const [isPending] = useTransition();
 
   async function submitSignIn({ email, password }: signInFormDate) {
-    const resp = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: APP_ROUTES.PRIVATE.DASHBOARD,
-    });
+    try {
+      const resp = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: APP_ROUTES.PRIVATE.DASHBOARD,
+      });
 
-    if (!resp?.ok) {
-      openError(
-        resp?.error || 'Falha ao autenticar com email e senha',
-        'Atenção!',
-        'error'
-      );
-      return;
-    }
-    if (resp.url) {
-      window.location.href = resp.url;
+      if (!resp.ok || resp.error) {
+        const errorMessage =
+          resp.error === 'CredentialsSignin'
+            ? 'Credenciais inválidas. Verifique seu email e senha.'
+            : resp.error || 'Falha ao autenticar com email e senha';
+
+        openError(errorMessage, 'Atenção!', 'error');
+        return;
+      }
+      if (resp.url) {
+        window.location.href = resp.url;
+      }
+    } catch (error) {
+      const mensagem =
+        error instanceof AppError
+          ? error.message
+          : 'Falha ao autenticar o usuário.';
+
+      openError(mensagem, 'Atenção!', 'error');
     }
   }
 

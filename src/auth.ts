@@ -55,18 +55,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: credentials!.email as string,
           password: credentials!.password as string,
           socialLogin: false,
-        }).catch(error => {
-          let mensagem;
-          if (error instanceof Error) {
-            mensagem = error.message;
-          } else {
-            mensagem = 'Falha ao autenticar o usuário.';
-          }
-          throw new AppError(mensagem);
+        }).catch(() => {
+          return null;
         });
 
         if (!user) {
-          throw new AppError('Falha ao autenticar o usuário.');
+          return null;
         }
 
         return { ...user } as User;
