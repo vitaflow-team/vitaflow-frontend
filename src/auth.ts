@@ -62,11 +62,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           } else {
             mensagem = 'Falha ao autenticar o usuário.';
           }
-          throw new AppError(mensagem);
+          return null;
         });
 
         if (!user) {
-          throw new AppError('Falha ao autenticar o usuário.');
+          return null;
         }
 
         return { ...user } as User;
