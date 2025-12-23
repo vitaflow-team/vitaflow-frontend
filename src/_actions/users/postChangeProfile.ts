@@ -27,7 +27,7 @@ export const actionChangeProfile = createServerAction()
     }
 
     try {
-      await apiClient('/profile/profile', {
+      await apiClient('/profile', {
         method: 'POST',
         body: formData,
       });
