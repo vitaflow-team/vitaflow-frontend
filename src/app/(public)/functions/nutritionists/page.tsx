@@ -10,6 +10,7 @@ import {
   HeartHandshakeIcon,
   Wallet,
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function Nutritionists() {
   const [productsPlans, err] = await actionGetProductsPlans();
@@ -36,12 +37,14 @@ export default async function Nutritionists() {
             </span>
           </div>
           <div className="flex flex-row md:flex-row w-full mb-2">
-            <Button
-              size="lg"
-              className="w-48 md:w-64 text-lg md:text-xl p-6 md:p-8"
-            >
-              Experimente agora
-            </Button>
+            <Link href="/signup">
+              <Button
+                size="lg"
+                className="w-48 md:w-64 text-lg md:text-xl p-6 md:p-8"
+              >
+                Experimente agora
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -104,16 +107,18 @@ export default async function Nutritionists() {
         </span>
       </div>
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
-        {nutritionistProducts.map(product => (
-          <CardUpgrade
-            key={product.id}
-            title={product.name}
-            value={product.price}
-            information={true}
-            active={false}
-            itens={product.productInfos.map(info => info.description)}
-          />
-        ))}
+        {nutritionistProducts
+          .sort((a, b) => a.price - b.price)
+          .map(product => (
+            <CardUpgrade
+              key={product.id}
+              title={product.name}
+              value={product.price}
+              information={true}
+              active={false}
+              itens={product.productInfos.map(info => info.description)}
+            />
+          ))}
       </div>
     </div>
   );

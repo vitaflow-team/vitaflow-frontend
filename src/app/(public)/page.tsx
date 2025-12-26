@@ -28,12 +28,14 @@ export default function Home() {
             nutrição e evolução.
           </span>
           <div className="flex flex-row-reverse md:flex-row w-full">
-            <Button
-              size="lg"
-              className="w-full md:w-64 text-lg md:text-xl p-6 md:p-8"
-            >
-              Comece agora
-            </Button>
+            <Link href="/signup">
+              <Button
+                size="lg"
+                className="w-full md:w-64 text-lg md:text-xl p-6 md:p-8"
+              >
+                Comece agora
+              </Button>
+            </Link>
           </div>
         </div>
         <div className="hidden md:flex flex-col pr-16">
