@@ -8,6 +8,7 @@ declare module 'next-auth' {
     avatar?: string | null;
     productId?: string | null;
     productGroupId?: string | null;
+    productType?: string | null;
     accessToken?: string;
   }
 
@@ -17,6 +18,7 @@ declare module 'next-auth' {
       avatar?: string | null;
       productId?: string | null;
       productGroupId?: string | null;
+      productType?: string | null;
       accessToken?: string;
     } & DefaultSession['user'];
   }
@@ -30,6 +32,7 @@ declare module 'next-auth/jwt' {
     avatar?: string | null;
     productId?: string | null;
     productGroupId?: string | null;
+    productType?: string | null;
     accessToken?: string;
   }
 }

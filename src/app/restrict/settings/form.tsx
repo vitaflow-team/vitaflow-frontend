@@ -31,16 +31,18 @@ export default function FormSettings({ profile }: FormSettingsProps) {
     defaultValues: {
       name: profile.name,
       phone: profile.phone,
-      birthDate: formatDate(profile.birthDate, 'en-CA'),
+      birthDate: profile.birthDate
+        ? formatDate(profile.birthDate, 'en-CA')
+        : '',
       avatar: undefined,
       email: profile.email,
       address: {
-        addressLine1: profile.address.addressLine1,
-        addressLine2: profile.address.addressLine2,
-        district: profile.address.district,
-        city: profile.address.city,
-        region: profile.address.region,
-        postalCode: profile.address.postalCode,
+        addressLine1: profile.address?.addressLine1,
+        addressLine2: profile.address?.addressLine2,
+        district: profile.address?.district,
+        city: profile.address?.city,
+        region: profile.address?.region,
+        postalCode: profile.address?.postalCode,
       },
     },
   });
@@ -84,7 +86,7 @@ export default function FormSettings({ profile }: FormSettingsProps) {
                       {...field}
                       disabled={isPending}
                       type="date"
-                      max={formatDate(new Date().toString(), 'en-CA')}
+                      max={new Date().toISOString().split('T')[0]}
                     />
                   </FormControl>
                 </FormItem>
