@@ -1,6 +1,6 @@
-export function formatDate(dateString: string, locale: string) {
+export function formatDate(dateString: string | Date, locale: string) {
   const date = new Date(dateString);
-  return date.toLocaleDateString(locale);
+  return date.toLocaleDateString(locale, { timeZone: 'UTC' });
 }
 
 export function formatCep(cep: string) {
