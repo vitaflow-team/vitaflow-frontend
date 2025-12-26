@@ -57,21 +57,23 @@ export default async function Settings() {
               value={plan.id}
               className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
             >
-              {plan.products.map(product => (
-                <CardUpgrade
-                  key={product.id}
-                  title={product.name}
-                  value={product.price}
-                  information={false}
-                  productId={product.id}
-                  active={
-                    session.user.productId === product.id ||
-                    (session.user.productId === null &&
-                      plans[0]?.products?.[0]?.id === product.id)
-                  }
-                  itens={product.productInfos.map(info => info.description)}
-                />
-              ))}
+              {plan.products
+                .sort((a, b) => a.price - b.price)
+                .map(product => (
+                  <CardUpgrade
+                    key={product.id}
+                    title={product.name}
+                    value={product.price}
+                    information={false}
+                    productId={product.id}
+                    active={
+                      session.user.productId === product.id ||
+                      (session.user.productId === null &&
+                        plans[0]?.products?.[0]?.id === product.id)
+                    }
+                    itens={product.productInfos.map(info => info.description)}
+                  />
+                ))}
             </TabsContent>
           ))}
         </Tabs>
