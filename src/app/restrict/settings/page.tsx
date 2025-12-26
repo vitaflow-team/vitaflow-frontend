@@ -39,40 +39,47 @@ export default async function Settings() {
         <FormSettings profile={profile} />
       </div>
       <Title label="Meu plano" className="border-b border-primary text-left" />
-      <Tabs
-        defaultValue={session.user.productGroupId || plans[0].id}
-        className="w-full bg-secondary/30 rounded-md mt-2"
-      >
-        <TabsList className="w-full bg-secondary">
-          {plans.map(plan => (
-            <TabsTrigger key={plan.id} value={plan.id}>
-              {plan.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {plans.map(plan => (
-          <TabsContent
-            key={plan.id}
-            value={plan.id}
-            className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
-          >
-            {plan.products.map(product => (
-              <CardUpgrade
-                key={product.id}
-                title={product.name}
-                value={product.price}
-                information={false}
-                active={
-                  session.user.productId === product.id ||
-                  (session.user.productId === null &&
-                    plans[0].products[0].id === product.id)
-                }
-                itens={product.productInfos.map(info => info.description)}
-              />
+      {plans.length > 0 ? (
+        <Tabs
+          defaultValue={session.user.productGroupId || plans[0]?.id}
+          className="w-full bg-secondary/30 rounded-md mt-2"
+        >
+          <TabsList className="w-full bg-secondary">
+            {plans.map(plan => (
+              <TabsTrigger key={plan.id} value={plan.id}>
+                {plan.name}
+              </TabsTrigger>
             ))}
-          </TabsContent>
-        ))}
-      </Tabs>
+          </TabsList>
+          {plans.map(plan => (
+            <TabsContent
+              key={plan.id}
+              value={plan.id}
+              className="flex flex-col lg:flex-row p-4 gap-4 justify-center"
+            >
+              {plan.products.map(product => (
+                <CardUpgrade
+                  key={product.id}
+                  title={product.name}
+                  value={product.price}
+                  information={false}
+                  productId={product.id}
+                  active={
+                    session.user.productId === product.id ||
+                    (session.user.productId === null &&
+                      plans[0]?.products?.[0]?.id === product.id)
+                  }
+                  itens={product.productInfos.map(info => info.description)}
+                />
+              ))}
+            </TabsContent>
+          ))}
+        </Tabs>
+      ) : (
+        <div className="mt-4 p-4 text-center text-muted-foreground bg-secondary/30 rounded-md">
+          Nenhum plano disponível no momento.
+        </div>
+      )}
     </DefaultLayout>
   );
 }

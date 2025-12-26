@@ -8,7 +8,7 @@ import {
 
 import { Check } from 'lucide-react';
 import Image from 'next/image';
-import { Button } from '../ui/button';
+import { ButtonLink } from './buttonLink';
 
 interface CardUpgradeItemProps {
   label: string;
@@ -30,6 +30,7 @@ interface CardUpgradeProps {
   value?: number;
   active?: boolean;
   information?: boolean;
+  productId?: string;
   itens?: string[];
 }
 
@@ -39,6 +40,7 @@ export function CardUpgrade({
   active = false,
   information = false,
   itens,
+  productId,
 }: CardUpgradeProps) {
   const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -76,9 +78,12 @@ export function CardUpgrade({
           ))}
         </CardContent>
         {!information && (
-          <Button className="rounded-t-none px-1 w-full" disabled={active}>
-            {active ? 'Active' : 'Escolher este plano'}
-          </Button>
+          <ButtonLink
+            url={`/checkout/${productId}`}
+            className="rounded-t-none px-1 w-full"
+            disabled={active}
+            label={active ? 'Plano ativo' : 'Escolher este plano'}
+          />
         )}
       </div>
     </Card>

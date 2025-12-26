@@ -1,0 +1,5 @@
+export enum ProductType {
+  USER = 'USER',
+  NUTRITIONIST = 'NUTRITIONIST',
+  PHYSICAL_EDUCATOR = 'PHYSICAL_EDUCATOR',
+}
