@@ -39,7 +39,7 @@ export default auth(async (req: any) => {
       ) {
         const referer = req.headers.get('referer');
         return NextResponse.redirect(
-          referer ?? new URL(APP_ROUTES.EXCLUDED_ROUTES[0], req.url)
+          referer ?? new URL(APP_ROUTES.ROUTE_PRIVATE, req.url)
         );
       }
     }
