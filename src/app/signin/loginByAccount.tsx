@@ -37,7 +37,7 @@ export function LoginByAccount() {
         email,
         password,
         redirect: false,
-        callbackUrl: APP_ROUTES.PRIVATE.DASHBOARD,
+        callbackUrl: APP_ROUTES.ROUTE_PRIVATE,
       });
 
       if (!resp.ok || resp.error) {

@@ -30,7 +30,7 @@ export function UserMenu() {
           <DropdownMenuItem icon={Bell}>Notificações</DropdownMenuItem>
           <DropdownMenuItem
             icon={Settings}
-            onClick={() => route.push(APP_ROUTES.PRIVATE.SETTINGS)}
+            onClick={() => route.push(APP_ROUTES.USER_SETTINGS)}
           >
             Configurações
           </DropdownMenuItem>

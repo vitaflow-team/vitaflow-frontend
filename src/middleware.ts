@@ -27,8 +27,22 @@ export default auth(async (req: any) => {
     }
   }
 
-  if (path.startsWith(APP_ROUTES.PRIVATE.DASHBOARD) && !isLogged) {
+  if (path.startsWith(APP_ROUTES.ROUTE_PRIVATE) && !isLogged) {
     return NextResponse.rewrite(new URL(APP_ROUTES.HOME, req.url));
+  }
+
+  if (!APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
+    for (const ITEM of APP_ROUTES.PRIVATE) {
+      if (
+        ITEM.URL === path &&
+        !ITEM.PRODUCT_TYPE.includes(req.auth?.user?.productType)
+      ) {
+        const referer = req.headers.get('referer');
+        return NextResponse.redirect(
+          referer ?? new URL(APP_ROUTES.EXCLUDED_ROUTES[0], req.url)
+        );
+      }
+    }
   }
 });
 
