@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import Link from 'next/link';
+
 import {
   ColumnDef,
   flexRender,
@@ -19,8 +21,19 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { cn } from '@/_lib/utils';
-import { Edit, Settings2 } from 'lucide-react';
+import { Edit, Settings2, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './alert-dialog';
 import { Button } from './button';
 import { Checkbox } from './checkbox';
 import {
@@ -32,9 +45,12 @@ import {
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  showSelectColumn?: boolean;
   data: TData[];
   pageSize?: number;
   messageNotFound?: string;
+  getEditLink?: (row: TData) => string;
+  deleteAction?: (row: TData) => Promise<any>;
 }
 
 declare module '@tanstack/react-table' {
@@ -47,8 +63,11 @@ declare module '@tanstack/react-table' {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  showSelectColumn = false,
   pageSize = 50,
   messageNotFound = 'Sem resultados',
+  getEditLink,
+  deleteAction,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -131,11 +150,43 @@ export function DataTable<TData, TValue>({
         </DropdownMenu>
       </div>
     ),
-    cell: () => (
-      <div className="flex justify-center items-center max-w-14 w-14 gap-2">
-        <Edit className="size-4" />
-      </div>
-    ),
+    cell: ({ row }) => {
+      return (
+        <div className="flex justify-center items-center content-center max-w-14 w-14 gap-3">
+          {getEditLink && (
+            <Link href={getEditLink(row.original)} className="text-foreground">
+              <Edit className="size-4" />
+            </Link>
+          )}
+          {deleteAction && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Trash2 className="size-4 cursor-pointer text-destructive" />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação não pode ser desfeita. Isso excluirá
+                    permanentemente o registro.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={async () => {
+                      await deleteAction(row.original);
+                    }}
+                  >
+                    Continuar
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
+      );
+    },
     enableSorting: false,
     enableHiding: false,
   };
@@ -220,7 +271,10 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="flex w-full gap-1 md:gap-3"
+                className={cn(
+                  'flex w-full gap-1 md:gap-3',
+                  !showSelectColumn ? 'pl-2' : ''
+                )}
               >
                 {headerGroup.headers.map(header => {
                   const isSelectColumn = header.column.id === 'select';
@@ -231,13 +285,15 @@ export function DataTable<TData, TValue>({
                       ? 'items-center content-center text-right m-0 p-0'
                       : 'items-center content-center text-left m-0 p-0';
 
+                  if (!showSelectColumn && isSelectColumn) return;
+
                   return (
                     <TableHead
                       key={header.id}
                       className={cn(
                         alignClass,
                         isSelectColumn ? 'max-w-9' : '',
-                        isSettingsColumn ? 'max-w-14 w-14' : '',
+                        isSettingsColumn ? 'ml-auto max-w-14 w-14' : '',
                         'overflow-hidden truncate whitespace-nowrap',
                         shouldHideOnMobile(header.column)
                           ? 'hidden sm:flex'
@@ -266,7 +322,10 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows.map(row => (
               <TableRow
                 key={row.id}
-                className="flex gap-1 md:gap-3 w-full hover:bg-secondary/40 p-0 m-0"
+                className={cn(
+                  'flex gap-1 md:gap-3 w-full hover:bg-secondary/40 p-0 m-0',
+                  !showSelectColumn ? 'pl-2' : ''
+                )}
               >
                 {row.getVisibleCells().map(cell => {
                   const isSelectColumn = cell.column.id === 'select';
@@ -286,6 +345,8 @@ export function DataTable<TData, TValue>({
                     typeof cellContent === 'string'
                       ? cellContent
                       : String(row.getValue(cell.column.id));
+
+                  if (!showSelectColumn && isSelectColumn) return;
 
                   return (
                     <TableCell
@@ -325,10 +386,12 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} de{' '}
-          {table.getFilteredRowModel().rows.length} registros selecionados.
-        </div>
+        {showSelectColumn && (
+          <div className="text-muted-foreground flex-1 text-sm">
+            {table.getFilteredSelectedRowModel().rows.length} de{' '}
+            {table.getFilteredRowModel().rows.length} registros selecionados.
+          </div>
+        )}
         <div className="space-x-2">
           <Button
             variant="outline"
