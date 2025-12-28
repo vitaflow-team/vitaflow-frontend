@@ -1,17 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import Link from 'next/link';
-
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-
 import {
   Table,
   TableBody,
@@ -21,7 +10,16 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { cn } from '@/_lib/utils';
+import {
+  ColumnDef,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { Edit, Settings2, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import {
   AlertDialog,
@@ -71,133 +69,131 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  const selectColumn: ColumnDef<TData, TValue> = {
-    id: 'select',
-    header: ({ table }) => (
-      <div className="flex w-6 items-center justify-center mx-2 px-2">
-        <Checkbox
-          className="bg-white"
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Selecionar todos"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex w-6 items-center justify-center mx-2 px-2">
-        <Checkbox
-          className="bg-white"
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
-          aria-label="Selecionar linha"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  };
-
-  const settingsColumn: ColumnDef<TData, TValue> = {
-    id: 'settings',
-    header: ({ table }) => (
-      <div className="flex justify-center items-center max-w-14 w-14">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Settings2 className="size-4 cursor-pointer" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            {table
-              .getAllLeafColumns()
-              .filter(col => col.id !== 'select' && col.id !== 'settings')
-              .map(col => {
-                const isMobile =
-                  typeof window !== 'undefined' && window.innerWidth < 640;
-
-                const visibleDataColumns = table
-                  .getAllLeafColumns()
-                  .filter(c => {
-                    if (c.id === 'select' || c.id === 'settings') return false;
-                    if (isMobile && shouldHideOnMobile(c)) return false;
-                    return c.getIsVisible();
-                  }).length;
-
-                const label =
-                  typeof col.columnDef.header === 'function'
-                    ? col.columnDef.header({ table, column: col } as any)
-                    : (col.columnDef.header ?? String(col.id));
-
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={col.id}
-                    className={cn(
-                      'capitalize',
-                      shouldHideOnMobile(col) ? 'hidden sm:flex' : ''
-                    )}
-                    checked={col.getIsVisible()}
-                    onCheckedChange={(checked: boolean) => {
-                      if (!checked && visibleDataColumns <= 1) return;
-                      col.toggleVisibility(checked);
-                    }}
-                  >
-                    {label}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex justify-center items-center content-center max-w-14 w-14 gap-3">
-          {getEditLink && (
-            <Link href={getEditLink(row.original)} className="text-foreground">
-              <Edit className="size-4" />
-            </Link>
-          )}
-          {deleteAction && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Trash2 className="size-4 cursor-pointer text-destructive" />
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esta ação não pode ser desfeita. Isso excluirá
-                    permanentemente o registro.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={async () => {
-                      await deleteAction(row.original);
-                    }}
-                  >
-                    Continuar
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-        </div>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
-  };
-
-  const visibleUserColumnsCount = columns.filter(col => {
-    const colId = (col as any).id ?? (col as any).accessorKey;
-    const isVisible = columnVisibility[colId] !== false;
-    return isVisible;
-  }).length;
-
   const allColumns = useMemo(() => {
+    const selectColumn: ColumnDef<TData, TValue> = {
+      id: 'select',
+      header: ({ table }) => (
+        <div className="flex w-6 items-center justify-center mx-2 px-2">
+          <Checkbox
+            className="bg-white"
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Selecionar todos"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex w-6 items-center justify-center mx-2 px-2">
+          <Checkbox
+            className="bg-white"
+            checked={row.getIsSelected()}
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            aria-label="Selecionar linha"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    };
+
+    const settingsColumn: ColumnDef<TData, TValue> = {
+      id: 'settings',
+      header: ({ table }) => (
+        <div className="flex justify-center items-center max-w-14 w-14">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Settings2 className="size-4 cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              {table
+                .getAllLeafColumns()
+                .filter(col => col.id !== 'select' && col.id !== 'settings')
+                .map(col => {
+                  const isMobile =
+                    typeof window !== 'undefined' && window.innerWidth < 640;
+
+                  const visibleDataColumns = table
+                    .getAllLeafColumns()
+                    .filter(c => {
+                      if (c.id === 'select' || c.id === 'settings')
+                        return false;
+                      if (isMobile && shouldHideOnMobile(c)) return false;
+                      return c.getIsVisible();
+                    }).length;
+
+                  const label =
+                    typeof col.columnDef.header === 'function'
+                      ? col.columnDef.header({ table, column: col } as any)
+                      : (col.columnDef.header ?? String(col.id));
+
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={col.id}
+                      className={cn(
+                        'capitalize',
+                        shouldHideOnMobile(col) ? 'hidden sm:flex' : ''
+                      )}
+                      checked={col.getIsVisible()}
+                      onCheckedChange={(checked: boolean) => {
+                        if (!checked && visibleDataColumns <= 1) return;
+                        col.toggleVisibility(checked);
+                      }}
+                    >
+                      {label}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex justify-center items-center content-center max-w-14 w-14 gap-3">
+            {getEditLink && (
+              <Link
+                href={getEditLink(row.original)}
+                className="text-foreground"
+              >
+                <Edit className="size-4" />
+              </Link>
+            )}
+            {deleteAction && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Trash2 className="size-4 cursor-pointer text-destructive" />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não pode ser desfeita. Isso excluirá
+                      permanentemente o registro.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={async () => {
+                        await deleteAction(row.original);
+                      }}
+                    >
+                      Continuar
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    };
+
     const columnsWithoutSize = columns.filter(c => !c.size);
     const hasFlexibleColumns = columnsWithoutSize.length > 0;
 
@@ -218,7 +214,7 @@ export function DataTable<TData, TValue>({
     });
 
     return [selectColumn, ...modifiedColumns, settingsColumn];
-  }, [columns, columnVisibility]);
+  }, [columns, getEditLink, deleteAction]);
 
   const table = useReactTable({
     data,

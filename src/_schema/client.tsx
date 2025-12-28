@@ -40,9 +40,9 @@ export const clientSchema = z.object({
   updatedAt: z.string(),
 });
 
-export type Client = z.infer<typeof clientSchema>;
+export type ClientFormData = z.infer<typeof clientSchema>;
 
-export const clientColumnDef: ColumnDef<Client>[] = [
+export const clientColumnDef: ColumnDef<ClientFormData>[] = [
   {
     accessorKey: 'name',
     header: 'Nome',
