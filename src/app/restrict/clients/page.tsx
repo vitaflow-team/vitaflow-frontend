@@ -19,12 +19,12 @@ export default function ClientsPage() {
   return (
     <DefaultLayout>
       <Title
-        label="Alunos/Pacientes"
+        label="Pessoas"
         styled="form"
         className="flex items-center justify-between border-b border-primary text-left py-1 flex-row"
       >
         <ButtonLink
-          url="/restrict/workouts/0"
+          url="/restrict/clients/0"
           label="Adicionar"
           className="w-32"
         />

@@ -31,7 +31,7 @@ export default auth(async (req: any) => {
     return NextResponse.rewrite(new URL(APP_ROUTES.HOME, req.url));
   }
 
-  if (!APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
+  if (isLogged && !APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
     for (const ITEM of APP_ROUTES.PRIVATE) {
       if (
         ITEM.URL === path &&

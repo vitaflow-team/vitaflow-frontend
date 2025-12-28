@@ -1,7 +1,5 @@
+import { phoneRegex, zipRegex } from '@/_constants/regex';
 import { z } from 'zod';
-
-const zipRegex = /^\d{5}-?\d{3}$/;
-const phoneRegex = /^\(?[1-9]{2}\)?\s?(?:9\d{4}|\d{4})-?\d{4}$/;
 
 export const profileSchema = z.object({
   name: z.string().min(2, 'Campo obrigatório').max(100, 'Nome muito longo'),

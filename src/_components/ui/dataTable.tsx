@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { cn } from '@/_lib/utils';
-import { Settings2 } from 'lucide-react';
+import { Edit, Settings2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Button } from './button';
 import { Checkbox } from './checkbox';
@@ -55,7 +55,7 @@ export function DataTable<TData, TValue>({
   const selectColumn: ColumnDef<TData, TValue> = {
     id: 'select',
     header: ({ table }) => (
-      <div className="flex w-6 items-center justify-center">
+      <div className="flex w-6 items-center justify-center mx-2 px-2">
         <Checkbox
           className="bg-white"
           checked={
@@ -68,7 +68,7 @@ export function DataTable<TData, TValue>({
       </div>
     ),
     cell: ({ row }) => (
-      <div className="flex w-6 items-center justify-center">
+      <div className="flex w-6 items-center justify-center mx-2 px-2">
         <Checkbox
           className="bg-white"
           checked={row.getIsSelected()}
@@ -132,7 +132,9 @@ export function DataTable<TData, TValue>({
       </div>
     ),
     cell: () => (
-      <div className="flex justify-center items-center max-w-14 w-14"></div>
+      <div className="flex justify-center items-center max-w-14 w-14 gap-2">
+        <Edit className="size-4" />
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -218,7 +220,7 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="flex w-full gap-2 items-center"
+                className="flex w-full gap-1 md:gap-3"
               >
                 {headerGroup.headers.map(header => {
                   const isSelectColumn = header.column.id === 'select';
@@ -226,8 +228,8 @@ export function DataTable<TData, TValue>({
 
                   const alignClass =
                     header.column.columnDef.meta?.align === 'right'
-                      ? 'justify-center items-center content-center text-right'
-                      : 'justify-center items-center content-center text-left';
+                      ? 'items-center content-center text-right m-0 p-0'
+                      : 'items-center content-center text-left m-0 p-0';
 
                   return (
                     <TableHead
@@ -235,7 +237,7 @@ export function DataTable<TData, TValue>({
                       className={cn(
                         alignClass,
                         isSelectColumn ? 'max-w-9' : '',
-                        isSettingsColumn ? 'ml-auto max-w-14 w-14' : '',
+                        isSettingsColumn ? 'max-w-14 w-14' : '',
                         'overflow-hidden truncate whitespace-nowrap',
                         shouldHideOnMobile(header.column)
                           ? 'hidden sm:flex'
@@ -264,7 +266,7 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows.map(row => (
               <TableRow
                 key={row.id}
-                className="flex gap-2 w-full hover:bg-secondary/40"
+                className="flex gap-1 md:gap-3 w-full hover:bg-secondary/40 p-0 m-0"
               >
                 {row.getVisibleCells().map(cell => {
                   const isSelectColumn = cell.column.id === 'select';
@@ -289,20 +291,19 @@ export function DataTable<TData, TValue>({
                     <TableCell
                       key={cell.id}
                       className={cn(
+                        'overflow-hidden truncate whitespace-nowrap mx-0 px-0',
                         alignClass,
                         isSelectColumn ? 'max-w-9' : '',
                         isSettingsColumn
                           ? 'ml-auto max-w-14 w-14 flex-none'
                           : '',
-                        'overflow-hidden truncate whitespace-nowrap',
-                        'px-2 py-1',
                         shouldHideOnMobile(cell.column) ? 'hidden sm:flex' : ''
                       )}
                       style={{
                         flexGrow: cell.column.columnDef.size ? 0 : 1,
                         flexBasis: cell.column.columnDef.size
                           ? `${cell.column.columnDef.size}px`
-                          : '0',
+                          : '',
                       }}
                     >
                       {cell.column.getCanHide() ? (
