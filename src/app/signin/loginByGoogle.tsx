@@ -8,7 +8,7 @@ export function LoginByGoogle() {
   async function submitSignInGoogle() {
     await signIn('google', {
       redirect: true,
-      callbackUrl: APP_ROUTES.PRIVATE.DASHBOARD,
+      callbackUrl: APP_ROUTES.ROUTE_PRIVATE,
     });
   }
 

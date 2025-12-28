@@ -10,32 +10,13 @@ import {
   useSidebar,
 } from '@/_components/ui/sidebar';
 import { APP_ROUTES } from '@/_constants/routes';
-import { Apple, ChartNoAxesCombined, Dumbbell, Home } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 export function MenuApp() {
-  const items = [
-    {
-      title: 'Início',
-      url: APP_ROUTES.PRIVATE.DASHBOARD,
-      icon: Home,
-    },
-    {
-      title: 'Treinos',
-      url: APP_ROUTES.PRIVATE.WORKOUTS,
-      icon: Dumbbell,
-    },
-    {
-      title: 'Nutrição',
-      url: APP_ROUTES.PRIVATE.DASHBOARD,
-      icon: Apple,
-    },
-    {
-      title: 'Evolução',
-      url: APP_ROUTES.PRIVATE.DASHBOARD,
-      icon: ChartNoAxesCombined,
-    },
-  ];
+  const { data: session } = useSession();
+  const user = session?.user;
+
   const { isMobile, open, openMobile, setOpenMobile } = useSidebar();
   const route = useRouter();
 
@@ -56,18 +37,24 @@ export function MenuApp() {
       )}
       <SidebarGroupContent className="flex flex-row w-full">
         <SidebarMenu>
-          {items.map(item => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                tooltip={item.title}
-                onClick={() => handleMenuButton(item.url)}
-                className="bg-transparent hover:bg-primary hover:text-secondary rounded-none"
-              >
-                <item.icon />
-                <span>{item.title}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {APP_ROUTES.PRIVATE.map(ITEM => {
+            if (!ITEM.PRODUCT_TYPE.includes(user?.productType as string)) {
+              return null;
+            }
+
+            return (
+              <SidebarMenuItem key={ITEM.TITLE}>
+                <SidebarMenuButton
+                  tooltip={ITEM.TITLE}
+                  onClick={() => handleMenuButton(ITEM.URL)}
+                  className="bg-transparent hover:bg-primary hover:text-secondary rounded-none"
+                >
+                  <ITEM.ICON />
+                  <span>{ITEM.TITLE}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
         {!isMobile && open && <SidebarTrigger />}
       </SidebarGroupContent>

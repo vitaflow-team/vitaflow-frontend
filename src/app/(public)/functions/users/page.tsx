@@ -5,6 +5,7 @@ import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
 import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
 import { Activity, Apple, Dumbbell, MessageCircle } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function Users() {
   const [productsPlans, err] = await actionGetProductsPlans();
@@ -30,12 +31,14 @@ export default async function Users() {
             </span>
           </div>
           <div className="flex flex-row justify-end md:flex-row w-full mb-2">
-            <Button
-              size="lg"
-              className="w-52 md:w-64 text-lg md:text-xl p-6 md:p-8"
-            >
-              Crie sua conta gratuita
-            </Button>
+            <Link href="/signup">
+              <Button
+                size="lg"
+                className="w-52 md:w-64 text-lg md:text-xl p-6 md:p-8"
+              >
+                Crie sua conta gratuita
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -95,16 +98,18 @@ export default async function Users() {
         </span>
       </div>
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
-        {userProducts.map(product => (
-          <CardUpgrade
-            key={product.id}
-            title={product.name}
-            value={product.price}
-            information={true}
-            active={false}
-            itens={product.productInfos.map(info => info.description)}
-          />
-        ))}
+        {userProducts
+          .sort((a, b) => a.price - b.price)
+          .map(product => (
+            <CardUpgrade
+              key={product.id}
+              title={product.name}
+              value={product.price}
+              information={true}
+              active={false}
+              itens={product.productInfos.map(info => info.description)}
+            />
+          ))}
       </div>
     </div>
   );
