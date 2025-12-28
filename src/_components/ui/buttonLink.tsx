@@ -25,6 +25,7 @@ export function ButtonLink({
     <Button
       variant={variant}
       size="default"
+      type="button"
       onClick={() => router.push(url)}
       {...props}
     >
