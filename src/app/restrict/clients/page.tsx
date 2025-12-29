@@ -11,11 +11,15 @@ import { useEffect } from 'react';
 import { useServerAction } from 'zsa-react';
 
 export default function ClientsPage() {
-  const { execute, data } = useServerAction(actionGetClientsByUser);
+  const { execute, data, isPending } = useServerAction(actionGetClientsByUser);
   const { execute: executeDelete } = useServerAction(actionDeleteClientsByUser);
 
   useEffect(() => {
-    execute();
+    async function LoadData() {
+      await execute();
+    }
+
+    LoadData();
   }, [execute]);
 
   return (
@@ -35,6 +39,7 @@ export default function ClientsPage() {
         <DataTable
           columns={clientColumnDef}
           data={data || []}
+          isPending={isPending}
           pageSize={50}
           getEditLink={row => `/restrict/clients/${row.id}`}
           deleteAction={async row => {

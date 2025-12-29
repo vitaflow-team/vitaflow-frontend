@@ -3,7 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { z } from 'zod';
 
 export const clientSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string().min(1, 'O nome é obrigatório'),
   phone: z
     .string()
@@ -35,9 +35,8 @@ export const clientSchema = z.object({
         message: 'Data inválida',
       }
     ),
-  professionalId: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export type ClientFormData = z.infer<typeof clientSchema>;

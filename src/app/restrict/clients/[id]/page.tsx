@@ -1,5 +1,7 @@
 'use client';
 
+import { actionGetClientById } from '@/_actions/clients/getClientById';
+import { actionPostClientByUser } from '@/_actions/clients/postClientsByUser';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
@@ -16,13 +18,28 @@ import { formatPhone } from '@/_lib/stringUtils';
 import { zodResolverFixed } from '@/_lib/zodResolverHelper';
 import { ClientFormData, clientSchema } from '@/_schema/client';
 import { Mail } from 'lucide-react';
+import { use, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useServerAction } from 'zsa-react';
 
-export default function ClientPage({ params }: { params: { id: string } }) {
+export default function ClientPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  const {
+    execute: executeGet,
+    data: dataGet,
+    isPending: isPendingGet,
+  } = useServerAction(actionGetClientById);
+  const { execute: executePost, isPending: isPendingPost } = useServerAction(
+    actionPostClientByUser
+  );
+
   const methods = useForm<ClientFormData>({
     resolver: zodResolverFixed(clientSchema),
     defaultValues: {
-      id: undefined,
       name: '',
       birthDate: '',
       email: '',
@@ -30,19 +47,51 @@ export default function ClientPage({ params }: { params: { id: string } }) {
     },
   });
 
-  const { id } = params;
+  useEffect(() => {
+    async function LoadData() {
+      await executeGet({ id });
+    }
 
-  if (id !== '0') {
-    console.log('buscar usuário');
+    LoadData();
+  }, []);
+
+  useEffect(() => {
+    if (dataGet) {
+      methods.reset({
+        name: dataGet.name || '',
+        birthDate: dataGet.birthDate
+          ? new Date(dataGet.birthDate).toISOString().split('T')[0]
+          : '',
+        email: dataGet.email || '',
+        phone: dataGet.phone || '',
+      });
+    }
+  }, [dataGet]);
+
+  async function onSubmit({ name, phone, email, birthDate }: ClientFormData) {
+    await executePost({
+      id: id === '0' ? null : id,
+      name,
+      phone,
+      email,
+      birthDate,
+    });
   }
 
   return (
     <DefaultLayout>
       <Form {...methods}>
-        <form className="flex flex-col w-full gap-6">
+        <form
+          className="flex flex-col w-full gap-6"
+          onSubmit={methods.handleSubmit(onSubmit)}
+        >
           <Title styled="form" label="Cadastro de clientes">
             <div className="flex gap-2 py-2 md:py-0 w-full justify-between md:justify-end">
-              <Button type="submit" className="w-32">
+              <Button
+                type="submit"
+                className="w-32"
+                disabled={isPendingPost || isPendingGet}
+              >
                 Salvar
               </Button>
               <ButtonLink
@@ -50,11 +99,12 @@ export default function ClientPage({ params }: { params: { id: string } }) {
                 url="/restrict/clients"
                 label="Cancelar"
                 className="w-32"
+                disabled={isPendingPost || isPendingGet}
               />
             </div>
           </Title>
 
-          <div className="flex flex-col w-full">
+          <div className="flex flex-col w-full px-2">
             <div className="grid grid-rows-2 xl:grid-rows-1 xl:grid-cols-3 gap-0 xl:gap-4 w-full">
               <FormField
                 control={methods.control}
@@ -63,7 +113,11 @@ export default function ClientPage({ params }: { params: { id: string } }) {
                   <FormItem className="xl:col-span-2">
                     <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <Input id="name" {...field} />
+                      <Input
+                        id="name"
+                        {...field}
+                        disabled={isPendingPost || isPendingGet}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -81,6 +135,7 @@ export default function ClientPage({ params }: { params: { id: string } }) {
                         {...field}
                         type="date"
                         max={new Date().toISOString().split('T')[0]}
+                        disabled={isPendingPost || isPendingGet}
                       />
                     </FormControl>
                   </FormItem>
@@ -96,7 +151,12 @@ export default function ClientPage({ params }: { params: { id: string } }) {
                   <FormItem className="xl:col-span-2">
                     <FormLabel>E-Mail</FormLabel>
                     <FormControl>
-                      <Input id="email" {...field} icon={Mail} />
+                      <Input
+                        id="email"
+                        {...field}
+                        icon={Mail}
+                        disabled={isPendingPost || isPendingGet}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
@@ -116,6 +176,7 @@ export default function ClientPage({ params }: { params: { id: string } }) {
                           const formatted = formatPhone(e.target.value);
                           field.onChange(formatted);
                         }}
+                        disabled={isPendingPost || isPendingGet}
                       />
                     </FormControl>
                   </FormItem>

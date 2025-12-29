@@ -40,12 +40,14 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from './dropdown-menu';
+import { Loading } from './loading';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   showSelectColumn?: boolean;
   data: TData[];
   pageSize?: number;
+  isPending?: boolean;
   messageNotFound?: string;
   getEditLink?: (row: TData) => string;
   deleteAction?: (row: TData) => Promise<any>;
@@ -63,6 +65,7 @@ export function DataTable<TData, TValue>({
   data,
   showSelectColumn = false,
   pageSize = 50,
+  isPending = false,
   messageNotFound = 'Sem resultados',
   getEditLink,
   deleteAction,
@@ -408,6 +411,8 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
+  ) : isPending ? (
+    <Loading />
   ) : (
     <span className="w-full italic text-center">{messageNotFound}</span>
   );
