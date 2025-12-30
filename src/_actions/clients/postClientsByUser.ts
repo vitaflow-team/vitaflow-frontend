@@ -1,8 +1,9 @@
 'use server';
 
+import { AppError } from '@/_lib/AppError';
 import { apiClient } from '@/_lib/apiClient';
 import { clientSchema } from '@/_schema/client';
-import { createServerAction, ZSAError } from 'zsa';
+import { ZSAError, createServerAction } from 'zsa';
 
 export const actionPostClientByUser = createServerAction()
   .input(clientSchema)
@@ -15,7 +16,7 @@ export const actionPostClientByUser = createServerAction()
       });
       return clients;
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof AppError) {
         throw new ZSAError('ERROR', error.message);
       }
       throw new ZSAError('ERROR', 'Erro ao criar ou alterar o cliente.');

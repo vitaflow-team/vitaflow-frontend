@@ -32,7 +32,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './alert-dialog';
-import { Button } from './button';
+import { Button, buttonVariants } from './button';
 import { Checkbox } from './checkbox';
 import {
   DropdownMenu,
@@ -178,13 +178,19 @@ export function DataTable<TData, TValue>({
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogCancel className="w-full sm:w-32">
+                      Cancelar
+                    </AlertDialogCancel>
                     <AlertDialogAction
+                      className={cn(
+                        buttonVariants({ variant: 'destructive' }),
+                        'w-full sm:w-32'
+                      )}
                       onClick={async () => {
                         await deleteAction(row.original);
                       }}
                     >
-                      Continuar
+                      Sim
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

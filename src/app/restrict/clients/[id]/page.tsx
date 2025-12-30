@@ -14,6 +14,8 @@ import {
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { Title } from '@/_components/ui/title';
+import { useAlertHook } from '@/_hooks/alert_hook';
+import { useFormRedirect } from '@/_hooks/useFormRedirect';
 import { formatPhone } from '@/_lib/stringUtils';
 import { zodResolverFixed } from '@/_lib/zodResolverHelper';
 import { ClientFormData, clientSchema } from '@/_schema/client';
@@ -46,6 +48,8 @@ export default function ClientPage({
       phone: '',
     },
   });
+  const { openError } = useAlertHook();
+  const { onSuccess, backUrl } = useFormRedirect('/restrict/clients');
 
   useEffect(() => {
     async function LoadData() {
@@ -69,13 +73,22 @@ export default function ClientPage({
   }, [dataGet]);
 
   async function onSubmit({ name, phone, email, birthDate }: ClientFormData) {
-    await executePost({
-      id: id === '0' ? null : id,
+    const [data, error] = await executePost({
+      id: id === '0' ? undefined : id,
       name,
       phone,
       email,
       birthDate,
     });
+    if (error) {
+      openError(
+        error.message || 'Erro desconhecido no cadastro.',
+        'Atenção!',
+        'error'
+      );
+      return;
+    }
+    onSuccess();
   }
 
   return (
@@ -96,7 +109,7 @@ export default function ClientPage({
               </Button>
               <ButtonLink
                 variant="outline"
-                url="/restrict/clients"
+                url={backUrl}
                 label="Cancelar"
                 className="w-32"
                 disabled={isPendingPost || isPendingGet}
