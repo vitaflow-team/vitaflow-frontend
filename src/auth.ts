@@ -55,7 +55,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: credentials!.email as string,
           password: credentials!.password as string,
           socialLogin: false,
-        }).catch(() => {
+        }).catch(error => {
+          console.error('Authorize error:', error);
           return null;
         });
 
