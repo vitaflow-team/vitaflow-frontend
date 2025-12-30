@@ -14,11 +14,18 @@ export interface Client {
   updatedAt: string;
 }
 
+import { auth } from '@/auth';
 import { z } from 'zod';
 
 export const actionDeleteClientsByUser = createServerAction()
   .input(z.object({ id: z.string() }))
   .handler(async ({ input }) => {
+    const session = await auth();
+
+    if (!session?.user) {
+      throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado');
+    }
+
     try {
       const { id } = input;
       const clients = await apiClient(`/clients/${id}`, {

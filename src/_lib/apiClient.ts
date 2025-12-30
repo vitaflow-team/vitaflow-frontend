@@ -29,6 +29,8 @@ export async function apiClient<T = unknown>(
     headers.set('Content-Type', 'application/json');
   }
 
+  headers.set('x-application-secret', process.env.APP_SECRET_KEY!);
+
   const config: RequestInit = {
     ...init,
     headers,

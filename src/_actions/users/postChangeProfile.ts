@@ -9,7 +9,10 @@ export const actionChangeProfile = createServerAction()
   .input(profileSchema)
   .handler(async ({ input: userProfile }) => {
     const session = await auth();
-    if (!session) return null;
+
+    if (!session?.user) {
+      throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado');
+    }
 
     const formData = new FormData();
     formData.append('name', userProfile.name);
