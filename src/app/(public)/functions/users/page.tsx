@@ -1,11 +1,11 @@
-'use server';
-
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
 import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
 import { Activity, Apple, Dumbbell, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Users() {
   const [productsPlans, err] = await actionGetProductsPlans();

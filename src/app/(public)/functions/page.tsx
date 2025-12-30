@@ -1,5 +1,3 @@
-'use server';
-
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
@@ -11,6 +9,8 @@ import {
   Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Functions() {
   const [productsPlans, err] = await actionGetProductsPlans();

@@ -29,7 +29,11 @@ export async function apiClient<T = unknown>(
     headers.set('Content-Type', 'application/json');
   }
 
-  headers.set('x-application-secret', process.env.APP_SECRET_KEY!);
+  const appSecretKey = process.env.APP_SECRET_KEY;
+  if (!appSecretKey) {
+    throw new AppError('Internal Error: APP_SECRET_KEY is not defined.');
+  }
+  headers.set('x-application-secret', appSecretKey);
 
   const config: RequestInit = {
     ...init,
