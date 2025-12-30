@@ -1,5 +1,6 @@
 'use client';
 
+import { actionDeleteClientsByUser } from '@/_actions/clients/deleteClientsByUser';
 import { actionGetClientsByUser } from '@/_actions/clients/getClientsByUser';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { ButtonLink } from '@/_components/ui/buttonLink';
@@ -10,10 +11,15 @@ import { useEffect } from 'react';
 import { useServerAction } from 'zsa-react';
 
 export default function ClientsPage() {
-  const { execute, data } = useServerAction(actionGetClientsByUser);
+  const { execute, data, isPending } = useServerAction(actionGetClientsByUser);
+  const { execute: executeDelete } = useServerAction(actionDeleteClientsByUser);
 
   useEffect(() => {
-    execute();
+    async function LoadData() {
+      await execute();
+    }
+
+    LoadData();
   }, [execute]);
 
   return (
@@ -30,7 +36,17 @@ export default function ClientsPage() {
         />
       </Title>
       <div className="flex w-full h-full">
-        <DataTable columns={clientColumnDef} data={data || []} pageSize={50} />
+        <DataTable
+          columns={clientColumnDef}
+          data={data || []}
+          isPending={isPending}
+          pageSize={50}
+          getEditLink={row => `/restrict/clients/${row.id}`}
+          deleteAction={async row => {
+            await executeDelete({ id: row.id });
+            execute();
+          }}
+        />
       </div>
     </DefaultLayout>
   );

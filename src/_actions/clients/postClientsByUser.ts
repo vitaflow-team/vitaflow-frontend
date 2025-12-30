@@ -1,27 +1,24 @@
 'use server';
 
+import { AppError } from '@/_lib/AppError';
 import { apiClient } from '@/_lib/apiClient';
-import { createServerAction, ZSAError } from 'zsa';
+import { clientSchema } from '@/_schema/client';
+import { ZSAError, createServerAction } from 'zsa';
 
-export interface Client {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  birthDate: string;
-  professionalId: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const actionGetClientsByUser = createServerAction().handler(async () => {
-  try {
-    const clients = await apiClient<Client[]>('/clients', { method: 'GET' });
-    return clients;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new ZSAError('ERROR', error.message);
+export const actionPostClientByUser = createServerAction()
+  .input(clientSchema)
+  .handler(async ({ input: { id, name, birthDate, email, phone } }) => {
+    console.log(id, name, birthDate, email, phone);
+    try {
+      const clients = await apiClient('/clients', {
+        method: 'POST',
+        body: JSON.stringify({ id, name, birthDate, email, phone }),
+      });
+      return clients;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw new ZSAError('ERROR', error.message);
+      }
+      throw new ZSAError('ERROR', 'Erro ao criar ou alterar o cliente.');
     }
-    throw new ZSAError('ERROR', 'Erro ao buscar clientes.');
-  }
-});
+  });

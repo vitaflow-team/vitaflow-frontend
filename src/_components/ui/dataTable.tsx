@@ -2,15 +2,6 @@
 'use client';
 
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-
-import {
   Table,
   TableBody,
   TableCell,
@@ -19,9 +10,29 @@ import {
   TableRow,
 } from '@/_components/ui/table';
 import { cn } from '@/_lib/utils';
-import { Edit, Settings2 } from 'lucide-react';
+import {
+  ColumnDef,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { Edit, Settings2, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { Button } from './button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './alert-dialog';
+import { Button, buttonVariants } from './button';
 import { Checkbox } from './checkbox';
 import {
   DropdownMenu,
@@ -29,12 +40,17 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from './dropdown-menu';
+import { Loading } from './loading';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
+  showSelectColumn?: boolean;
   data: TData[];
   pageSize?: number;
+  isPending?: boolean;
   messageNotFound?: string;
+  getEditLink?: (row: TData) => string;
+  deleteAction?: (row: TData) => Promise<any>;
 }
 
 declare module '@tanstack/react-table' {
@@ -47,106 +63,146 @@ declare module '@tanstack/react-table' {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  showSelectColumn = false,
   pageSize = 50,
+  isPending = false,
   messageNotFound = 'Sem resultados',
+  getEditLink,
+  deleteAction,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
-  const selectColumn: ColumnDef<TData, TValue> = {
-    id: 'select',
-    header: ({ table }) => (
-      <div className="flex w-6 items-center justify-center mx-2 px-2">
-        <Checkbox
-          className="bg-white"
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Selecionar todos"
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex w-6 items-center justify-center mx-2 px-2">
-        <Checkbox
-          className="bg-white"
-          checked={row.getIsSelected()}
-          onCheckedChange={value => row.toggleSelected(!!value)}
-          aria-label="Selecionar linha"
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  };
-
-  const settingsColumn: ColumnDef<TData, TValue> = {
-    id: 'settings',
-    header: ({ table }) => (
-      <div className="flex justify-center items-center max-w-14 w-14">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Settings2 className="size-4 cursor-pointer" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
-            {table
-              .getAllLeafColumns()
-              .filter(col => col.id !== 'select' && col.id !== 'settings')
-              .map(col => {
-                const isMobile =
-                  typeof window !== 'undefined' && window.innerWidth < 640;
-
-                const visibleDataColumns = table
-                  .getAllLeafColumns()
-                  .filter(c => {
-                    if (c.id === 'select' || c.id === 'settings') return false;
-                    if (isMobile && shouldHideOnMobile(c)) return false;
-                    return c.getIsVisible();
-                  }).length;
-
-                const label =
-                  typeof col.columnDef.header === 'function'
-                    ? col.columnDef.header({ table, column: col } as any)
-                    : (col.columnDef.header ?? String(col.id));
-
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={col.id}
-                    className={cn(
-                      'capitalize',
-                      shouldHideOnMobile(col) ? 'hidden sm:flex' : ''
-                    )}
-                    checked={col.getIsVisible()}
-                    onCheckedChange={(checked: boolean) => {
-                      if (!checked && visibleDataColumns <= 1) return;
-                      col.toggleVisibility(checked);
-                    }}
-                  >
-                    {label}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-    cell: () => (
-      <div className="flex justify-center items-center max-w-14 w-14 gap-2">
-        <Edit className="size-4" />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  };
-
-  const visibleUserColumnsCount = columns.filter(col => {
-    const colId = (col as any).id ?? (col as any).accessorKey;
-    const isVisible = columnVisibility[colId] !== false;
-    return isVisible;
-  }).length;
-
   const allColumns = useMemo(() => {
+    const selectColumn: ColumnDef<TData, TValue> = {
+      id: 'select',
+      header: ({ table }) => (
+        <div className="flex w-6 items-center justify-center mx-2 px-2">
+          <Checkbox
+            className="bg-white"
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Selecionar todos"
+          />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="flex w-6 items-center justify-center mx-2 px-2">
+          <Checkbox
+            className="bg-white"
+            checked={row.getIsSelected()}
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            aria-label="Selecionar linha"
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    };
+
+    const settingsColumn: ColumnDef<TData, TValue> = {
+      id: 'settings',
+      header: ({ table }) => (
+        <div className="flex justify-center items-center max-w-14 w-14">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Settings2 className="size-4 cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              {table
+                .getAllLeafColumns()
+                .filter(col => col.id !== 'select' && col.id !== 'settings')
+                .map(col => {
+                  const isMobile =
+                    typeof window !== 'undefined' && window.innerWidth < 640;
+
+                  const visibleDataColumns = table
+                    .getAllLeafColumns()
+                    .filter(c => {
+                      if (c.id === 'select' || c.id === 'settings')
+                        return false;
+                      if (isMobile && shouldHideOnMobile(c)) return false;
+                      return c.getIsVisible();
+                    }).length;
+
+                  const label =
+                    typeof col.columnDef.header === 'function'
+                      ? col.columnDef.header({ table, column: col } as any)
+                      : (col.columnDef.header ?? String(col.id));
+
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={col.id}
+                      className={cn(
+                        'capitalize',
+                        shouldHideOnMobile(col) ? 'hidden sm:flex' : ''
+                      )}
+                      checked={col.getIsVisible()}
+                      onCheckedChange={(checked: boolean) => {
+                        if (!checked && visibleDataColumns <= 1) return;
+                        col.toggleVisibility(checked);
+                      }}
+                    >
+                      {label}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex justify-center items-center content-center max-w-14 w-14 gap-3">
+            {getEditLink && (
+              <Link
+                href={getEditLink(row.original)}
+                className="text-foreground"
+              >
+                <Edit className="size-4" />
+              </Link>
+            )}
+            {deleteAction && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Trash2 className="size-4 cursor-pointer text-destructive" />
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não pode ser desfeita. Isso excluirá
+                      permanentemente o registro.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="w-full sm:w-32">
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className={cn(
+                        buttonVariants({ variant: 'destructive' }),
+                        'w-full sm:w-32'
+                      )}
+                      onClick={async () => {
+                        await deleteAction(row.original);
+                      }}
+                    >
+                      Sim
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
+        );
+      },
+      enableSorting: false,
+      enableHiding: false,
+    };
+
     const columnsWithoutSize = columns.filter(c => !c.size);
     const hasFlexibleColumns = columnsWithoutSize.length > 0;
 
@@ -167,7 +223,7 @@ export function DataTable<TData, TValue>({
     });
 
     return [selectColumn, ...modifiedColumns, settingsColumn];
-  }, [columns, columnVisibility]);
+  }, [columns, getEditLink, deleteAction]);
 
   const table = useReactTable({
     data,
@@ -220,7 +276,10 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="flex w-full gap-1 md:gap-3"
+                className={cn(
+                  'flex w-full gap-1 md:gap-3',
+                  !showSelectColumn ? 'pl-2' : ''
+                )}
               >
                 {headerGroup.headers.map(header => {
                   const isSelectColumn = header.column.id === 'select';
@@ -231,13 +290,15 @@ export function DataTable<TData, TValue>({
                       ? 'items-center content-center text-right m-0 p-0'
                       : 'items-center content-center text-left m-0 p-0';
 
+                  if (!showSelectColumn && isSelectColumn) return;
+
                   return (
                     <TableHead
                       key={header.id}
                       className={cn(
                         alignClass,
                         isSelectColumn ? 'max-w-9' : '',
-                        isSettingsColumn ? 'max-w-14 w-14' : '',
+                        isSettingsColumn ? 'ml-auto max-w-14 w-14' : '',
                         'overflow-hidden truncate whitespace-nowrap',
                         shouldHideOnMobile(header.column)
                           ? 'hidden sm:flex'
@@ -266,7 +327,10 @@ export function DataTable<TData, TValue>({
             {table.getRowModel().rows.map(row => (
               <TableRow
                 key={row.id}
-                className="flex gap-1 md:gap-3 w-full hover:bg-secondary/40 p-0 m-0"
+                className={cn(
+                  'flex gap-1 md:gap-3 w-full hover:bg-secondary/40 p-0 m-0',
+                  !showSelectColumn ? 'pl-2' : ''
+                )}
               >
                 {row.getVisibleCells().map(cell => {
                   const isSelectColumn = cell.column.id === 'select';
@@ -286,6 +350,8 @@ export function DataTable<TData, TValue>({
                     typeof cellContent === 'string'
                       ? cellContent
                       : String(row.getValue(cell.column.id));
+
+                  if (!showSelectColumn && isSelectColumn) return;
 
                   return (
                     <TableCell
@@ -325,10 +391,12 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-muted-foreground flex-1 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} de{' '}
-          {table.getFilteredRowModel().rows.length} registros selecionados.
-        </div>
+        {showSelectColumn && (
+          <div className="text-muted-foreground flex-1 text-sm">
+            {table.getFilteredSelectedRowModel().rows.length} de{' '}
+            {table.getFilteredRowModel().rows.length} registros selecionados.
+          </div>
+        )}
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -349,6 +417,8 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
+  ) : isPending ? (
+    <Loading />
   ) : (
     <span className="w-full italic text-center">{messageNotFound}</span>
   );
