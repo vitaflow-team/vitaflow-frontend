@@ -1,19 +1,9 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { ClientFormData } from '@/_schema/client';
 import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
-
-export interface Client {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  birthDate: string;
-  professionalId: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export const actionGetClientsByUser = createServerAction().handler(async () => {
   const session = await auth();
@@ -23,7 +13,10 @@ export const actionGetClientsByUser = createServerAction().handler(async () => {
   }
 
   try {
-    const clients = await apiClient<Client[]>('/clients', { method: 'GET' });
+    const clients = await apiClient<ClientFormData[]>('/clients', {
+      method: 'GET',
+      next: { tags: ['list-clientsByUser'] },
+    });
     return clients;
   } catch (error) {
     if (error instanceof Error) {

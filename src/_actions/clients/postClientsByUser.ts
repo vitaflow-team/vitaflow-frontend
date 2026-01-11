@@ -4,6 +4,7 @@ import { apiClient } from '@/_lib/apiClient';
 import { AppError } from '@/_lib/AppError';
 import { clientSchema } from '@/_schema/client';
 import { auth } from '@/auth';
+import { revalidateTag } from 'next/cache';
 import { createServerAction, ZSAError } from 'zsa';
 
 export const actionPostClientByUser = createServerAction()
@@ -21,6 +22,9 @@ export const actionPostClientByUser = createServerAction()
         method: 'POST',
         body: JSON.stringify({ id, name, birthDate, email, phone }),
       });
+
+      revalidateTag('list-clientsByUser', { expire: 0 });
+
       return clients;
     } catch (error) {
       if (error instanceof AppError) {
