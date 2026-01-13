@@ -48,28 +48,50 @@ export const actionCreateCheckoutSession = createServerAction()
       );
     }
 
-    // 2. Initialize Stripe
-    if (!process.env.STRIPE_SECRET_KEY) {
+    if (!process.env.STRIPE_API_KEY) {
       throw new ZSAError(
         'ERROR',
         'Serviço de pagamento não configurado (Chave Stripe ausente).'
       );
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    const stripe = new Stripe(process.env.STRIPE_API_KEY, {
       typescript: true,
     });
+
+    let priceId = product.stripeId;
+
+    if (product.stripeId.startsWith('prod_')) {
+      try {
+        const prices = await stripe.prices.list({
+          product: product.stripeId,
+          active: true,
+          limit: 1,
+        });
+
+        if (prices.data.length === 0) {
+          throw new ZSAError(
+            'ERROR',
+            'Nenhum preço encontrado para este produto no Stripe.'
+          );
+        }
+
+        priceId = prices.data[0].id;
+      } catch (error) {
+        console.error('Error fetching prices:', error);
+        throw new ZSAError('ERROR', 'Erro ao buscar preço do produto.');
+      }
+    }
 
     const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
     try {
-      // 3. Create Checkout Session
       const checkoutSession = await stripe.checkout.sessions.create({
-        mode: 'subscription', // Assuming it's a subscription
+        mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [
           {
-            price: product.stripeId,
+            price: priceId,
             quantity: 1,
           },
         ],
