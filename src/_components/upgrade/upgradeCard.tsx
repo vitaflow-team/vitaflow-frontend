@@ -8,13 +8,13 @@ import {
 
 import { Check } from 'lucide-react';
 import Image from 'next/image';
-import { ButtonLink } from './buttonLink';
+import { UpgradeCheckout } from './upgradeCheckout';
 
-interface CardUpgradeItemProps {
+interface UpgradeCardItemProps {
   label: string;
 }
 
-export function CardUpgradeItem({ label }: CardUpgradeItemProps) {
+export function UpgradeCardItem({ label }: UpgradeCardItemProps) {
   return (
     <div className="flex flex-row gap-2 w-full text-sm">
       <div>
@@ -25,7 +25,7 @@ export function CardUpgradeItem({ label }: CardUpgradeItemProps) {
   );
 }
 
-interface CardUpgradeProps {
+interface UpgradeCardProps {
   title: string;
   value?: number;
   active?: boolean;
@@ -34,14 +34,14 @@ interface CardUpgradeProps {
   itens?: string[];
 }
 
-export function CardUpgrade({
+export function UpgradeCard({
   title,
   value = 0,
   active = false,
   information = false,
   itens,
   productId,
-}: CardUpgradeProps) {
+}: UpgradeCardProps) {
   const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -55,7 +55,7 @@ export function CardUpgrade({
           alt="Selected plan"
           width={100}
           height={100}
-          className="absolute -right-2 -top-2 z-9999"
+          className="absolute -right-2 -top-2 z-2"
         />
       )}
       <div className="flex w-full h-full flex-col gap-2">
@@ -74,16 +74,11 @@ export function CardUpgrade({
         </CardHeader>
         <CardContent className="flex flex-col pb-4 gap-2 text-base h-full">
           {itens?.map((item, index) => (
-            <CardUpgradeItem key={index} label={item} />
+            <UpgradeCardItem key={index} label={item} />
           ))}
         </CardContent>
-        {!information && (
-          <ButtonLink
-            url={`/checkout/${productId}`}
-            className="rounded-t-none px-1 w-full"
-            disabled={active}
-            label={active ? 'Plano ativo' : 'Escolher este plano'}
-          />
+        {!information && !active && productId && (
+          <UpgradeCheckout productId={productId} />
         )}
       </div>
     </Card>

@@ -1,6 +1,5 @@
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import DefaultLayout from '@/_components/layout/defaultLayout';
-import { CardUpgrade } from '@/_components/ui/cardUpgrade';
 import {
   Tabs,
   TabsContent,
@@ -8,6 +7,7 @@ import {
   TabsTrigger,
 } from '@/_components/ui/tabs';
 import { Title } from '@/_components/ui/title';
+import { UpgradeCard } from '@/_components/upgrade/upgradeCard';
 import { apiClient } from '@/_lib/apiClient';
 import { profileFormData } from '@/_schema/profile';
 import { auth } from '@/auth';
@@ -29,7 +29,7 @@ export default async function Settings() {
     return <div>Erro ao carregar perfil. Tente novamente mais tarde.</div>;
   }
 
-  const [productsPlans, err] = await actionGetProductsPlans();
+  const [productsPlans] = await actionGetProductsPlans();
   const plans = productsPlans || [];
 
   return (
@@ -60,7 +60,7 @@ export default async function Settings() {
               {plan.products
                 .sort((a, b) => a.price - b.price)
                 .map(product => (
-                  <CardUpgrade
+                  <UpgradeCard
                     key={product.id}
                     title={product.name}
                     value={product.price}

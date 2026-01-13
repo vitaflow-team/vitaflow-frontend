@@ -1,7 +1,10 @@
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import {
+  UpgradeCard,
+  UpgradeCardItem,
+} from '@/_components/upgrade/upgradeCard';
 import {
   ClipboardList,
   HandCoins,
@@ -13,7 +16,7 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function Nutritionists() {
-  const [productsPlans, err] = await actionGetProductsPlans();
+  const [productsPlans] = await actionGetProductsPlans();
   const plans = productsPlans || [];
 
   const nutritionistPlanGroup = plans.find(
@@ -55,8 +58,8 @@ export default async function Nutritionists() {
             Atendimento inteligente
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
-            <CardUpgradeItem label="Visualize a evolução nutricional com gráficos automáticos." />
+            <UpgradeCardItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
+            <UpgradeCardItem label="Visualize a evolução nutricional com gráficos automáticos." />
           </CardContent>
         </Card>
 
@@ -66,8 +69,8 @@ export default async function Nutritionists() {
             Gestão financeira
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
-            <CardUpgradeItem label="Visualize a evolução nutricional com gráficos automáticos." />
+            <UpgradeCardItem label="Prescreva cardápios e planos alimentares personalizados em minutos." />
+            <UpgradeCardItem label="Visualize a evolução nutricional com gráficos automáticos." />
           </CardContent>
         </Card>
 
@@ -77,8 +80,8 @@ export default async function Nutritionists() {
             Relacionamento e fidelização
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Comunicação direta com pacientes." />
-            <CardUpgradeItem label="Relatórios de evolução e acompanhamento de metas." />
+            <UpgradeCardItem label="Comunicação direta com pacientes." />
+            <UpgradeCardItem label="Relatórios de evolução e acompanhamento de metas." />
           </CardContent>
         </Card>
 
@@ -88,8 +91,8 @@ export default async function Nutritionists() {
             Tudo em um só lugar
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Centralize planos, consultas, medidas e relatórios." />
-            <CardUpgradeItem label="Acesse de qualquer dispositivo." />
+            <UpgradeCardItem label="Centralize planos, consultas, medidas e relatórios." />
+            <UpgradeCardItem label="Acesse de qualquer dispositivo." />
           </CardContent>
         </Card>
       </div>
@@ -110,7 +113,7 @@ export default async function Nutritionists() {
         {nutritionistProducts
           .sort((a, b) => a.price - b.price)
           .map(product => (
-            <CardUpgrade
+            <UpgradeCard
               key={product.id}
               title={product.name}
               value={product.price}

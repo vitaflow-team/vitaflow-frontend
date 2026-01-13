@@ -1,14 +1,17 @@
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import {
+  UpgradeCard,
+  UpgradeCardItem,
+} from '@/_components/upgrade/upgradeCard';
 import { Activity, Apple, Dumbbell, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Users() {
-  const [productsPlans, err] = await actionGetProductsPlans();
+  const [productsPlans] = await actionGetProductsPlans();
   const plans = productsPlans || [];
 
   const userPlanGroup = plans.find(plan => plan.name === 'Usuário');
@@ -49,7 +52,7 @@ export default async function Users() {
             Treinos personalizados
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Visualize seus treinos, receba atualizações em tempo real e acompanhe seu progresso de forma prática e motivadora." />
+            <UpgradeCardItem label="Visualize seus treinos, receba atualizações em tempo real e acompanhe seu progresso de forma prática e motivadora." />
           </CardContent>
         </Card>
 
@@ -59,7 +62,7 @@ export default async function Users() {
             Nutrição sob medida
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Tenha acesso aos planos alimentares criados pelo seu nutricionista e registre suas refeições com facilidade." />
+            <UpgradeCardItem label="Tenha acesso aos planos alimentares criados pelo seu nutricionista e registre suas refeições com facilidade." />
           </CardContent>
         </Card>
 
@@ -69,8 +72,8 @@ export default async function Users() {
             Evolução em tempo real
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Acompanhe medidas, peso, metas e relatórios de progresso." />
-            <CardUpgradeItem label="Veja sua evolução e mantenha o foco nos resultados." />
+            <UpgradeCardItem label="Acompanhe medidas, peso, metas e relatórios de progresso." />
+            <UpgradeCardItem label="Veja sua evolução e mantenha o foco nos resultados." />
           </CardContent>
         </Card>
 
@@ -80,8 +83,8 @@ export default async function Users() {
             Conexão com profissionais
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Converse com seu treinador e nutricionista em um único lugar." />
-            <CardUpgradeItem label="Receba lembretes, notificações e mensagens de incentivo." />
+            <UpgradeCardItem label="Converse com seu treinador e nutricionista em um único lugar." />
+            <UpgradeCardItem label="Receba lembretes, notificações e mensagens de incentivo." />
           </CardContent>
         </Card>
       </div>
@@ -101,7 +104,7 @@ export default async function Users() {
         {userProducts
           .sort((a, b) => a.price - b.price)
           .map(product => (
-            <CardUpgrade
+            <UpgradeCard
               key={product.id}
               title={product.name}
               value={product.price}

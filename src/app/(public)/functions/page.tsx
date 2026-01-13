@@ -1,7 +1,10 @@
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
 import { Button } from '@/_components/ui/button';
 import { Card, CardContent, CardTitle } from '@/_components/ui/card';
-import { CardUpgrade, CardUpgradeItem } from '@/_components/ui/cardUpgrade';
+import {
+  UpgradeCard,
+  UpgradeCardItem,
+} from '@/_components/upgrade/upgradeCard';
 import {
   ClipboardList,
   HandCoins,
@@ -13,7 +16,7 @@ import Link from 'next/link';
 export const dynamic = 'force-dynamic';
 
 export default async function Functions() {
-  const [productsPlans, err] = await actionGetProductsPlans();
+  const [productsPlans] = await actionGetProductsPlans();
   const plans = productsPlans || [];
 
   const personalPlanGroup = plans.find(
@@ -57,8 +60,8 @@ export default async function Functions() {
             Atendimento inteligente
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Organize treinos, acompanhe resultados e entregue planos personalizados com facilidade." />
-            <CardUpgradeItem label="Com o VitaFlow, você centraliza o progresso dos alunos e oferece uma experiência moderna e motivadora." />
+            <UpgradeCardItem label="Organize treinos, acompanhe resultados e entregue planos personalizados com facilidade." />
+            <UpgradeCardItem label="Com o VitaFlow, você centraliza o progresso dos alunos e oferece uma experiência moderna e motivadora." />
           </CardContent>
         </Card>
 
@@ -68,8 +71,8 @@ export default async function Functions() {
             Gestão financeira
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Controle seus recebimentos, mensalidades e pacotes de treinos em um só lugar." />
-            <CardUpgradeItem label="Visualize relatórios e tenha clareza sobre o fluxo financeiro do seu negócio." />
+            <UpgradeCardItem label="Controle seus recebimentos, mensalidades e pacotes de treinos em um só lugar." />
+            <UpgradeCardItem label="Visualize relatórios e tenha clareza sobre o fluxo financeiro do seu negócio." />
           </CardContent>
         </Card>
 
@@ -79,8 +82,8 @@ export default async function Functions() {
             Relacionamento e fidelização
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Acompanhe o desempenho dos alunos, envie mensagens automáticas e mantenha o engajamento alto." />
-            <CardUpgradeItem label="Transforme cada treino em uma oportunidade de fidelizar seus clientes." />
+            <UpgradeCardItem label="Acompanhe o desempenho dos alunos, envie mensagens automáticas e mantenha o engajamento alto." />
+            <UpgradeCardItem label="Transforme cada treino em uma oportunidade de fidelizar seus clientes." />
           </CardContent>
         </Card>
 
@@ -90,8 +93,8 @@ export default async function Functions() {
             Tudo em um só lugar
           </CardTitle>
           <CardContent className="flex flex-col rounded-b-md p-4 gap-2 text-base h-full border-2 border-primary">
-            <CardUpgradeItem label="Agenda, treinos, pagamentos e comunicação — tudo integrado." />
-            <CardUpgradeItem label="Menos tempo com planilhas, mais tempo com o que realmente importa: seus alunos." />
+            <UpgradeCardItem label="Agenda, treinos, pagamentos e comunicação — tudo integrado." />
+            <UpgradeCardItem label="Menos tempo com planilhas, mais tempo com o que realmente importa: seus alunos." />
           </CardContent>
         </Card>
       </div>
@@ -112,7 +115,7 @@ export default async function Functions() {
         {personalProducts
           .sort((a, b) => a.price - b.price)
           .map(product => (
-            <CardUpgrade
+            <UpgradeCard
               key={product.id}
               title={product.name}
               value={product.price}
