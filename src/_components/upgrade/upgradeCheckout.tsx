@@ -56,7 +56,7 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
       <DialogTrigger className="flex rounded-md rounded-t-none w-full bg-primary ">
         <span className="p-2 w-full text-secondary">Escolher este plano</span>
       </DialogTrigger>
-      <DialogContent className="border-2 shadow-2xl border-primary">
+      <DialogContent className="border-2 shadow-2xl border-primary w-full sm:w-96">
         <DialogHeader>
           <DialogTitle className="pb-2">Finalizar Assinatura</DialogTitle>
           <DialogDescription className="text-center text-primary/80">
@@ -69,7 +69,7 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
         </p>
         <DialogFooter className="flex flex-row w-full items-center content-center justify-center">
           <Button
-            className="px-5 font-semibold w-1/3"
+            className="px-5 font-semibold w-full"
             onClick={handleSubscribe}
             disabled={loading}
           >
