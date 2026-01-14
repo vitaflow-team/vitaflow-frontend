@@ -151,7 +151,7 @@ export default function Home() {
                 className="mt-4 w-full"
                 disabled={isPending}
               >
-                Entrar
+                Criar conta
               </Button>
             </form>
           </Form>
