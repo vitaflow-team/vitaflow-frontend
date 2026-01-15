@@ -22,7 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/_components/ui/tooltip';
-import { useIsMobile } from '@/_hooks/use-mobile';
+import { useIsMobile } from '@/_hooks/useMobile';
 import { cn } from '@/_lib/utils';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';

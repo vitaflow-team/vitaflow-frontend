@@ -19,7 +19,7 @@ import {
   FormLabel,
 } from '@/_components/ui/form';
 import { InputPassword } from '@/_components/ui/inputPass';
-import { useAlertHook } from '@/_hooks/alert_hook';
+import { useAlertHook } from '@/_hooks/alertHook';
 import { newPasswordFormData, newPasswordSchema } from '@/_schema/newPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';

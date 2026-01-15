@@ -15,7 +15,7 @@ import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { Title } from '@/_components/ui/title';
 import { APP_ROUTES } from '@/_constants/routes';
-import { useAlertHook } from '@/_hooks/alert_hook';
+import { useAlertHook } from '@/_hooks/alertHook';
 import { signUpFormData, signUpSchema } from '@/_schema/signup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail } from 'lucide-react';

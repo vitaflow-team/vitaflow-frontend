@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/_components/ui/dialog';
-import { useAlertHook } from '@/_hooks/alert_hook';
+import { useAlertHook } from '@/_hooks/alertHook';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '../ui/button';
