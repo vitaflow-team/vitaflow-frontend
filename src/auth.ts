@@ -3,7 +3,12 @@ import { AppError } from '@/_lib/AppError';
 import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import { actionSignIn } from './_actions/users/postSignin';
+import {
+  actionSignIn,
+  actionSignInWithGoogle,
+} from './_actions/users/postSignin';
+import { clearAccessTokenCookie } from './_lib/accessTokenCookie';
+import { jwtCallback, sessionCallback } from './authCallbacks';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -12,23 +17,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            async profile(profile) {
-              const user = await actionSignIn({
-                email: profile.email,
-                password: profile.sub,
-                socialLogin: true,
-              }).catch(error => {
-                let mensagem;
-                if (error instanceof Error) {
-                  mensagem = error.message;
-                } else {
-                  mensagem = 'Falha ao autenticar via Google';
+            async profile(profile, tokens) {
+              if (!tokens.id_token) {
+                throw new AppError('Falha ao autenticar via Google.');
+              }
+
+              const user = await actionSignInWithGoogle(tokens.id_token).catch(
+                () => {
+                  throw new AppError('Falha ao autenticar via Google.');
                 }
-                throw new AppError(mensagem);
-              });
+              );
 
               if (!user) {
-                throw new AppError('Falha ao autenticar via Google');
+                throw new AppError('Falha ao autenticar via Google.');
               }
 
               return {
@@ -54,7 +55,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const user = await actionSignIn({
           email: credentials!.email as string,
           password: credentials!.password as string,
-          socialLogin: false,
         }).catch(error => {
           console.error('Authorize error:', error);
           return null;
@@ -77,37 +77,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signOut: APP_ROUTES.HOME,
     error: APP_ROUTES.HOME,
   },
+  events: {
+    async signOut() {
+      await clearAccessTokenCookie();
+    },
+  },
   callbacks: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async jwt({ token, user }: { token: any; user: any }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-        token.avatar = user.avatar ?? user.image;
-        token.productId = user.productId;
-        token.productGroupId = user.productGroupId;
-        token.productType = user.productType;
-        token.accessToken = user.accessToken;
-      }
-
-      return token;
-    },
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async session({ session, token }: { session: any; token: any }) {
-      if (token && session.user) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.avatar = token.avatar;
-        session.user.productId = token.productId;
-        session.user.productGroupId = token.productGroupId;
-        session.user.productType = token.productType;
-        session.user.accessToken = token.accessToken;
-      }
-
-      return session;
-    },
+    jwt: params => jwtCallback(params),
+    session: params =>
+      sessionCallback({ session: params.session, token: params.token }),
   },
 });

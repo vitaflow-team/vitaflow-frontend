@@ -47,5 +47,5 @@ export default auth(async (req: any) => {
 });
 
 export const config = {
-  matcher: ['/restrict/:path*'],
+  matcher: ['/signin', '/signup', '/api/auth/:path*', '/restrict/:path*'],
 };
