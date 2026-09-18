@@ -17,6 +17,7 @@ const InputPassword = forwardRef<HTMLInputElement, InputPassProps>(
         {...props}
         type={isPassword ? 'password' : 'text'}
         icon={isPassword ? Eye : EyeOffIcon}
+        iconLabel={isPassword ? 'Mostrar senha' : 'Ocultar senha'}
         onClickIcon={() => setIsPassword(!isPassword)}
       />
     );

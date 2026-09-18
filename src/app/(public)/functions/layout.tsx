@@ -6,8 +6,11 @@ export default function FunctionsLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-col md:flex-row w-full h-full md:gap-4">
-      <div className="flex flex-row md:flex-col pt-2 md:pt-0 md:my-2 w-full md:w-80 gap-2 border-b-[1px] md:border-b-0 md:border-r-[1px] border-secondary px-2 pb-2 md:pb-0 items-center md:items-start justify-center md:justify-start">
+    <div className="flex flex-col w-full h-full">
+      <nav
+        aria-label="Perfis"
+        className="flex flex-row gap-1 w-full my-2 p-1 rounded-lg bg-(--background-secondary) items-center justify-center md:justify-start md:w-fit"
+      >
         <NavLink exact url="/functions">
           Educadores físicos
         </NavLink>
@@ -17,9 +20,9 @@ export default function FunctionsLayout({
         <NavLink exact url="/functions/users">
           Usuários
         </NavLink>
-      </div>
+      </nav>
 
-      <div className="w-full md:mx-6">{children}</div>
+      <div className="w-full">{children}</div>
     </div>
   );
 }

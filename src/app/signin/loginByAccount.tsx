@@ -75,7 +75,7 @@ export function LoginByAccount() {
             <FormItem>
               <FormLabel>E-mail:</FormLabel>
               <FormControl>
-                <Input id="email" {...field} icon={Mail} disabled={isPending} />
+                <Input {...field} icon={Mail} disabled={isPending} />
               </FormControl>
             </FormItem>
           )}
@@ -88,7 +88,7 @@ export function LoginByAccount() {
             <FormItem>
               <FormLabel>Senha:</FormLabel>
               <FormControl>
-                <InputPassword id="password" {...field} disabled={isPending} />
+                <InputPassword {...field} disabled={isPending} />
               </FormControl>
             </FormItem>
           )}

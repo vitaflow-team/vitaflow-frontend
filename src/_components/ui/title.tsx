@@ -29,8 +29,13 @@ export function Title({
     },
   };
 
+  // Antes, este componente sempre renderizava uma <div>, ignorando `size` — por isso o
+  // site inteiro (públicas + área logada) não tinha nenhum H1-H3 de verdade. Agora a tag
+  // HTML acompanha o `size`, sem mudar nada visualmente (as classes continuam as mesmas).
+  const Tag = size;
+
   return (
-    <div
+    <Tag
       {...props}
       className={cn(
         'flex flex-col md:flex-row items-center w-full text-center font-semibold mb-2',
@@ -41,6 +46,6 @@ export function Title({
     >
       <span className="w-full">{label}</span>
       {children}
-    </div>
+    </Tag>
   );
 }

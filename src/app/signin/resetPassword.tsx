@@ -70,12 +70,7 @@ export default function ResetPassword() {
                     <FormItem>
                       <FormLabel>E-mail:</FormLabel>
                       <FormControl>
-                        <Input
-                          id="email"
-                          icon={Mail}
-                          placeholder="E-mail"
-                          {...field}
-                        />
+                        <Input icon={Mail} placeholder="E-mail" {...field} />
                       </FormControl>
                     </FormItem>
                   )}

@@ -100,11 +100,7 @@ export function NewPassword() {
                   <FormItem>
                     <FormLabel>Senha:</FormLabel>
                     <FormControl>
-                      <InputPassword
-                        id="password"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <InputPassword {...field} disabled={isPending} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -117,11 +113,7 @@ export function NewPassword() {
                   <FormItem>
                     <FormLabel>Confirme sua senha:</FormLabel>
                     <FormControl>
-                      <InputPassword
-                        id="checkPassword"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <InputPassword {...field} disabled={isPending} />
                     </FormControl>
                   </FormItem>
                 )}
