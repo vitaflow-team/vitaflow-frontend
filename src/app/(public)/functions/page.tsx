@@ -187,13 +187,14 @@ export default async function Functions() {
       <div className="flex flex-col md:flex-row justify-center w-full p-4 md:p-8 gap-4 md:gap-10">
         {personalProducts
           .sort((a, b) => a.price - b.price)
-          .map(product => (
+          .map((product, index, sorted) => (
             <UpgradeCard
               key={product.id}
               title={product.name}
               value={product.price}
               information={true}
               active={false}
+              featured={sorted.length > 1 && index === sorted.length - 1}
               itens={product.productInfos.map(info => info.description)}
             />
           ))}

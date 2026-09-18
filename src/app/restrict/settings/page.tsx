@@ -59,13 +59,14 @@ export default async function Settings() {
             >
               {plan.products
                 .sort((a, b) => a.price - b.price)
-                .map(product => (
+                .map((product, index, sorted) => (
                   <UpgradeCard
                     key={product.id}
                     title={product.name}
                     value={product.price}
                     information={false}
                     productId={product.id}
+                    featured={sorted.length > 1 && index === sorted.length - 1}
                     active={
                       session.user.productId === product.id ||
                       (session.user.productId === null &&

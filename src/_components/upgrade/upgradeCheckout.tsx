@@ -1,6 +1,5 @@
 'use client';
 
-import { actionCreateCheckoutSession } from '@/_actions/stripe/createCheckoutSession';
 import {
   Dialog,
   DialogContent,
@@ -10,9 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/_components/ui/dialog';
-import { useAlertHook } from '@/_hooks/alertHook';
-import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useStripe } from '@/_hooks/useStripe';
 import { Button } from '../ui/button';
 
 interface UpgradeCheckoutProps {
@@ -20,41 +17,12 @@ interface UpgradeCheckoutProps {
 }
 
 export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
-  const [loading, setLoading] = useState(false);
-  const { openError } = useAlertHook();
-
-  const handleSubscribe = async () => {
-    setLoading(true);
-    try {
-      const [data, err] = await actionCreateCheckoutSession({
-        productId,
-      });
-
-      if (err) {
-        openError(
-          err.message || 'Erro ao iniciar o checkout.',
-          'Atenção!',
-          'error'
-        );
-        return;
-      }
-
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        openError('URL de redirecionamento inválida.', 'Atenção!', 'error');
-      }
-    } catch {
-      openError('Ocorreu um erro inesperado.', 'Atenção!', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { createCheckoutSession } = useStripe();
 
   return (
     <Dialog>
-      <DialogTrigger className="flex rounded-md rounded-t-none w-full bg-primary ">
-        <span className="p-2 w-full text-secondary">Escolher este plano</span>
+      <DialogTrigger asChild>
+        <Button className="w-full">Escolher este plano</Button>
       </DialogTrigger>
       <DialogContent className="border-2 shadow-2xl border-primary w-full sm:w-96">
         <DialogHeader>
@@ -70,17 +38,9 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
         <DialogFooter className="flex flex-row w-full items-center content-center justify-center">
           <Button
             className="px-5 font-semibold w-full"
-            onClick={handleSubscribe}
-            disabled={loading}
+            onClick={() => createCheckoutSession(productId)}
           >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processando...
-              </>
-            ) : (
-              'Ir para Pagamento'
-            )}
+            Ir para Pagamento
           </Button>
         </DialogFooter>
       </DialogContent>
