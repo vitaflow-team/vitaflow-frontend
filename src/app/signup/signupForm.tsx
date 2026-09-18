@@ -4,6 +4,7 @@ import { actionSignUp } from '@/_actions/users/postSignup';
 import { Logo } from '@/_components/layout/logo';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
+import { Checkbox } from '@/_components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -20,6 +21,7 @@ import { signUpFormData, signUpSchema } from '@/_schema/signup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowLeft, Mail } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
@@ -36,6 +38,8 @@ export function SignupForm() {
       email: '',
       password: '',
       checkPassword: '',
+      termsAccepted: false,
+      healthDataConsent: false,
     },
   });
 
@@ -151,6 +155,77 @@ export function SignupForm() {
                     <FormControl>
                       <InputPassword {...field} disabled={isPending} />
                     </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={methods.control}
+                name="termsAccepted"
+                render={({ field }) => (
+                  <FormItem className="flex-row items-start gap-2 mt-2 mb-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={checked =>
+                          field.onChange(checked === true)
+                        }
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormLabel className="h-auto font-normal leading-snug">
+                      Li e aceito os{' '}
+                      <Link
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-primary"
+                      >
+                        Termos de Uso
+                      </Link>{' '}
+                      e a{' '}
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-primary"
+                      >
+                        Política de Privacidade
+                      </Link>
+                      .
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={methods.control}
+                name="healthDataConsent"
+                render={({ field }) => (
+                  <FormItem className="flex-row items-start gap-2 mt-2 mb-0">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={checked =>
+                          field.onChange(checked === true)
+                        }
+                        disabled={isPending}
+                      />
+                    </FormControl>
+                    <FormLabel className="h-auto font-normal leading-snug">
+                      Autorizo o tratamento dos meus dados de saúde (peso,
+                      altura, medidas, treinos e alimentação) que eu vier a
+                      registrar na plataforma, conforme a{' '}
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-primary"
+                      >
+                        Política de Privacidade
+                      </Link>
+                      .
+                    </FormLabel>
                   </FormItem>
                 )}
               />
