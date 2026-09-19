@@ -1,4 +1,4 @@
-import { Dumbbell, Home, User2 } from 'lucide-react';
+import { ChartNoAxesCombined, Dumbbell, Home, User2 } from 'lucide-react';
 
 export const APP_ROUTES = {
   HOME: '/',
@@ -25,6 +25,12 @@ export const APP_ROUTES = {
       URL: '/restrict/workouts',
       ICON: Dumbbell,
       PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+    },
+    {
+      TITLE: 'Minha Evolução',
+      URL: '/restrict/progress',
+      ICON: ChartNoAxesCombined,
+      PRODUCT_TYPE: ['USER'],
     },
   ],
 };
