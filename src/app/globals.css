@@ -32,6 +32,13 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-sage: var(--sage);
+  --color-sage-bg: var(--sage-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -85,6 +92,13 @@
      prática ficava difícil de ler ao lado do texto do rótulo. Escurecida para 38%:
      ~6.3–6.5:1, nitidamente mais legível. */
   --destructive: hsl(14 50% 38%);
+  --destructive-foreground: hsl(48 30% 97%);
+  --sage: hsl(110 24% 32%);
+  --sage-bg: hsl(108 28% 90%);
+  --info: hsl(202 42% 34%);
+  --info-bg: hsl(202 45% 91%);
+  --warn: hsl(35 58% 32%);
+  --warn-bg: hsl(39 72% 90%);
   /* 45 14% 87% tinha só 1.25:1 contra o fundo — border/input viravam quase invisíveis
      (WCAG 1.4.11 pede 3:1 para o contorno de campos de formulário e cards sem
      preenchimento). 50%: ~3.3–3.5:1. */
@@ -128,6 +142,13 @@
     --accent-foreground: hsl(48 24% 93%);
     --icon-accent: hsl(49 39% 73%);
     --destructive: hsl(14 55% 58%);
+    --destructive-foreground: hsl(46 16% 12%);
+    --sage: hsl(110 34% 70%);
+    --sage-bg: hsl(110 20% 18%);
+    --info: hsl(202 48% 72%);
+    --info-bg: hsl(202 24% 18%);
+    --warn: hsl(39 62% 72%);
+    --warn-bg: hsl(39 24% 18%);
     /* 46 10% 21% tinha só 1.52:1 contra o fundo escuro — mesmo problema do tema claro,
        clareada para 40%: ~3.3:1. */
     --border: hsl(46 10% 40%);
