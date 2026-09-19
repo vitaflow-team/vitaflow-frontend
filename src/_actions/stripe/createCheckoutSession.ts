@@ -1,106 +1,83 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { AppError } from '@/_lib/AppError';
+import { stripe } from '@/_lib/stripe';
 import { auth } from '@/auth';
-import Stripe from 'stripe';
-import z from 'zod';
+import { z } from 'zod';
 import { createServerAction, ZSAError } from 'zsa';
 
-const checkoutInputSchema = z.object({
+const ACTIVE_STATUSES = ['active', 'trialing', 'past_due'];
+
+const inputSchema = z.object({
   productId: z.string(),
 });
 
 interface Product {
   id: string;
   name: string;
-  price: number;
   stripeId: string | null;
 }
 
-export const actionCreateCheckoutSession = createServerAction()
-  .input(checkoutInputSchema)
-  .handler(async ({ input }) => {
-    const session = await auth();
+interface SubscriptionState {
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  subscriptionStatus: string | null;
+}
 
-    if (!session || !session.user || !session.user.email) {
+export const actionCreateCheckoutSession = createServerAction()
+  .input(inputSchema)
+  .handler(async ({ input: { productId } }) => {
+    const session = await auth();
+    if (!session?.user?.email || !session.user.id) {
       throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado.');
     }
 
-    const { productId } = input;
-
-    let product: Product;
     try {
-      product = await apiClient<Product>(`/products/${productId}`, {
-        method: 'GET',
-      });
-    } catch (error) {
-      console.error('Error fetching product:', error);
-      throw new ZSAError(
-        'ERROR',
-        'Produto não encontrado ou erro ao buscar detalhes.'
-      );
-    }
+      const [product, subscription] = await Promise.all([
+        apiClient<Product>(`/products/${productId}`, { method: 'GET' }),
+        apiClient<SubscriptionState>('/users/subscription', {
+          method: 'GET',
+        }),
+      ]);
 
-    if (!product.stripeId) {
-      throw new ZSAError(
-        'ERROR',
-        'Este produto não possui configuração de pagamento (Stripe ID ausente).'
-      );
-    }
-
-    if (!process.env.STRIPE_API_KEY) {
-      throw new ZSAError(
-        'ERROR',
-        'Serviço de pagamento não configurado (Chave Stripe ausente).'
-      );
-    }
-
-    const stripe = new Stripe(process.env.STRIPE_API_KEY, {
-      typescript: true,
-    });
-
-    let priceId = product.stripeId;
-
-    if (product.stripeId.startsWith('prod_')) {
-      try {
-        const prices = await stripe.prices.list({
-          product: product.stripeId,
-          active: true,
-          limit: 1,
-        });
-
-        if (prices.data.length === 0) {
-          throw new ZSAError(
-            'ERROR',
-            'Nenhum preço encontrado para este produto no Stripe.'
-          );
-        }
-
-        priceId = prices.data[0].id;
-      } catch (error) {
-        console.error('Error fetching prices:', error);
-        throw new ZSAError('ERROR', 'Erro ao buscar preço do produto.');
+      if (!product.stripeId) {
+        throw new ZSAError(
+          'ERROR',
+          'Este plano não está disponível para assinatura online.'
+        );
       }
-    }
 
-    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      if (
+        subscription.stripeSubscriptionId &&
+        ACTIVE_STATUSES.includes(subscription.subscriptionStatus ?? '')
+      ) {
+        throw new ZSAError(
+          'ERROR',
+          'Você já tem uma assinatura ativa — use "Trocar para este plano" em vez de assinar novamente.'
+        );
+      }
 
-    try {
+      const origin = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: 'subscription',
         payment_method_types: ['card'],
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        customer_email: session.user.email,
-        success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/checkout/cancel`,
+        line_items: [{ price: product.stripeId, quantity: 1 }],
+        customer: subscription.stripeCustomerId ?? undefined,
+        customer_email: subscription.stripeCustomerId
+          ? undefined
+          : session.user.email,
+        success_url: `${origin}/restrict/settings?checkout_session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/restrict/settings`,
         metadata: {
-          userId: session.user.id || '',
-          productId: productId,
+          userId: session.user.id,
+          productId: product.id,
+        },
+        subscription_data: {
+          metadata: {
+            userId: session.user.id,
+          },
         },
       });
 
@@ -112,13 +89,14 @@ export const actionCreateCheckoutSession = createServerAction()
       }
 
       return { url: checkoutSession.url };
-    } catch (stripeError) {
-      console.error('Stripe error:', stripeError);
-      const errorMessage =
-        stripeError instanceof Error ? stripeError.message : 'Unknown error';
-      throw new ZSAError(
-        'ERROR',
-        `Erro ao criar sessão de pagamento: ${errorMessage}`
-      );
+    } catch (error) {
+      if (error instanceof ZSAError) {
+        throw error;
+      }
+      const message =
+        error instanceof AppError || error instanceof Error
+          ? error.message
+          : 'Erro ao iniciar o pagamento.';
+      throw new ZSAError('ERROR', message);
     }
   });
