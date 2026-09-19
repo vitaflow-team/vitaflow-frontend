@@ -6,11 +6,11 @@ import { createServerAction, ZSAError } from 'zsa';
 
 export const actionSignUp = createServerAction()
   .input(signUpSchema)
-  .handler(async ({ input: { name, email, password, checkPassword } }) => {
+  .handler(async ({ input }) => {
     try {
       return await apiClient('/users/signup', {
         method: 'POST',
-        body: JSON.stringify({ name, email, password, checkPassword }),
+        body: JSON.stringify(input),
       });
     } catch (error) {
       if (error instanceof Error) {

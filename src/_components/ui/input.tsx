@@ -6,6 +6,8 @@ import { LucideProps } from 'lucide-react';
 export interface InputProps extends React.ComponentProps<'input'> {
   icon?: React.ComponentType<LucideProps>;
   onClickIcon?: () => void;
+  /** Nome acessível do ícone quando ele é clicável (ex.: "Mostrar senha"). */
+  iconLabel?: string;
 }
 
 function Input({
@@ -16,6 +18,7 @@ function Input({
   id,
   onClickIcon,
   icon: Icon,
+  iconLabel,
   ...props
 }: InputProps) {
   function handleIconClick() {
@@ -40,21 +43,28 @@ function Input({
       )}
     >
       <input
+        id={id}
         type={type}
         data-slot="input"
         className="w-full h-full border-0 outline-none bg-transparent border-hidden"
         {...props}
       />
-      {Icon && (
-        <label htmlFor={id} onClick={() => handleIconClick()}>
-          <Icon
-            className={cn(
-              'text-slate-400 size-5',
-              onClickIcon && !disabled ? 'cursor-pointer' : 'cursor-default',
-              className
-            )}
-          />
-        </label>
+      {Icon && onClickIcon ? (
+        <button
+          type="button"
+          onClick={handleIconClick}
+          disabled={disabled}
+          aria-label={iconLabel ?? 'Alternar'}
+          className="disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+        >
+          <Icon className="text-muted-foreground size-5 cursor-pointer" />
+        </button>
+      ) : (
+        Icon && (
+          <label htmlFor={id}>
+            <Icon className="text-muted-foreground size-5 cursor-default" />
+          </label>
+        )
       )}
     </label>
   );

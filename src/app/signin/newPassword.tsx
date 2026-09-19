@@ -19,7 +19,7 @@ import {
   FormLabel,
 } from '@/_components/ui/form';
 import { InputPassword } from '@/_components/ui/inputPass';
-import { useAlertHook } from '@/_hooks/alert_hook';
+import { useAlertHook } from '@/_hooks/alertHook';
 import { newPasswordFormData, newPasswordSchema } from '@/_schema/newPassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -100,11 +100,7 @@ export function NewPassword() {
                   <FormItem>
                     <FormLabel>Senha:</FormLabel>
                     <FormControl>
-                      <InputPassword
-                        id="password"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <InputPassword {...field} disabled={isPending} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -117,11 +113,7 @@ export function NewPassword() {
                   <FormItem>
                     <FormLabel>Confirme sua senha:</FormLabel>
                     <FormControl>
-                      <InputPassword
-                        id="checkPassword"
-                        {...field}
-                        disabled={isPending}
-                      />
+                      <InputPassword {...field} disabled={isPending} />
                     </FormControl>
                   </FormItem>
                 )}

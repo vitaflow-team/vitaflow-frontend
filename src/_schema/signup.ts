@@ -16,6 +16,13 @@ export const signUpSchema = z
       .refine(value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value), {
         message: 'Deve ter letras maiúsculas, minúsculas e números',
       }),
+    termsAccepted: z.boolean().refine(value => value === true, {
+      message:
+        'É preciso aceitar os Termos de Uso e a Política de Privacidade.',
+    }),
+    healthDataConsent: z.boolean().refine(value => value === true, {
+      message: 'É preciso autorizar o tratamento dos seus dados de saúde.',
+    }),
   })
   .superRefine((data, ctx) => {
     if (data.password !== data.checkPassword) {

@@ -5,10 +5,8 @@ export function Rights() {
   return (
     <div className="flex justify-between pt-2 items-center w-full border-t-[1px] border-secondary pb-2 text-[0.625rem] md:text-sm">
       <div className="flex flex-col">
-        <span>All rights reserved.</span>
-        <span>
-          &copy; Vitaflow - Saúde personalizada. Vida equilibrada. 2025
-        </span>
+        <span>&copy; {new Date().getFullYear()} Vita Flow.</span>
+        <span>Todos os direitos reservados.</span>
       </div>
       <div className="flex flex-col items-center justify-center content-center">
         <span>Developed by:</span>

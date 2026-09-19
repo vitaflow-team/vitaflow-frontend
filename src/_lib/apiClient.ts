@@ -1,3 +1,5 @@
+import { cookies } from 'next/headers';
+import { ACCESS_TOKEN_COOKIE_NAME } from './accessTokenCookie';
 import { AppError } from './AppError';
 import { getEnv } from './getenv';
 
@@ -11,14 +13,9 @@ export async function apiClient<T = unknown>(
 
   const headers = new Headers(init?.headers);
 
-  try {
-    const { auth } = await import('@/auth');
-    const session = await auth();
-    if (session?.user?.accessToken) {
-      headers.set('Authorization', `Bearer ${session.user.accessToken}`);
-    }
-  } catch (error) {
-    console.warn('Failed to retrieve session in apiClient:', error);
+  const accessToken = (await cookies()).get(ACCESS_TOKEN_COOKIE_NAME)?.value;
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
   if (

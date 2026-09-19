@@ -1,18 +1,52 @@
 import { AlertError } from '@/_components/ui/alert-error';
 import type { Metadata } from 'next';
-import { Lato } from 'next/font/google';
+import { Fraunces, Manrope } from 'next/font/google';
 import './globals.css';
 
-const lato = Lato({
-  variable: '--font-lato',
+const manrope = Manrope({
+  variable: '--font-manrope',
   subsets: ['latin'],
-  weight: ['300', '400', '700', '900'],
+  weight: ['400', '500', '600', '700', '800'],
 });
 
+const fraunces = Fraunces({
+  variable: '--font-fraunces',
+  subsets: ['latin'],
+  weight: ['500', '600'],
+  style: ['normal', 'italic'],
+});
+
+const siteUrl = 'https://vitaflow-frontend.vercel.app';
+
+// Metadata base: cada rota pública (Home, Funcionalidades, Contato, Login, Cadastro)
+// define seu próprio title/description em export const metadata, que o Next.js mescla
+// com este por cima — antes disso, todas as páginas compartilhavam o mesmo título e a
+// mesma description, o que o Google tratava como conteúdo duplicado entre as páginas.
 export const metadata: Metadata = {
-  title: 'Vitaflow',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'Vita Flow — Treinos, Nutrição e Evolução em Um Só Lugar',
+    template: '%s | Vita Flow',
+  },
   description:
-    'Vitaflow é uma plataforma de gerenciamento de saúde que permite aos usuários gerenciar suas saúde de forma fácil e eficiente.',
+    'A Vita Flow reúne treinos, planos alimentares e evolução em um só app. Feita para educadores físicos, nutricionistas e quem quer cuidar da própria saúde com acompanhamento real.',
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    siteName: 'Vita Flow',
+    url: siteUrl,
+  },
+};
+
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Vita Flow',
+  url: siteUrl,
+  logo: `${siteUrl}/vitaflow.svg`,
+  description:
+    'Plataforma que conecta educadores físicos, nutricionistas e usuários para gestão de treinos, nutrição e evolução.',
+  sameAs: ['https://www.instagram.com/vitaflowapp/'],
 };
 
 import { AuthProvider } from '@/_components/providers/auth-provider';
@@ -23,8 +57,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${lato.variable} font-lato antialiased max-w-full`}>
+    <html lang="pt-BR">
+      <body
+        className={`${manrope.variable} ${fraunces.variable} font-sans antialiased max-w-full`}
+      >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold"
+        >
+          Pular para o conteúdo
+        </a>
         <AuthProvider>
           <div className="flex w-full max-w-full h-full min-h-dvh">
             <AlertError>{children}</AlertError>

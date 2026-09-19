@@ -9,7 +9,6 @@ declare module 'next-auth' {
     productId?: string | null;
     productGroupId?: string | null;
     productType?: string | null;
-    accessToken?: string;
   }
 
   interface Session {
@@ -19,7 +18,6 @@ declare module 'next-auth' {
       productId?: string | null;
       productGroupId?: string | null;
       productType?: string | null;
-      accessToken?: string;
     } & DefaultSession['user'];
   }
 }
@@ -33,6 +31,5 @@ declare module 'next-auth/jwt' {
     productId?: string | null;
     productGroupId?: string | null;
     productType?: string | null;
-    accessToken?: string;
   }
 }

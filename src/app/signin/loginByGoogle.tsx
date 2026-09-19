@@ -13,13 +13,13 @@ export function LoginByGoogle() {
   }
 
   return (
-    <Image
-      src="/google.svg"
-      className="bg-white p-2 border-2 hover:cursor-pointer"
-      width={50}
-      height={50}
-      alt="Google"
+    <button
+      type="button"
       onClick={() => submitSignInGoogle()}
-    />
+      aria-label="Continuar com o Google"
+      className="bg-white p-2 border-2 rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
+      <Image src="/google.svg" width={50} height={50} alt="" />
+    </button>
   );
 }

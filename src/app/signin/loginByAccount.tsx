@@ -11,7 +11,7 @@ import {
 import { Input } from '@/_components/ui/input';
 import { InputPassword } from '@/_components/ui/inputPass';
 import { APP_ROUTES } from '@/_constants/routes';
-import { useAlertHook } from '@/_hooks/alert_hook';
+import { useAlertHook } from '@/_hooks/alertHook';
 import { AppError } from '@/_lib/AppError';
 import { signInFormDate, signInSchema } from '@/_schema/signin';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -75,7 +75,7 @@ export function LoginByAccount() {
             <FormItem>
               <FormLabel>E-mail:</FormLabel>
               <FormControl>
-                <Input id="email" {...field} icon={Mail} disabled={isPending} />
+                <Input {...field} icon={Mail} disabled={isPending} />
               </FormControl>
             </FormItem>
           )}
@@ -88,7 +88,7 @@ export function LoginByAccount() {
             <FormItem>
               <FormLabel>Senha:</FormLabel>
               <FormControl>
-                <InputPassword id="password" {...field} disabled={isPending} />
+                <InputPassword {...field} disabled={isPending} />
               </FormControl>
             </FormItem>
           )}

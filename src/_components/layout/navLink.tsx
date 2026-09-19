@@ -32,11 +32,13 @@ export function NavLink({ url, children, exact = false }: NavLinkProps) {
 
   return (
     <Link
+      aria-current={isActive ? 'page' : undefined}
       className={cn(
-        'px-2 py-1 md:px-4 md:py-2',
-        'border-primary text-sm lg:text-base',
-        'hover:bg-primary hover:text-white',
-        isActive ? 'font-bold border-b-2 text-primary' : 'border-b-0'
+        'px-3 py-2 rounded-md',
+        'border-primary text-sm lg:text-base transition-colors',
+        'hover:bg-primary hover:text-primary-foreground',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+        isActive ? 'font-bold bg-secondary text-primary' : ''
       )}
       href={url}
     >
