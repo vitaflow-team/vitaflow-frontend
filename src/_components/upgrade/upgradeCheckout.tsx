@@ -1,5 +1,8 @@
 'use client';
 
+import { actionCreateCheckoutSession } from '@/_actions/stripe/createCheckoutSession';
+import { useAlertHook } from '@/_hooks/alertHook';
+import { useServerAction } from 'zsa-react';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/_components/ui/dialog';
-import { useStripe } from '@/_hooks/useStripe';
 import { Button } from '../ui/button';
 
 interface UpgradeCheckoutProps {
@@ -17,7 +19,23 @@ interface UpgradeCheckoutProps {
 }
 
 export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
-  const { createCheckoutSession } = useStripe();
+  const { isPending, execute } = useServerAction(actionCreateCheckoutSession);
+  const { openError } = useAlertHook();
+
+  async function handleCheckout() {
+    const [data, error] = await execute({ productId });
+    if (error) {
+      openError(
+        error.message || 'Erro ao iniciar o pagamento.',
+        'Atenção!',
+        'error'
+      );
+      return;
+    }
+    if (data?.url) {
+      window.location.href = data.url;
+    }
+  }
 
   return (
     <Dialog>
@@ -28,7 +46,7 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
         <DialogHeader>
           <DialogTitle className="pb-2">Finalizar Assinatura</DialogTitle>
           <DialogDescription className="text-center text-primary/80">
-            Você está a um passo de atualizar seu plano.
+            Você está a um passo de assinar este plano.
           </DialogDescription>
         </DialogHeader>
         <p className="flex flex-col items-center gap-4 text-center text-sm text-primary/70">
@@ -38,9 +56,10 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
         <DialogFooter className="flex flex-row w-full items-center content-center justify-center">
           <Button
             className="px-5 font-semibold w-full"
-            onClick={() => createCheckoutSession(productId)}
+            onClick={handleCheckout}
+            disabled={isPending}
           >
-            Ir para Pagamento
+            {isPending ? 'Redirecionando…' : 'Ir para Pagamento'}
           </Button>
         </DialogFooter>
       </DialogContent>

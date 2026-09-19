@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
-import { Button } from '../ui/button';
 import { Card, CardContent, CardTitle } from '../ui/card';
+import { CancelSubscriptionControl } from './cancelSubscriptionControl';
+import { ChangePlanButton } from './changePlanButton';
 import { UpgradeCheckout } from './upgradeCheckout';
 
 interface UpgradeCardItemProps {
@@ -24,6 +25,8 @@ interface UpgradeCardProps {
   information?: boolean;
   productId?: string;
   itens?: string[];
+  hasActiveSubscription?: boolean;
+  subscriptionCancelAt?: string | null;
 }
 
 export function UpgradeCard({
@@ -34,11 +37,37 @@ export function UpgradeCard({
   information = false,
   itens,
   productId,
+  hasActiveSubscription = false,
+  subscriptionCancelAt = null,
 }: UpgradeCardProps) {
   const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   });
+
+  function renderAction() {
+    if (value === 0) {
+      return null;
+    }
+
+    if (active) {
+      return (
+        <CancelSubscriptionControl
+          subscriptionCancelAt={subscriptionCancelAt}
+        />
+      );
+    }
+
+    if (!productId) {
+      return null;
+    }
+
+    if (hasActiveSubscription) {
+      return <ChangePlanButton productId={productId} planName={title} />;
+    }
+
+    return <UpgradeCheckout productId={productId} />;
+  }
 
   return (
     <Card
@@ -69,14 +98,7 @@ export function UpgradeCard({
           <UpgradeCardItem key={index} label={item} />
         ))}
       </CardContent>
-      {!information &&
-        (active ? (
-          <Button variant="outline" className="w-full" disabled>
-            Plano atual
-          </Button>
-        ) : (
-          productId && <UpgradeCheckout productId={productId} />
-        ))}
+      {!information && renderAction()}
     </Card>
   );
 }

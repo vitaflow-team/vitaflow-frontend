@@ -1,4 +1,5 @@
 import { actionGetProductsPlans } from '@/_actions/products/getProdductsPlans';
+import { actionUpdateSubscription } from '@/_actions/users/postUpdateSubscription';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import {
   Tabs,
@@ -13,14 +14,36 @@ import { profileFormData } from '@/_schema/profile';
 import { auth } from '@/auth';
 import FormSettings from './form';
 
-export default async function Settings() {
+const ACTIVE_STATUSES = ['active', 'trialing', 'past_due'];
+
+interface SettingsProps {
+  searchParams: Promise<{ checkout_session_id?: string }>;
+}
+
+export default async function Settings({ searchParams }: SettingsProps) {
   const session = await auth();
   if (!session) return null;
+
+  const { checkout_session_id: checkoutSessionId } = await searchParams;
+  if (checkoutSessionId) {
+    // Fast-path optimistic sync right after returning from Stripe Checkout
+    // — the webhook is the authoritative sync and runs independently, this
+    // just avoids the UI looking stale for the few seconds it takes to
+    // arrive. A failure here is silent on purpose: the webhook still lands.
+    await actionUpdateSubscription({ sessionId: checkoutSessionId }).catch(
+      () => undefined
+    );
+  }
 
   let profile;
   try {
     profile = await apiClient<
-      Omit<profileFormData, 'avatar'> & { avatar?: string | null }
+      Omit<profileFormData, 'avatar'> & {
+        avatar?: string | null;
+        productId?: string | null;
+        subscriptionStatus?: string | null;
+        subscriptionCancelAt?: string | null;
+      }
     >('/profile', {
       method: 'GET',
     });
@@ -28,6 +51,10 @@ export default async function Settings() {
     console.error('Falha ao carregar perfil:', error);
     return <div>Erro ao carregar perfil. Tente novamente mais tarde.</div>;
   }
+
+  const hasActiveSubscription = ACTIVE_STATUSES.includes(
+    profile.subscriptionStatus ?? ''
+  );
 
   const [productsPlans] = await actionGetProductsPlans();
   const plans = productsPlans || [];
@@ -68,10 +95,12 @@ export default async function Settings() {
                     productId={product.id}
                     featured={sorted.length > 1 && index === sorted.length - 1}
                     active={
-                      session.user.productId === product.id ||
-                      (session.user.productId === null &&
+                      profile.productId === product.id ||
+                      (!profile.productId &&
                         plans[0]?.products?.[0]?.id === product.id)
                     }
+                    hasActiveSubscription={hasActiveSubscription}
+                    subscriptionCancelAt={profile.subscriptionCancelAt ?? null}
                     itens={product.productInfos.map(info => info.description)}
                   />
                 ))}
