@@ -80,13 +80,15 @@ export function UpgradeCard({
           Mais popular
         </span>
       )}
-      {active && !information && (
-        <span className="inline-flex w-fit items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground">
-          <Check className="size-3" />
-          Seu plano atual
-        </span>
-      )}
-      <CardTitle className="text-sm">{title}</CardTitle>
+      <div className="flex items-center justify-between gap-2">
+        <CardTitle className="text-sm">{title}</CardTitle>
+        {active && !information && (
+          <span className="inline-flex w-fit shrink-0 items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-xs font-semibold text-accent-foreground">
+            <Check className="size-3" />
+            Seu plano atual
+          </span>
+        )}
+      </div>
       <div className="flex items-baseline gap-1">
         <span className="font-display text-3xl font-semibold">
           {currencyFormatter.format(value)}
