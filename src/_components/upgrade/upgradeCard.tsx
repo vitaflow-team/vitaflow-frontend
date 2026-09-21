@@ -1,7 +1,7 @@
 import { summarizePlanChange } from '@/_lib/planChangeSummary';
 import type { PlanType } from '@/_lib/planSelection';
-import { formatPlanDate } from '@/_lib/planSummary';
-import { Check } from 'lucide-react';
+import type { PlanExpiry } from '@/_lib/planExpiry';
+import { Check, TriangleAlert } from 'lucide-react';
 import { Card, CardContent, CardTitle } from '../ui/card';
 import { CancelSubscriptionControl } from './cancelSubscriptionControl';
 import { ChangePlanButton } from './changePlanButton';
@@ -48,10 +48,11 @@ interface UpgradeCardProps {
   hasActiveSubscription?: boolean;
   subscriptionCancelAt?: string | null;
   /**
-   * Data ISO da próxima cobrança, exibida apenas no plano pago vigente. É
-   * informação, não regra: nenhuma decisão de assinatura depende dela.
+   * Como a data do plano vigente é escrita, já decidida pelo backend e
+   * formatada por `planExpiry` (ADR-004). É informação, não regra: nenhuma
+   * decisão de assinatura depende dela.
    */
-  renewsAt?: string | null;
+  planExpiry?: PlanExpiry | null;
   /** Linha "Para quem é" do catálogo (ADR-001); ausente nas páginas públicas. */
   audience?: string;
   /** Contexto do resumo de troca; ausente fora da aba Plano. */
@@ -68,7 +69,7 @@ export function UpgradeCard({
   productId,
   hasActiveSubscription = false,
   subscriptionCancelAt = null,
-  renewsAt = null,
+  planExpiry = null,
   audience,
   planChange,
 }: UpgradeCardProps) {
@@ -171,17 +172,26 @@ export function UpgradeCard({
           <UpgradeCardItem key={index} label={item} />
         ))}
       </CardContent>
-      {/* Cancelamento agendado tem a própria linha dentro do controle de
-          assinatura; anunciar renovação ao lado dela se contradiria. */}
+      {/* Uma linha só para a data do plano vigente: o controle de assinatura
+          não escreve mais data nenhuma (ADR-004). O estado de alerta se
+          distingue por ícone e texto, não apenas por cor (US-002.EC-4). */}
       {!information &&
         active &&
         value > 0 &&
-        renewsAt &&
-        !subscriptionCancelAt && (
-          <p className="text-xs text-muted-foreground text-center">
-            Renova em {formatPlanDate(renewsAt)}
+        planExpiry &&
+        (planExpiry.kind === 'expires' ? (
+          <p
+            role="status"
+            className="flex items-center justify-center gap-1.5 rounded-md bg-warn-bg px-2 py-1.5 text-xs font-medium text-warn"
+          >
+            <TriangleAlert className="size-3.5 shrink-0" aria-hidden="true" />
+            {planExpiry.label}
           </p>
-        )}
+        ) : (
+          <p className="text-xs text-muted-foreground text-center">
+            {planExpiry.label}
+          </p>
+        ))}
       {!information && renderAction()}
     </Card>
   );

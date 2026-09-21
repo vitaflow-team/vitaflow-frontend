@@ -26,14 +26,14 @@ describe('restricted shell data — getShellData', () => {
     vi.restoreAllMocks();
   });
 
-  it('UT-043 maps the profile into the shell shape', async () => {
+  it('UT-033 maps the profile into the shell shape', async () => {
     apiClientMock.mockResolvedValue({
       name: 'Fernando Vicari',
       avatar: 'https://cdn.example/profile-avatar.png',
       productName: 'Premium',
       subscriptionStatus: 'active',
-      subscriptionCancelAt: null,
-      subscriptionCurrentPeriodEnd: '2026-10-18T15:00:00.000Z',
+      expiresAt: '2026-10-18T15:00:00.000Z',
+      autoRenew: true,
     });
 
     const shell = await getShellData(session);
@@ -44,13 +44,13 @@ describe('restricted shell data — getShellData', () => {
       avatar: 'https://cdn.example/profile-avatar.png',
       productName: 'Premium',
       subscriptionStatus: 'active',
-      subscriptionCancelAt: null,
-      subscriptionCurrentPeriodEnd: '2026-10-18T15:00:00.000Z',
+      expiresAt: '2026-10-18T15:00:00.000Z',
+      autoRenew: true,
       profileLoaded: true,
     });
   });
 
-  it('UT-044 falls back to the session when the profile request fails', async () => {
+  it('UT-033 falls back to the session when the profile request fails', async () => {
     apiClientMock.mockRejectedValue(new Error('backend indisponível'));
 
     const shell = await getShellData(session);
@@ -60,8 +60,8 @@ describe('restricted shell data — getShellData', () => {
       avatar: 'https://cdn.example/session-avatar.png',
       productName: null,
       subscriptionStatus: null,
-      subscriptionCancelAt: null,
-      subscriptionCurrentPeriodEnd: null,
+      expiresAt: null,
+      autoRenew: false,
       profileLoaded: false,
     });
 
@@ -71,7 +71,7 @@ describe('restricted shell data — getShellData', () => {
     expect(warning).not.toContain('user-id');
   });
 
-  it('UT-044 also survives a missing session', async () => {
+  it('UT-033 also survives a missing session', async () => {
     apiClientMock.mockRejectedValue(new Error('backend indisponível'));
 
     await expect(getShellData(null)).resolves.toEqual({
@@ -79,8 +79,8 @@ describe('restricted shell data — getShellData', () => {
       avatar: null,
       productName: null,
       subscriptionStatus: null,
-      subscriptionCancelAt: null,
-      subscriptionCurrentPeriodEnd: null,
+      expiresAt: null,
+      autoRenew: false,
       profileLoaded: false,
     });
   });

@@ -67,24 +67,19 @@ export function CancelSubscriptionControl({
     router.refresh();
   }
 
+  // A data do cancelamento é escrita uma vez só, pelo card e pelo bloco da
+  // barra lateral, a partir de `expiresAt`/`autoRenew` (ADR-004). Aqui fica só
+  // a ação — a condição que a escolhe segue sendo o cancelamento agendado.
   if (subscriptionCancelAt) {
-    const dateLabel = new Date(subscriptionCancelAt).toLocaleDateString(
-      'pt-BR'
-    );
     return (
-      <div className="flex flex-col gap-2 w-full">
-        <p className="text-xs text-muted-foreground text-center">
-          Cancela em {dateLabel}
-        </p>
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={handleReactivate}
-          disabled={isPending}
-        >
-          {reactivateAction.isPending ? 'Reativando…' : 'Reativar assinatura'}
-        </Button>
-      </div>
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={handleReactivate}
+        disabled={isPending}
+      >
+        {reactivateAction.isPending ? 'Reativando…' : 'Reativar assinatura'}
+      </Button>
     );
   }
 

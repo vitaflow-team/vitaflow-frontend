@@ -8,8 +8,10 @@ export interface ProfileShell {
   avatar: string | null;
   productName: string | null;
   subscriptionStatus: string | null;
-  subscriptionCancelAt: string | null;
-  subscriptionCurrentPeriodEnd: string | null;
+  /** Data em que o plano acaba ou se renova, já derivada pelo backend (ADR-004). */
+  expiresAt: string | null;
+  /** `true` quando a assinatura se renova sozinha na data acima. */
+  autoRenew: boolean;
 }
 
 /**

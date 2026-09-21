@@ -8,8 +8,8 @@ interface ProfileShellResponse {
   avatar?: string | null;
   productName?: string | null;
   subscriptionStatus?: string | null;
-  subscriptionCancelAt?: string | Date | null;
-  subscriptionCurrentPeriodEnd?: string | Date | null;
+  expiresAt?: string | Date | null;
+  autoRenew?: boolean | null;
 }
 
 function toIso(value?: string | Date | null): string | null {
@@ -24,8 +24,8 @@ function fromSession(session: Session | null): ShellData {
     avatar: session?.user?.avatar ?? null,
     productName: null,
     subscriptionStatus: null,
-    subscriptionCancelAt: null,
-    subscriptionCurrentPeriodEnd: null,
+    expiresAt: null,
+    autoRenew: false,
     profileLoaded: false,
   };
 }
@@ -51,8 +51,8 @@ export async function getShellData(
       avatar: profile.avatar ?? null,
       productName: profile.productName ?? null,
       subscriptionStatus: profile.subscriptionStatus ?? null,
-      subscriptionCancelAt: toIso(profile.subscriptionCancelAt),
-      subscriptionCurrentPeriodEnd: toIso(profile.subscriptionCurrentPeriodEnd),
+      expiresAt: toIso(profile.expiresAt),
+      autoRenew: profile.autoRenew ?? false,
     };
 
     return { ...shell, profileLoaded: true };

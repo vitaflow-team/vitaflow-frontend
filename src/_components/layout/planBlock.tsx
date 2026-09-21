@@ -7,23 +7,21 @@ import {
 } from '@/_components/ui/tooltip';
 import type { PlanSummary } from '@/_lib/planSummary';
 import { useSidebar } from '@/_components/ui/sidebar';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, TriangleAlert } from 'lucide-react';
 import Link from 'next/link';
 
 interface PlanBlockProps {
   plan: PlanSummary;
 }
 
-function detailText(plan: PlanSummary): string | null {
-  if (!plan.detail) return null;
-  return plan.detail.kind === 'cancels'
-    ? `Cancela em ${plan.detail.date}`
-    : `Renova em ${plan.detail.date}`;
-}
-
+/**
+ * O rodapé é informativo: mostra a mesma frase do card ("Renova em …" /
+ * "Expira em …") e nunca oferece cancelar ou reativar (US-004.AC-2). Sem data
+ * — Gratuito ou perfil indisponível — não se escreve nada.
+ */
 export function PlanBlock({ plan }: PlanBlockProps) {
   const { state } = useSidebar();
-  const detail = detailText(plan);
+  const detail = plan.detail;
 
   if (state === 'collapsed') {
     return (
@@ -38,7 +36,7 @@ export function PlanBlock({ plan }: PlanBlockProps) {
           </Link>
         </TooltipTrigger>
         <TooltipContent side="right">
-          {detail ? `${plan.name} — ${detail}` : plan.name}
+          {detail ? `${plan.name} — ${detail.label}` : plan.name}
         </TooltipContent>
       </Tooltip>
     );
@@ -53,9 +51,21 @@ export function PlanBlock({ plan }: PlanBlockProps) {
         />
         <span className="truncate text-sm font-semibold">{plan.name}</span>
       </div>
-      {detail && (
-        <span className="text-xs text-muted-foreground">{detail}</span>
-      )}
+      {/* O alerta se distingue por ícone e texto, nunca só pela cor, e o
+          leitor de tela o anuncia como texto comum (US-002.EC-4,
+          US-004.EC-3). */}
+      {detail &&
+        (detail.kind === 'expires' ? (
+          <span
+            role="status"
+            className="inline-flex w-fit items-center gap-1 rounded-md bg-warn-bg px-1.5 py-1 text-xs font-medium text-warn"
+          >
+            <TriangleAlert className="size-3 shrink-0" aria-hidden="true" />
+            {detail.label}
+          </span>
+        ) : (
+          <span className="text-xs text-muted-foreground">{detail.label}</span>
+        ))}
       <Link
         href={plan.cta.href}
         className="mt-1 w-fit text-xs font-medium underline underline-offset-4 hover:no-underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden"

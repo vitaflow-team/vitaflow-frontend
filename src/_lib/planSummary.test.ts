@@ -1,6 +1,6 @@
 import type { ProfileShell } from '@/_types/shell';
 import { describe, expect, it } from 'vitest';
-import { formatPlanDate, getPlanSummary } from './planSummary';
+import { getPlanSummary } from './planSummary';
 
 const PLAN_HREF = '/restrict/settings?tab=plano';
 
@@ -10,14 +10,14 @@ function shell(overrides: Partial<ProfileShell> = {}): ProfileShell {
     avatar: null,
     productName: null,
     subscriptionStatus: null,
-    subscriptionCancelAt: null,
-    subscriptionCurrentPeriodEnd: null,
+    expiresAt: null,
+    autoRenew: false,
     ...overrides,
   };
 }
 
 describe('restricted sidebar plan summary — getPlanSummary', () => {
-  it('UT-030 shows the free plan with the upgrade call to action', () => {
+  it('UT-024 shows the free plan with the upgrade call to action', () => {
     expect(getPlanSummary(shell({ productName: 'Gratuito' }))).toEqual({
       name: 'Plano Gratuito',
       detail: null,
@@ -25,7 +25,7 @@ describe('restricted sidebar plan summary — getPlanSummary', () => {
     });
   });
 
-  it('UT-031 treats no product and no status as the free plan', () => {
+  it('UT-024 treats no product and no status as the free plan', () => {
     expect(
       getPlanSummary(shell({ productName: null, subscriptionStatus: null }))
     ).toEqual({
@@ -35,53 +35,43 @@ describe('restricted sidebar plan summary — getPlanSummary', () => {
     });
   });
 
-  it('UT-032 shows the renewal date of an active paid plan', () => {
+  it('UT-024 words an auto-renewing plan as renewing', () => {
     expect(
       getPlanSummary(
         shell({
           productName: 'Premium',
           subscriptionStatus: 'active',
-          subscriptionCurrentPeriodEnd: '2026-10-18T15:00:00.000Z',
+          expiresAt: '2026-10-18T15:00:00.000Z',
+          autoRenew: true,
         })
       )
     ).toEqual({
       name: 'Plano Premium',
-      detail: { kind: 'renews', date: '18/10/2026' },
+      detail: { kind: 'renews', label: 'Renova em 18/10/2026' },
       cta: { label: 'Gerenciar plano', href: PLAN_HREF },
     });
   });
 
-  it('UT-033 lets a scheduled cancellation take precedence over renewal', () => {
+  it('UT-024 words a plan that will not renew as expiring', () => {
     expect(
       getPlanSummary(
         shell({
           productName: 'Premium',
           subscriptionStatus: 'active',
-          subscriptionCurrentPeriodEnd: '2026-10-18T15:00:00.000Z',
-          subscriptionCancelAt: '2026-10-18T15:00:00.000Z',
+          expiresAt: '2026-10-10T15:00:00.000Z',
+          autoRenew: false,
         })
       ).detail
-    ).toEqual({ kind: 'cancels', date: '18/10/2026' });
+    ).toEqual({ kind: 'expires', label: 'Expira em 10/10/2026' });
   });
 
-  it('UT-034 shows no date for a subscription that is not active', () => {
-    expect(
-      getPlanSummary(
-        shell({
-          productName: 'Premium',
-          subscriptionStatus: 'canceled',
-          subscriptionCurrentPeriodEnd: '2026-10-18T15:00:00.000Z',
-        })
-      ).detail
-    ).toBeNull();
-  });
-
-  it('UT-035 invents no date when the period end is unknown', () => {
+  it('UT-024 invents no date when the backend sends none', () => {
     const summary = getPlanSummary(
       shell({
         productName: 'Premium',
         subscriptionStatus: 'active',
-        subscriptionCurrentPeriodEnd: null,
+        expiresAt: null,
+        autoRenew: true,
       })
     );
 
@@ -89,18 +79,11 @@ describe('restricted sidebar plan summary — getPlanSummary', () => {
     expect(summary.detail).toBeNull();
   });
 
-  it('UT-036 falls back to a neutral label when the profile is unavailable', () => {
+  it('UT-024 falls back to a neutral label when the profile is unavailable', () => {
     const summary = getPlanSummary(null);
 
     expect(summary.name).toBe('Seu plano');
     expect(summary.detail).toBeNull();
     expect(summary.cta.href).toBe(PLAN_HREF);
-  });
-});
-
-describe('restricted sidebar plan summary — formatPlanDate', () => {
-  it('UT-037 uses the São Paulo calendar day, not the UTC one', () => {
-    expect(formatPlanDate('2026-10-18T02:00:00.000Z')).toBe('17/10/2026');
-    expect(formatPlanDate('2026-10-18T15:00:00.000Z')).toBe('18/10/2026');
   });
 });
