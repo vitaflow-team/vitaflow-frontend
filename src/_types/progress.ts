@@ -25,3 +25,7 @@ export interface TrendPoint {
   recordedAt: string;
   value: number;
 }
+
+export interface LatestRecordResponseDTO {
+  latest: MeasurementRecordResponseDTO | null;
+}

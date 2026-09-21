@@ -4,19 +4,9 @@ import { Button } from '@/_components/ui/button';
 import { Plus } from 'lucide-react';
 import { RecordFormModal } from './recordFormModal';
 
-interface FloatingRegisterButtonProps {
-  defaultHeightCm?: number;
-  defaultWeightKg?: number;
-}
-
-export function FloatingRegisterButton({
-  defaultHeightCm,
-  defaultWeightKg,
-}: FloatingRegisterButtonProps) {
+export function FloatingRegisterButton() {
   return (
     <RecordFormModal
-      defaultHeightCm={defaultHeightCm}
-      defaultWeightKg={defaultWeightKg}
       trigger={
         <Button
           aria-label="Registrar novo"

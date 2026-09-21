@@ -21,7 +21,6 @@ interface HomeUserProps {
 export function HomeUser({ nowIso, firstName, dashboard }: HomeUserProps) {
   const latest = dashboard?.latest ?? null;
   const status = !dashboard ? 'error' : latest ? 'ready' : 'empty';
-  const defaultHeightCm = latest?.heightCm;
   const weightSeries =
     dashboard?.weightSeries.map(point => point.weightKg) ?? [];
 
@@ -30,7 +29,6 @@ export function HomeUser({ nowIso, firstName, dashboard }: HomeUserProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Greeting nowIso={nowIso} firstName={firstName} />
         <RecordFormModal
-          defaultHeightCm={defaultHeightCm}
           trigger={
             <Button className="w-full sm:w-auto">
               <Plus aria-hidden="true" />
@@ -56,7 +54,6 @@ export function HomeUser({ nowIso, firstName, dashboard }: HomeUserProps) {
 
       <ShortcutsCard>
         <RecordFormModal
-          defaultHeightCm={defaultHeightCm}
           trigger={
             <ShortcutButton icon={Scale} label="Registrar peso e medidas" />
           }

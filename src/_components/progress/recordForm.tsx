@@ -13,12 +13,14 @@ import {
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
 import { useAlertHook } from '@/_hooks/alertHook';
+import { useDebouncedValue } from '@/_hooks/useDebouncedValue';
 import { getBmiPreview } from '@/_lib/bmi';
 import {
   formatDecimal,
   normalizeDecimalInput,
   stepWeight,
 } from '@/_lib/decimalInput';
+import { initialFormValues } from '@/_lib/latestRecord';
 import {
   formatBmi,
   getBmiStripTone,
@@ -26,13 +28,19 @@ import {
 } from '@/_lib/progressDisplay';
 import { cn } from '@/_lib/utils';
 import {
+  announceWeight,
+  formatLastWeightReference,
+  formatWeightDelta,
+} from '@/_lib/weightReference';
+import { canStepWeight } from '@/_lib/weightStepper';
+import {
   measurementRecordSchema,
   type MeasurementRecordFormData,
   type MeasurementRecordFormInput,
 } from '@/_schema/progress';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useId, useState } from 'react';
 import {
@@ -43,14 +51,15 @@ import {
 } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 import { BmiBadge } from './bmiBadge';
+import { WeightStepButton } from './weightStepButton';
 
 export type RecordFormLayout = 'sheet' | 'dialog';
 export type RecordFormFocusField = 'weightKg' | 'heightCm';
 
 interface RecordFormProps {
   layout: RecordFormLayout;
-  defaultHeightCm?: number;
-  defaultWeightKg?: number;
+  /** Último registro do usuário; só o registro novo o utiliza. */
+  latest?: MeasurementRecordResponseDTO | null;
   existingRecord?: MeasurementRecordResponseDTO;
   focusField?: RecordFormFocusField;
   onCancel: () => void;
@@ -64,6 +73,9 @@ const STRIP_TONE_CLASS: Record<BmiStripTone, string> = {
   muted: 'bg-muted',
 };
 
+/** Tempo parado antes de o peso ser anunciado pela região viva (ADR-003). */
+const ANNOUNCE_DEBOUNCE_MS = 500;
+
 function finiteDecimal(value: string): number | undefined {
   const normalized = normalizeDecimalInput(value);
   return typeof normalized === 'number' && Number.isFinite(normalized)
@@ -72,32 +84,39 @@ function finiteDecimal(value: string): number | undefined {
 }
 
 function getDefaultValues({
-  defaultHeightCm,
-  defaultWeightKg,
+  latest,
   existingRecord,
 }: Pick<
   RecordFormProps,
-  'defaultHeightCm' | 'defaultWeightKg' | 'existingRecord'
+  'latest' | 'existingRecord'
 >): MeasurementRecordFormInput {
-  return {
-    weightKg: formatDecimal(existingRecord?.weightKg ?? defaultWeightKg),
-    heightCm: formatDecimal(existingRecord?.heightCm ?? defaultHeightCm),
-    waistCm: formatDecimal(existingRecord?.waistCm ?? undefined),
-    hipCm: formatDecimal(existingRecord?.hipCm ?? undefined),
-  };
+  if (existingRecord) {
+    return {
+      weightKg: formatDecimal(existingRecord.weightKg),
+      heightCm: formatDecimal(existingRecord.heightCm),
+      waistCm: formatDecimal(existingRecord.waistCm ?? undefined),
+      hipCm: formatDecimal(existingRecord.hipCm ?? undefined),
+    };
+  }
+
+  const { weightKg, heightCm } = initialFormValues(latest ?? null);
+
+  return { weightKg, heightCm, waistCm: '', hipCm: '' };
 }
 
 export function RecordForm({
   layout,
-  defaultHeightCm,
-  defaultWeightKg,
+  latest,
   existingRecord,
   focusField,
   onCancel,
   onSaved,
 }: RecordFormProps) {
-  const previousHeightCm = existingRecord?.heightCm ?? defaultHeightCm;
-  const lastKnownWeightKg = existingRecord?.weightKg ?? defaultWeightKg;
+  const referenceRecord = existingRecord ? null : (latest ?? null);
+  const previousHeightCm =
+    existingRecord?.heightCm ?? referenceRecord?.heightCm;
+  const lastKnownWeightKg =
+    existingRecord?.weightKg ?? referenceRecord?.weightKg;
   const [showHeight, setShowHeight] = useState(
     layout === 'dialog' ||
       previousHeightCm === undefined ||
@@ -119,22 +138,25 @@ export function RecordForm({
       unknown,
       MeasurementRecordFormData
     >,
-    defaultValues: getDefaultValues({
-      defaultHeightCm,
-      defaultWeightKg,
-      existingRecord,
-    }),
+    defaultValues: getDefaultValues({ latest, existingRecord }),
   });
   const [weightKg, heightCm] = useWatch({
     control: methods.control,
     name: ['weightKg', 'heightCm'],
   });
-  const preview = getBmiPreview(
-    finiteDecimal(weightKg),
-    finiteDecimal(heightCm)
-  );
+  const currentWeightKg = finiteDecimal(weightKg);
+  const preview = getBmiPreview(currentWeightKg, finiteDecimal(heightCm));
   const stripTone = preview ? getBmiStripTone(preview.classification) : 'muted';
   const isPending = createAction.isPending || updateAction.isPending;
+  const weightDelta = referenceRecord
+    ? formatWeightDelta(currentWeightKg, referenceRecord.weightKg)
+    : null;
+  // Só o valor estabilizado é anunciado: segurar o botão não pode inundar o
+  // leitor de tela com cada repetição (ADR-003).
+  const settledWeight = useDebouncedValue(weightKg, ANNOUNCE_DEBOUNCE_MS);
+  const weightAnnouncement = announceWeight(
+    finiteDecimal(settledWeight) === undefined ? '' : settledWeight
+  );
 
   useEffect(() => {
     if (!focusField) return;
@@ -159,6 +181,15 @@ export function RecordForm({
       shouldTouch: true,
       shouldValidate: methods.formState.isSubmitted,
     });
+  }
+
+  // Lido do formulário, não da renderização: a repetição consulta o limite
+  // entre dois passos, quando ainda não houve novo render.
+  function canStepNow(direction: 1 | -1) {
+    return canStepWeight(
+      finiteDecimal(methods.getValues('weightKg')),
+      direction
+    );
   }
 
   async function submitRecord(data: MeasurementRecordFormData) {
@@ -196,27 +227,47 @@ export function RecordForm({
       control={methods.control}
       name="weightKg"
       render={({ field }) => (
-        <FormItem className={cn(layout === 'sheet' && 'min-w-0 flex-1')}>
+        <FormItem className="min-w-0">
           <FormLabel
             showMessage={false}
             className={cn(layout === 'sheet' && 'sr-only')}
           >
             Peso (kg)
           </FormLabel>
-          <FormControl>
-            <Input
-              {...field}
-              type="text"
-              inputMode="decimal"
-              autoComplete="off"
-              required
-              disabled={isPending}
-              className={cn(
-                layout === 'sheet' &&
-                  'h-16 border-0 border-l-0 bg-transparent px-0 shadow-none focus-within:ring-0 focus-within:ring-offset-0 [&_input]:text-center [&_input]:text-4xl [&_input]:font-semibold'
-              )}
+          <div
+            className={cn(
+              'flex items-center',
+              layout === 'sheet' ? 'gap-3' : 'gap-2'
+            )}
+          >
+            <WeightStepButton
+              direction={-1}
+              disabled={isPending || !canStepWeight(currentWeightKg, -1)}
+              onStep={() => changeWeight(-1)}
+              canStep={() => canStepNow(-1)}
             />
-          </FormControl>
+            <FormControl>
+              <Input
+                {...field}
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                required
+                disabled={isPending}
+                className={cn(
+                  'min-w-0 flex-1',
+                  layout === 'sheet' &&
+                    'h-16 border-0 border-l-0 bg-transparent px-0 shadow-none focus-within:ring-0 focus-within:ring-offset-0 [&_input]:text-center [&_input]:text-4xl [&_input]:font-semibold'
+                )}
+              />
+            </FormControl>
+            <WeightStepButton
+              direction={1}
+              disabled={isPending || !canStepWeight(currentWeightKg, 1)}
+              onStep={() => changeWeight(1)}
+              canStep={() => canStepNow(1)}
+            />
+          </div>
           <FormMessage
             role="alert"
             className={cn(layout === 'sheet' && 'text-center')}
@@ -225,6 +276,20 @@ export function RecordForm({
       )}
     />
   );
+
+  // Referência e diferença existem só no registro novo com histórico: tom
+  // neutro, sinal e unidade explícitos, nunca verde ou vermelho (ADR-002).
+  const weightReference = referenceRecord ? (
+    <div
+      className={cn(
+        'flex flex-col gap-0.5 text-sm text-muted-foreground',
+        layout === 'sheet' && 'items-center text-center'
+      )}
+    >
+      <span>{formatLastWeightReference(referenceRecord)}</span>
+      {weightDelta && <span>{weightDelta}</span>}
+    </div>
+  ) : null;
 
   const heightField = (
     <FormField
@@ -264,39 +329,23 @@ export function RecordForm({
               <p className="mb-1 text-center text-sm font-medium text-muted-foreground">
                 Peso atual
               </p>
-              <div className="flex items-center gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-lg"
-                  className="size-11 rounded-full"
-                  aria-label="Diminuir peso em 0,1 kg"
-                  disabled={isPending}
-                  onClick={() => changeWeight(-1)}
-                >
-                  <Minus aria-hidden="true" />
-                </Button>
-                {weightField}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-lg"
-                  className="size-11 rounded-full"
-                  aria-label="Aumentar peso em 0,1 kg"
-                  disabled={isPending}
-                  onClick={() => changeWeight(1)}
-                >
-                  <Plus aria-hidden="true" />
-                </Button>
-              </div>
+              {weightField}
               <p className="text-center text-sm text-muted-foreground">kg</p>
+              {weightReference}
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
-              {weightField}
+            <div className="grid items-start gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1">
+                {weightField}
+                {weightReference}
+              </div>
               {heightField}
             </div>
           )}
+
+          <p aria-live="polite" className="sr-only">
+            {weightAnnouncement}
+          </p>
 
           {layout === 'sheet' &&
             (!showHeight && previousHeightCm !== undefined ? (
@@ -309,11 +358,7 @@ export function RecordForm({
                 onClick={revealHeight}
               >
                 <span className="min-w-0 whitespace-normal">
-                  Altura ·{' '}
-                  {previousHeightCm.toLocaleString('pt-BR', {
-                    maximumFractionDigits: 1,
-                  })}{' '}
-                  cm (última)
+                  Altura · {formatDecimal(previousHeightCm)} cm (última)
                 </span>
                 <span className="text-sm font-semibold text-icon-accent">
                   Alterar

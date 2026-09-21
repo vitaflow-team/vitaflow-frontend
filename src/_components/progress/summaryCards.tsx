@@ -139,10 +139,7 @@ export function SummaryCards({
           <p className="mt-1 text-[0.6875rem] leading-tight text-muted-foreground md:mt-2 md:text-sm">
             {formatRelativeDate(latest.recordedAt)}
           </p>
-          <UpdateHeightButton
-            heightCm={latest.heightCm}
-            weightKg={latest.weightKg}
-          />
+          <UpdateHeightButton />
         </CardContent>
       </Card>
     </section>
