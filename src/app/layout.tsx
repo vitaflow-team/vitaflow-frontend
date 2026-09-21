@@ -1,5 +1,5 @@
 import { AlertError } from '@/_components/ui/alert-error';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Fraunces, Manrope } from 'next/font/google';
 import './globals.css';
 
@@ -36,6 +36,12 @@ export const metadata: Metadata = {
     siteName: 'Vita Flow',
     url: siteUrl,
   },
+};
+
+// viewport-fit=cover é o que faz env(safe-area-inset-bottom) valer mais que zero no
+// iOS — sem isso a barra inferior do app ficaria por baixo do indicador de home.
+export const viewport: Viewport = {
+  viewportFit: 'cover',
 };
 
 const organizationJsonLd = {

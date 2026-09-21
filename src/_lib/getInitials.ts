@@ -1,6 +1,6 @@
 export function getInitialsName(name: string | null | undefined): string {
-  if (!name) {
-    return 'SI';
+  if (!name?.trim()) {
+    return '';
   }
 
   const partes = name.trim().split(/\s+/);

@@ -3,6 +3,7 @@
 import { getInitialsName } from '@/_lib/getInitials';
 import { cn } from '@/_lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
+import { UserRound } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 
 const avatarVariants = cva('border-2', {
@@ -24,10 +25,14 @@ interface UserAvatarProps extends VariantProps<typeof avatarVariants> {
 }
 
 export function UserAvatar({ size, src, name }: UserAvatarProps) {
+  const initials = getInitialsName(name);
+
   return (
     <Avatar className={cn(avatarVariants({ size }))}>
       <AvatarImage src={src ?? undefined} />
-      <AvatarFallback>{getInitialsName(name)}</AvatarFallback>
+      <AvatarFallback>
+        {initials || <UserRound aria-hidden="true" className="size-1/2" />}
+      </AvatarFallback>
     </Avatar>
   );
 }

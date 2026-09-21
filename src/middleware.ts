@@ -1,4 +1,5 @@
 import { APP_ROUTES } from '@/_constants/routes';
+import { canAccess, resolveRedirect } from '@/_lib/routeAccess';
 import { auth } from '@/auth';
 import { NextResponse } from 'next/server';
 
@@ -32,16 +33,16 @@ export default auth(async (req: any) => {
   }
 
   if (isLogged && !APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
-    for (const ITEM of APP_ROUTES.PRIVATE) {
-      if (
-        ITEM.URL === path &&
-        !ITEM.PRODUCT_TYPE.includes(req.auth?.user?.productType)
-      ) {
-        const referer = req.headers.get('referer');
-        return NextResponse.redirect(
-          referer ?? new URL(APP_ROUTES.ROUTE_PRIVATE, req.url)
-        );
-      }
+    const productType = req.auth?.user?.productType;
+    if (!canAccess(path, productType)) {
+      return NextResponse.redirect(
+        resolveRedirect({
+          requestUrl: req.url,
+          referer: req.headers.get('referer'),
+          productType,
+        }),
+        307
+      );
     }
   }
 });
