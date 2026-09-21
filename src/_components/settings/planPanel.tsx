@@ -1,95 +1,53 @@
-import type { ProductsPlan } from '@/_actions/products/getProdductsPlans';
+import type { Product } from '@/_actions/products/getPlans';
+import { PlanCategoryTabs } from '@/_components/settings/planCategoryTabs';
 import {
   UpgradeCard,
   type PlanChangeContext,
 } from '@/_components/upgrade/upgradeCard';
 import { planAudience, planTitle } from '@/_lib/planAudience';
-import { groupPlans, type PlanSections } from '@/_lib/planSelection';
+import {
+  PLAN_CATEGORY_KEYS,
+  filterPlansByCategory,
+  initialCategory,
+  resolveCurrentPlan,
+  type PlanCategoryKey,
+} from '@/_lib/planCategories';
+import { planExpiry } from '@/_lib/planExpiry';
+import type { ReactNode } from 'react';
 
 interface PlanPanelProps {
-  plans: ProductsPlan[];
+  /** Catálogo inteiro, já ordenado pelo backend; filtrado em memória (ADR-003). */
+  plans: Product[];
   productId?: string | null;
+  /** Tipo do perfil; define a sub-aba aberta ao entrar (US-006.AC-2). */
+  profileType?: string | null;
   hasActiveSubscription: boolean;
+  /** Cancelamento agendado, ainda a chave do controle de assinatura. */
   subscriptionCancelAt: string | null;
-  subscriptionCurrentPeriodEnd: string | null;
-  /** `null` quando o perfil não trouxe a contagem de alunos (ADR-005). */
+  /** Data e renovação já derivadas pelo backend; aqui só se escreve (ADR-004). */
+  expiresAt: string | null;
+  autoRenew: boolean;
+  /** `null` quando o perfil não trouxe a contagem de alunos. */
   clientsCount: number | null;
-  /** A lista de planos não chegou; a tira de abas segue de pé (US-001.EC-1). */
+  /** A lista de planos não chegou; a tira de abas da página segue de pé. */
   loadFailed?: boolean;
-}
-
-interface PlanCardsProps {
-  products: ProductsPlan['products'];
-  sections: PlanSections;
-  hasActiveSubscription: boolean;
-  subscriptionCancelAt: string | null;
-  subscriptionCurrentPeriodEnd: string | null;
-  currentPlanName: string;
-  clientsCount: number | null;
-}
-
-/**
- * Uma coluna no celular, sem rolagem horizontal: os cards só entram em linha a
- * partir de `md`, onde a largura fixa deles cabe lado a lado (US-001.EC-4).
- */
-function PlanCards({
-  products,
-  sections,
-  hasActiveSubscription,
-  subscriptionCancelAt,
-  subscriptionCurrentPeriodEnd,
-  currentPlanName,
-  clientsCount,
-}: PlanCardsProps) {
-  return (
-    <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:justify-center">
-      {products.map(product => {
-        const isCurrent = product.id === sections.currentProductId;
-        const planChange: PlanChangeContext = {
-          currentPlanName,
-          currentPlanId: sections.currentProductId,
-          currentType: sections.currentType,
-          targetType: product.type,
-          clientsCount,
-        };
-
-        return (
-          <UpgradeCard
-            key={product.id}
-            title={planTitle(product.name, product.type)}
-            value={product.price}
-            information={false}
-            productId={product.id}
-            active={isCurrent}
-            audience={planAudience(product.type)}
-            planChange={planChange}
-            hasActiveSubscription={hasActiveSubscription}
-            subscriptionCancelAt={subscriptionCancelAt}
-            renewsAt={
-              isCurrent && hasActiveSubscription
-                ? subscriptionCurrentPeriodEnd
-                : null
-            }
-            itens={product.productInfos.map(info => info.description)}
-          />
-        );
-      })}
-    </div>
-  );
 }
 
 function PlanMessage({ children }: { children: string }) {
   return (
-    <div className="mt-4 p-4 text-center text-muted-foreground bg-secondary/30 rounded-md">
+    <div
+      role="status"
+      className="mt-4 p-4 text-center text-muted-foreground bg-secondary/30 rounded-md"
+    >
       {children}
     </div>
   );
 }
 
 /**
- * O catálogo inteiro em duas seções de público, "Para você" e "Para
- * profissionais" (esta com subtítulo por profissão), em vez do filtro pelo tipo
- * do usuário (ADR-001, que substitui a ADR-004 de `settings-tabs-and-account`).
+ * A aba Plano: um controle de categoria e, abaixo dele, os planos daquela
+ * categoria. As duas seções de público ("Para você" / "Para profissionais")
+ * saíram junto com `groupPlans` (ADR-001).
  *
  * Aqui se escolhe o que mostrar e qual contexto passar; o que cada botão faz
  * continua inteiro dentro do `UpgradeCard` e dos controles de assinatura.
@@ -97,9 +55,11 @@ function PlanMessage({ children }: { children: string }) {
 export function PlanPanel({
   plans,
   productId,
+  profileType,
   hasActiveSubscription,
   subscriptionCancelAt,
-  subscriptionCurrentPeriodEnd,
+  expiresAt,
+  autoRenew,
   clientsCount,
   loadFailed = false,
 }: PlanPanelProps) {
@@ -114,74 +74,66 @@ export function PlanPanel({
     );
   }
 
-  const sections = groupPlans(plans, productId);
-
-  if (!sections) {
-    return <PlanMessage>Nenhum plano disponível no momento.</PlanMessage>;
-  }
-
-  const personalProducts = sections.personal.flatMap(group => group.products);
-  const currentProduct = [
-    ...personalProducts,
-    ...sections.professional.flatMap(g => g.products),
-  ].find(product => product.id === sections.currentProductId);
+  // O plano vigente sai da lista inteira, não da categoria visível: quem paga
+  // um plano profissional continua vendo "Seu plano atual" ao abrir a aba dele,
+  // e nenhum card é marcado nas outras (ADR-003, US-009.EC-1).
+  const current = resolveCurrentPlan(plans, productId);
+  const currentProduct = plans.find(plan => plan.id === current.id);
   // Com o tipo no nome, o diálogo não diz "de Premium para Premium".
   const currentPlanName = currentProduct
     ? planTitle(currentProduct.name, currentProduct.type)
     : 'Sem plano';
+  const expiry = planExpiry({ expiresAt, autoRenew });
 
-  const cardProps = {
-    sections,
-    hasActiveSubscription,
-    subscriptionCancelAt,
-    subscriptionCurrentPeriodEnd,
-    currentPlanName,
-    clientsCount,
-  };
+  function panelOf(key: PlanCategoryKey): ReactNode {
+    const categoryPlans = filterPlansByCategory(plans, key);
 
-  if (personalProducts.length === 0 && sections.professional.length === 0) {
-    return <PlanMessage>Nenhum plano disponível no momento.</PlanMessage>;
+    if (categoryPlans.length === 0) {
+      return (
+        <PlanMessage>Nenhum plano disponível para esta categoria</PlanMessage>
+      );
+    }
+
+    return (
+      // Uma coluna no celular, sem rolagem horizontal: os cards só entram em
+      // linha a partir de `md`, onde a largura fixa deles cabe lado a lado.
+      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap md:justify-center">
+        {categoryPlans.map(product => {
+          const isCurrent = product.id === current.id;
+          const planChange: PlanChangeContext = {
+            currentPlanName,
+            currentPlanId: current.id,
+            currentType: current.type,
+            targetType: product.type,
+            clientsCount,
+          };
+
+          return (
+            <UpgradeCard
+              key={product.id}
+              title={planTitle(product.name, product.type)}
+              value={product.price}
+              information={false}
+              productId={product.id}
+              active={isCurrent}
+              audience={planAudience(product.type)}
+              planChange={planChange}
+              hasActiveSubscription={hasActiveSubscription}
+              subscriptionCancelAt={subscriptionCancelAt}
+              planExpiry={isCurrent && hasActiveSubscription ? expiry : null}
+              itens={product.productInfos.map(info => info.description)}
+            />
+          );
+        })}
+      </div>
+    );
   }
 
-  return (
-    <div className="flex flex-col gap-8 pt-2">
-      {/* Uma seção sem produto nenhum simplesmente não aparece (US-001.EC-2). */}
-      {personalProducts.length > 0 && (
-        <section
-          aria-labelledby="plan-section-personal"
-          className="flex flex-col gap-4"
-        >
-          <h3
-            id="plan-section-personal"
-            className="font-display text-lg font-semibold"
-          >
-            Para você
-          </h3>
-          <PlanCards products={personalProducts} {...cardProps} />
-        </section>
-      )}
+  const panels = Object.fromEntries(
+    PLAN_CATEGORY_KEYS.map(key => [key, panelOf(key)])
+  ) as Record<PlanCategoryKey, ReactNode>;
 
-      {sections.professional.length > 0 && (
-        <section
-          aria-labelledby="plan-section-professional"
-          className="flex flex-col gap-4"
-        >
-          <h3
-            id="plan-section-professional"
-            className="font-display text-lg font-semibold"
-          >
-            Para profissionais
-          </h3>
-          {sections.professional.map(group => (
-            <div key={group.id} className="flex flex-col gap-3">
-              <h4 className="text-sm font-semibold text-muted-foreground">
-                {group.name}
-              </h4>
-              <PlanCards products={group.products} {...cardProps} />
-            </div>
-          ))}
-        </section>
-      )}
-    </div>
+  return (
+    <PlanCategoryTabs initial={initialCategory(profileType)} panels={panels} />
   );
 }

@@ -1,8 +1,9 @@
+import { planExpiry, type PlanExpiry } from '@/_lib/planExpiry';
 import type { ProfileShell } from '@/_types/shell';
 
 export interface PlanSummary {
   name: string;
-  detail: { kind: 'renews' | 'cancels'; date: string } | null;
+  detail: PlanExpiry | null;
   cta: { label: 'Conhecer o Premium' | 'Gerenciar plano'; href: string };
 }
 
@@ -12,21 +13,11 @@ export interface PlanSummary {
  */
 export const PLAN_SETTINGS_HREF = '/restrict/settings?tab=plano';
 
-/** Status em que a assinatura ainda vale e a próxima data faz sentido. */
+/** Status em que a assinatura ainda vale e a chamada para ação muda. */
 const PAID_STATUSES = ['active', 'trialing', 'past_due'];
 
 const FREE_PLAN_NAME = 'Plano Gratuito';
 const UNKNOWN_PLAN_NAME = 'Seu plano';
-
-/** Data curta no fuso de Brasília: dd/mm/aaaa. */
-export function formatPlanDate(iso: string): string {
-  return new Intl.DateTimeFormat('pt-BR', {
-    timeZone: 'America/Sao_Paulo',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(iso));
-}
 
 export function getPlanSummary(input: ProfileShell | null): PlanSummary {
   // Sem perfil não dá para afirmar nada sobre o plano — um rótulo neutro é mais
@@ -47,19 +38,12 @@ export function getPlanSummary(input: ProfileShell | null): PlanSummary {
 
   return {
     name,
-    // Cancelamento agendado tem precedência sobre a renovação: é a data que
-    // muda a vida do assinante. Assinatura inativa ou data desconhecida não
-    // inventa nada.
-    detail: !isPaid
-      ? null
-      : input.subscriptionCancelAt
-        ? { kind: 'cancels', date: formatPlanDate(input.subscriptionCancelAt) }
-        : input.subscriptionCurrentPeriodEnd
-          ? {
-              kind: 'renews',
-              date: formatPlanDate(input.subscriptionCurrentPeriodEnd),
-            }
-          : null,
+    // Renovar ou expirar já foi decidido pelo backend: aqui só se escreve o que
+    // `expiresAt` e `autoRenew` dizem, e sem data não se inventa nada (ADR-004).
+    detail: planExpiry({
+      expiresAt: input.expiresAt,
+      autoRenew: input.autoRenew,
+    }),
     cta: {
       label: isPaid ? 'Gerenciar plano' : 'Conhecer o Premium',
       href: PLAN_SETTINGS_HREF,

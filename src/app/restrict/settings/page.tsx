@@ -1,7 +1,4 @@
-import {
-  actionGetProductsPlans,
-  type ProductsPlan,
-} from '@/_actions/products/getProdductsPlans';
+import { actionGetPlans, type Product } from '@/_actions/products/getPlans';
 import { actionUpdateSubscription } from '@/_actions/users/postUpdateSubscription';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { AccountPanel } from '@/_components/settings/accountPanel';
@@ -42,6 +39,9 @@ type SettingsProfile = Omit<profileFormData, 'avatar'> & {
   subscriptionStatus?: string | null;
   subscriptionCancelAt?: string | null;
   subscriptionCurrentPeriodEnd?: string | null;
+  /** Data e renovação do plano já derivadas pelo backend (ADR-004). */
+  expiresAt?: string | null;
+  autoRenew?: boolean | null;
   /** `0` para quem não é profissional; ausente se o backend não mandar (ADR-008). */
   clientsCount?: number | null;
 };
@@ -83,13 +83,15 @@ export default async function Settings({ searchParams }: SettingsProps) {
     console.error('Falha ao carregar perfil:', error);
   }
 
-  let plans: ProductsPlan[] = [];
+  // O catálogo inteiro em uma chamada só; a troca de categoria filtra essa
+  // lista em memória, sem voltar à rede (ADR-003).
+  let plans: Product[] = [];
   // A falha precisa ser distinguível de "catálogo vazio": só ela troca o
-  // painel por uma mensagem de erro (US-001.EC-1).
+  // painel por uma mensagem de erro (US-006.EC-3).
   let plansFailed = false;
   if (tab === 'plano') {
-    const [productsPlans, plansError] = await actionGetProductsPlans();
-    plans = productsPlans ?? [];
+    const [catalog, plansError] = await actionGetPlans();
+    plans = catalog ?? [];
     plansFailed = Boolean(plansError);
   }
 
@@ -161,13 +163,15 @@ export default async function Settings({ searchParams }: SettingsProps) {
         <PlanPanel
           plans={plans}
           productId={profile.productId}
+          // Vem do perfil recém-lido, não da sessão: logo após uma troca de
+          // plano a sessão ainda carrega o tipo antigo (ADR-008).
+          profileType={profile.productType}
           hasActiveSubscription={ACTIVE_STATUSES.includes(
             profile.subscriptionStatus ?? ''
           )}
           subscriptionCancelAt={profile.subscriptionCancelAt ?? null}
-          subscriptionCurrentPeriodEnd={
-            profile.subscriptionCurrentPeriodEnd ?? null
-          }
+          expiresAt={profile.expiresAt ?? null}
+          autoRenew={profile.autoRenew ?? false}
           clientsCount={
             typeof profile.clientsCount === 'number'
               ? profile.clientsCount
