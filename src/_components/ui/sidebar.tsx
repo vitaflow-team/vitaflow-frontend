@@ -24,9 +24,11 @@ import {
 } from '@/_components/ui/tooltip';
 import { useIsMobile } from '@/_hooks/useMobile';
 import { cn } from '@/_lib/utils';
+import {
+  SIDEBAR_COOKIE_MAX_AGE,
+  SIDEBAR_COOKIE_NAME,
+} from '@/_constants/sidebar';
 
-const SIDEBAR_COOKIE_NAME = 'sidebar_state';
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = '16rem';
 const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';

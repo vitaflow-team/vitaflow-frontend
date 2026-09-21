@@ -11,11 +11,20 @@ interface ProductInfo {
   updatedAt: string;
 }
 
-interface Product {
+/** Tipo de conta que o plano atende, como o backend devolve em `/products`. */
+export type ProductTypeName = 'USER' | 'NUTRITIONIST' | 'PHYSICAL_EDUCATOR';
+
+export interface Product {
   id: string;
   name: string;
   price: number;
   groupId: string;
+  /**
+   * Fonte do tipo de plano na tela de Configurações: a aba Plano descobre o
+   * tipo do usuário pelo produto atual, não pela sessão, que congela no login
+   * (ADR-004).
+   */
+  type: ProductTypeName;
   stripeId: string | null;
   createdAt: string;
   updatedAt: string;

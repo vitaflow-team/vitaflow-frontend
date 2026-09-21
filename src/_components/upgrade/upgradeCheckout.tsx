@@ -2,6 +2,9 @@
 
 import { actionCreateCheckoutSession } from '@/_actions/stripe/createCheckoutSession';
 import { useAlertHook } from '@/_hooks/alertHook';
+import type { PlanChangeSummary as PlanChangeResult } from '@/_lib/planChangeSummary';
+import type { PlanType } from '@/_lib/planSelection';
+import { useRef } from 'react';
 import { useServerAction } from 'zsa-react';
 import {
   Dialog,
@@ -13,29 +16,59 @@ import {
   DialogTrigger,
 } from '@/_components/ui/dialog';
 import { Button } from '../ui/button';
+import { PlanChangeSummary } from './planChangeSummary';
 
 interface UpgradeCheckoutProps {
   productId: string;
+  /** Nome do plano deste card, usado só no resumo da troca. */
+  planName?: string;
+  /** Resumo da troca; `null` ou ausente esconde o bloco (ADR-010). */
+  summary?: PlanChangeResult | null;
+  currentPlanName?: string;
+  currentType?: PlanType;
+  targetType?: PlanType;
 }
 
-export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
+export function UpgradeCheckout({
+  productId,
+  planName,
+  summary = null,
+  currentPlanName,
+  currentType,
+  targetType,
+}: UpgradeCheckoutProps) {
   const { isPending, execute } = useServerAction(actionCreateCheckoutSession);
   const { openError } = useAlertHook();
+  // `isPending` só chega no render seguinte; dois cliques no mesmo tique
+  // abririam dois checkouts (US-005.EC-2).
+  const running = useRef(false);
 
   async function handleCheckout() {
-    const [data, error] = await execute({ productId });
-    if (error) {
-      openError(
-        error.message || 'Erro ao iniciar o pagamento.',
-        'Atenção!',
-        'error'
-      );
+    if (isPending || running.current) {
       return;
     }
-    if (data?.url) {
-      window.location.href = data.url;
+    running.current = true;
+
+    try {
+      const [data, error] = await execute({ productId });
+      if (error) {
+        openError(
+          error.message || 'Erro ao iniciar o pagamento.',
+          'Atenção!',
+          'error'
+        );
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } finally {
+      running.current = false;
     }
   }
+
+  const showSummary =
+    summary && currentPlanName && planName && currentType && targetType;
 
   return (
     <Dialog>
@@ -46,13 +79,23 @@ export function UpgradeCheckout({ productId }: UpgradeCheckoutProps) {
         <DialogHeader>
           <DialogTitle className="pb-2">Finalizar Assinatura</DialogTitle>
           <DialogDescription className="text-center text-primary/80">
-            Você está a um passo de assinar este plano.
+            Confira o que muda antes de assinar.
           </DialogDescription>
         </DialogHeader>
-        <p className="flex flex-col items-center gap-4 text-center text-sm text-primary/70">
-          Clique no botão abaixo para ser redirecionado ao nosso parceiro de
-          pagamentos seguro.
-        </p>
+        {showSummary ? (
+          <PlanChangeSummary
+            summary={summary}
+            currentPlanName={currentPlanName}
+            targetPlanName={planName}
+            currentType={currentType}
+            targetType={targetType}
+          />
+        ) : (
+          <p className="flex flex-col items-center gap-4 text-center text-sm text-primary/70">
+            Clique no botão abaixo para ser redirecionado ao nosso parceiro de
+            pagamentos seguro.
+          </p>
+        )}
         <DialogFooter className="flex flex-row w-full items-center content-center justify-center">
           <Button
             className="px-5 font-semibold w-full"

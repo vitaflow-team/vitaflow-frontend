@@ -2,6 +2,7 @@
 
 import { apiClient } from '@/_lib/apiClient';
 import { stripe } from '@/_lib/stripe';
+import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
 
@@ -43,6 +44,7 @@ export const actionReactivateSubscription = createServerAction().handler(
           stripeSubscriptionId: updated.id,
           subscriptionStatus: updated.status,
           subscriptionCancelAt: null,
+          subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(updated),
         }),
       });
 

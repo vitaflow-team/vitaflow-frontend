@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { normalizeDecimalInput } from '@/_lib/decimalInput';
 
 function measurementNumber(label: string, minimum: number, maximum: number) {
   return z
@@ -9,10 +10,34 @@ function measurementNumber(label: string, minimum: number, maximum: number) {
 }
 
 export const measurementRecordSchema = z.object({
-  weightKg: measurementNumber('Peso', 20, 300),
-  heightCm: measurementNumber('Altura', 50, 250),
-  waistCm: measurementNumber('Cintura', 30, 200).optional(),
-  hipCm: measurementNumber('Quadril', 30, 200).optional(),
+  weightKg: z.preprocess(
+    normalizeDecimalInput,
+    measurementNumber('Peso', 20, 300)
+  ),
+  heightCm: z.preprocess(
+    normalizeDecimalInput,
+    measurementNumber('Altura', 50, 250)
+  ),
+  waistCm: z.preprocess(
+    normalizeDecimalInput,
+    measurementNumber('Cintura', 30, 200).optional()
+  ),
+  hipCm: z.preprocess(
+    normalizeDecimalInput,
+    measurementNumber('Quadril', 30, 200).optional()
+  ),
 });
 
-export type measurementRecordFormData = z.infer<typeof measurementRecordSchema>;
+export interface MeasurementRecordFormInput {
+  weightKg: string;
+  heightCm: string;
+  waistCm: string;
+  hipCm: string;
+}
+
+export type MeasurementRecordFormData = z.output<
+  typeof measurementRecordSchema
+>;
+
+/** @deprecated Prefer the PascalCase output type. */
+export type measurementRecordFormData = MeasurementRecordFormData;

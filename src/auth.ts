@@ -10,7 +10,10 @@ import {
 import { clearAccessTokenCookie } from './_lib/accessTokenCookie';
 import { jwtCallback, sessionCallback } from './authCallbacks';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+// `unstable_update` é o único caminho de atualização de sessão do servidor no
+// NextAuth v5 beta; ele escreve o cookie, então só roda em server action ou
+// route handler (ADR-008).
+export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
@@ -83,7 +86,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   callbacks: {
-    jwt: params => jwtCallback(params),
+    jwt: params =>
+      jwtCallback({
+        token: params.token,
+        user: params.user,
+        trigger: params.trigger,
+        session: params.session,
+      }),
     session: params =>
       sessionCallback({ session: params.session, token: params.token }),
   },

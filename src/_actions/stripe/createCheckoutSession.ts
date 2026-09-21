@@ -68,8 +68,11 @@ export const actionCreateCheckoutSession = createServerAction()
         customer_email: subscription.stripeCustomerId
           ? undefined
           : session.user.email,
-        success_url: `${origin}/restrict/settings?checkout_session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/restrict/settings`,
+        // Literal, não montado com URLSearchParams: o Stripe só troca o
+        // marcador se as chaves chegarem sem escape. A volta cai na aba Plano
+        // e a página continua sincronizando pelo `checkout_session_id`.
+        success_url: `${origin}/restrict/settings?tab=plano&checkout_session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/restrict/settings?tab=plano`,
         metadata: {
           userId: session.user.id,
           productId: product.id,

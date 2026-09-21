@@ -32,9 +32,10 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+  TTransformedValues extends FieldValues | undefined = TFieldValues,
 >({
   ...props
-}: ControllerProps<TFieldValues, TName>) => {
+}: ControllerProps<TFieldValues, TName, TTransformedValues>) => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
@@ -90,8 +91,11 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
 function FormLabel({
   className,
   children,
+  showMessage = true,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & {
+  showMessage?: boolean;
+}) {
   const { error, formItemId } = useFormField();
 
   return (
@@ -103,7 +107,7 @@ function FormLabel({
       {...props}
     >
       {children}
-      <FormMessage />
+      {showMessage && <FormMessage />}
     </Label>
   );
 }

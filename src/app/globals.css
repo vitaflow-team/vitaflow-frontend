@@ -31,6 +31,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-line: var(--line);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-sage: var(--sage);
@@ -65,6 +66,7 @@
  */
 :root {
   --radius: 0.75rem;
+  --bottom-nav-h: 4.5rem;
   --background: hsl(48 30% 97%);
   --background-secondary: hsl(46 20% 95%);
   --primary: hsl(49 14% 23%);
@@ -104,6 +106,11 @@
      preenchimento). 50%: ~3.3–3.5:1. */
   --border: hsl(45 14% 50%);
   --input: hsl(45 14% 50%);
+  /* Traço decorativo: divisórias e contornos de cartão que apenas agrupam conteúdo já
+     legível por conta própria. Fica de propósito mais suave que --border e NÃO serve para
+     contorno de campo de formulário nem para nenhum limite essencial — esses continuam em
+     --border/--input, que carregam os 3:1 exigidos pela WCAG 1.4.11. */
+  --line: hsl(45 14% 84%);
   /* 48 34% 64% tinha 1.93:1 contra o fundo — o anel de foco (essencial para navegação
      por teclado) ficava praticamente invisível. 43%: ~3.5:1. */
   --ring: hsl(48 34% 43%);
@@ -153,6 +160,8 @@
        clareada para 40%: ~3.3:1. */
     --border: hsl(46 10% 40%);
     --input: hsl(46 10% 40%);
+    /* Par escuro do traço decorativo — ver a nota no tema claro. */
+    --line: hsl(46 10% 22%);
     --ring: hsl(49 39% 73%);
     --chart-1: hsl(49 39% 73%);
     --chart-2: hsl(110 30% 58%);

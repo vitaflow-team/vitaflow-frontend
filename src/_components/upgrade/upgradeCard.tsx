@@ -1,3 +1,6 @@
+import { summarizePlanChange } from '@/_lib/planChangeSummary';
+import type { PlanType } from '@/_lib/planSelection';
+import { formatPlanDate } from '@/_lib/planSummary';
 import { Check } from 'lucide-react';
 import { Card, CardContent, CardTitle } from '../ui/card';
 import { CancelSubscriptionControl } from './cancelSubscriptionControl';
@@ -17,6 +20,23 @@ export function UpgradeCardItem({ label }: UpgradeCardItemProps) {
   );
 }
 
+/**
+ * O que o card sabe sobre a troca que ele oferece. É contexto de conteúdo, não
+ * de decisão: nenhuma regra de assinatura depende dele — ele só alimenta o
+ * resumo exibido dentro dos diálogos que já existem (ADR-003, ADR-010).
+ */
+export interface PlanChangeContext {
+  /** Nome do plano vigente, para a linha "Plano atual" do resumo. */
+  currentPlanName: string;
+  /** Id do plano vigente; `null` quando não dá para dizer qual é. */
+  currentPlanId: string | null;
+  currentType: PlanType;
+  /** Tipo do plano deste card. */
+  targetType: PlanType;
+  /** `null` quando o perfil não trouxe a contagem de alunos (ADR-005). */
+  clientsCount: number | null;
+}
+
 interface UpgradeCardProps {
   title: string;
   value?: number;
@@ -27,6 +47,15 @@ interface UpgradeCardProps {
   itens?: string[];
   hasActiveSubscription?: boolean;
   subscriptionCancelAt?: string | null;
+  /**
+   * Data ISO da próxima cobrança, exibida apenas no plano pago vigente. É
+   * informação, não regra: nenhuma decisão de assinatura depende dela.
+   */
+  renewsAt?: string | null;
+  /** Linha "Para quem é" do catálogo (ADR-001); ausente nas páginas públicas. */
+  audience?: string;
+  /** Contexto do resumo de troca; ausente fora da aba Plano. */
+  planChange?: PlanChangeContext;
 }
 
 export function UpgradeCard({
@@ -39,11 +68,29 @@ export function UpgradeCard({
   productId,
   hasActiveSubscription = false,
   subscriptionCancelAt = null,
+  renewsAt = null,
+  audience,
+  planChange,
 }: UpgradeCardProps) {
   const currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   });
+
+  // `summarizePlanChange` devolve `null` quando o alvo já é o plano vigente,
+  // e é o mesmo `null` que faz os diálogos não mostrarem resumo nenhum.
+  const changeSummary =
+    planChange && productId
+      ? summarizePlanChange({
+          current: {
+            id: planChange.currentPlanId,
+            type: planChange.currentType,
+          },
+          target: { id: productId, type: planChange.targetType },
+          hasActiveSubscription,
+          clientsCount: planChange.clientsCount,
+        })
+      : null;
 
   function renderAction() {
     if (value === 0) {
@@ -63,10 +110,28 @@ export function UpgradeCard({
     }
 
     if (hasActiveSubscription) {
-      return <ChangePlanButton productId={productId} planName={title} />;
+      return (
+        <ChangePlanButton
+          productId={productId}
+          planName={title}
+          summary={changeSummary}
+          currentPlanName={planChange?.currentPlanName}
+          currentType={planChange?.currentType}
+          targetType={planChange?.targetType}
+        />
+      );
     }
 
-    return <UpgradeCheckout productId={productId} />;
+    return (
+      <UpgradeCheckout
+        productId={productId}
+        planName={title}
+        summary={changeSummary}
+        currentPlanName={planChange?.currentPlanName}
+        currentType={planChange?.currentType}
+        targetType={planChange?.targetType}
+      />
+    );
   }
 
   return (
@@ -95,11 +160,28 @@ export function UpgradeCard({
         </span>
         <span className="text-sm text-muted-foreground">/mês</span>
       </div>
+      {audience && (
+        <p className="text-xs text-muted-foreground">
+          <span className="font-semibold text-foreground">Para quem é: </span>
+          {audience}
+        </p>
+      )}
       <CardContent className="flex flex-col gap-2 p-0 flex-1">
         {itens?.map((item, index) => (
           <UpgradeCardItem key={index} label={item} />
         ))}
       </CardContent>
+      {/* Cancelamento agendado tem a própria linha dentro do controle de
+          assinatura; anunciar renovação ao lado dela se contradiria. */}
+      {!information &&
+        active &&
+        value > 0 &&
+        renewsAt &&
+        !subscriptionCancelAt && (
+          <p className="text-xs text-muted-foreground text-center">
+            Renova em {formatPlanDate(renewsAt)}
+          </p>
+        )}
       {!information && renderAction()}
     </Card>
   );

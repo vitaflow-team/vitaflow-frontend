@@ -22,7 +22,7 @@ export function ModalAdd({
 }>) {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="link">Adicionar</Button>
       </DialogTrigger>
       <DialogContent className="border-2 shadow-2xl border-primary">

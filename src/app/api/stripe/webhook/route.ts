@@ -1,5 +1,6 @@
 import { apiClient } from '@/_lib/apiClient';
 import { stripe } from '@/_lib/stripe';
+import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { NextResponse } from 'next/server';
 import type Stripe from 'stripe';
 
@@ -84,6 +85,7 @@ async function handleCheckoutCompleted(
     stripeSubscriptionId: subscription.id,
     subscriptionStatus: subscription.status,
     subscriptionCancelAt: subscription.cancel_at,
+    subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(subscription),
   });
 }
 
@@ -103,6 +105,7 @@ async function handleSubscriptionUpdated(
     stripeSubscriptionId: subscription.id,
     subscriptionStatus: subscription.status,
     subscriptionCancelAt: subscription.cancel_at,
+    subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(subscription),
   });
 }
 
@@ -121,6 +124,7 @@ async function handleSubscriptionDeleted(
     stripeSubscriptionId: null,
     subscriptionStatus: 'canceled',
     subscriptionCancelAt: null,
+    subscriptionCurrentPeriodEnd: null,
   });
 }
 
@@ -150,6 +154,7 @@ async function handleInvoicePaymentFailed(
     stripeSubscriptionId: subscription.id,
     subscriptionStatus: subscription.status,
     subscriptionCancelAt: subscription.cancel_at,
+    subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(subscription),
   });
 }
 
@@ -160,6 +165,7 @@ interface SyncPayload {
   stripeSubscriptionId: string | null;
   subscriptionStatus: string;
   subscriptionCancelAt: number | null;
+  subscriptionCurrentPeriodEnd?: string | null;
 }
 
 async function syncSubscription(payload: SyncPayload): Promise<void> {
@@ -174,6 +180,7 @@ async function syncSubscription(payload: SyncPayload): Promise<void> {
       subscriptionCancelAt: payload.subscriptionCancelAt
         ? new Date(payload.subscriptionCancelAt * 1000).toISOString()
         : null,
+      subscriptionCurrentPeriodEnd: payload.subscriptionCurrentPeriodEnd,
     }),
   });
 }

@@ -1,7 +1,41 @@
 import { describe, expect, it } from 'vitest';
-import { formatWeightVariation, getBmiBadgeDisplay } from './progressDisplay';
+import {
+  formatBmi,
+  formatWeightVariation,
+  getBmiBadgeDisplay,
+  getBmiStripTone,
+} from './progressDisplay';
+
+describe('BMI display formatting', () => {
+  it('UT-022 formats an integer with one decimal place', () => {
+    expect(formatBmi(22)).toBe('22,0');
+  });
+
+  it('UT-023 formats a decimal with a comma', () => {
+    expect(formatBmi(21.4)).toBe('21,4');
+  });
+
+  it('UT-024 rounds consistently across a tenth', () => {
+    expect(formatBmi(22.04)).toBe('22,0');
+    expect(formatBmi(22.06)).toBe('22,1');
+  });
+
+  it('UT-025 replaces non-finite values with an em dash', () => {
+    expect(formatBmi(Number.NaN)).toBe('—');
+    expect(formatBmi(Number.POSITIVE_INFINITY)).toBe('—');
+  });
+});
 
 describe('progress display logic', () => {
+  it('UT-045 maps each BMI classification to its strip tone', () => {
+    expect(getBmiStripTone('PESO_NORMAL')).toBe('sage-bg');
+    expect(getBmiStripTone('ABAIXO_DO_PESO')).toBe('info-bg');
+    expect(getBmiStripTone('SOBREPESO')).toBe('warn-bg');
+    expect(getBmiStripTone('OBESIDADE_GRAU_I')).toBe('muted');
+    expect(getBmiStripTone('OBESIDADE_GRAU_II')).toBe('muted');
+    expect(getBmiStripTone('OBESIDADE_GRAU_III')).toBe('muted');
+  });
+
   it('UT-051 maps normal weight to the sage token pair', () => {
     expect(getBmiBadgeDisplay('PESO_NORMAL')).toEqual({
       label: 'Peso normal',

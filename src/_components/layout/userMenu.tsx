@@ -1,7 +1,9 @@
 'use client';
 
 import { APP_ROUTES } from '@/_constants/routes';
-import { Bell, LogOut, Settings } from 'lucide-react';
+import { Skeleton } from '@/_components/ui/skeleton';
+import { getAvatarView } from '@/_lib/avatarView';
+import { LogOut, Settings } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -14,20 +16,21 @@ import {
 import { UserAvatar } from './userAvatar';
 
 export function UserMenu() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const route = useRouter();
+  const avatarView = getAvatarView(status, session?.user?.name);
+
+  if (avatarView.kind === 'skeleton') {
+    return <Skeleton className="h-12 w-12 rounded-full" aria-hidden="true" />;
+  }
 
   return (
     <div className="flex items-center gap-4 sm:gap-8 w-fit">
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <UserAvatar
-            src={session ? session.user!.avatar : undefined}
-            name={session ? session.user!.name : undefined}
-          />
+        <DropdownMenuTrigger aria-label="Abrir menu do usuário">
+          <UserAvatar src={session?.user?.avatar} name={avatarView.name} />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56 mx-2">
-          <DropdownMenuItem icon={Bell}>Notificações</DropdownMenuItem>
           <DropdownMenuItem
             icon={Settings}
             onClick={() => route.push(APP_ROUTES.USER_SETTINGS)}

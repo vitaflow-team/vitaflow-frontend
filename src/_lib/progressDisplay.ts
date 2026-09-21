@@ -6,6 +6,17 @@ export interface BmiBadgeDisplay {
   backgroundToken: string;
 }
 
+export type BmiStripTone = 'sage-bg' | 'info-bg' | 'warn-bg' | 'muted';
+
+const BMI_STRIP_TONE: Record<BmiClassification, BmiStripTone> = {
+  ABAIXO_DO_PESO: 'info-bg',
+  PESO_NORMAL: 'sage-bg',
+  SOBREPESO: 'warn-bg',
+  OBESIDADE_GRAU_I: 'muted',
+  OBESIDADE_GRAU_II: 'muted',
+  OBESIDADE_GRAU_III: 'muted',
+};
+
 const BMI_BADGE_DISPLAY: Record<BmiClassification, BmiBadgeDisplay> = {
   ABAIXO_DO_PESO: {
     label: 'Abaixo do peso',
@@ -39,10 +50,27 @@ const BMI_BADGE_DISPLAY: Record<BmiClassification, BmiBadgeDisplay> = {
   },
 };
 
+export function formatBmi(value: number): string {
+  if (!Number.isFinite(value)) {
+    return '—';
+  }
+
+  return value.toLocaleString('pt-BR', {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+}
+
 export function getBmiBadgeDisplay(
   classification: BmiClassification
 ): BmiBadgeDisplay {
   return BMI_BADGE_DISPLAY[classification];
+}
+
+export function getBmiStripTone(
+  classification: BmiClassification
+): BmiStripTone {
+  return BMI_STRIP_TONE[classification];
 }
 
 export interface WeightVariationDisplay {

@@ -6,15 +6,18 @@ interface LogoProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Dentro do app a marca leva para o Início, não para o site público. */
+  href?: string;
 }
 
 export function Logo({
   width = 300,
   height = 150,
   className = 'w-48 md:w-64',
+  href = '/',
 }: LogoProps) {
   return (
-    <Link href="/">
+    <Link href={href}>
       <Image
         src="/vitaflow.svg"
         alt="Vitaflow"

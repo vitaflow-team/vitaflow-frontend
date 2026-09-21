@@ -17,6 +17,8 @@ export interface DashboardResponseDTO {
   weightSeries: Array<{ recordedAt: string; weightKg: number }>;
   bmiSeries: Array<{ recordedAt: string; bmi: number }>;
   history: MeasurementRecordResponseDTO[];
+  /** Janela exata usada pelo backend — é ela, e não `Date.now()`, que define o eixo de tempo. */
+  period: { weeks: 4 | 8 | 12; start: string; end: string };
 }
 
 export interface TrendPoint {
