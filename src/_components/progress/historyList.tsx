@@ -19,16 +19,60 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/_components/ui/tooltip';
 import { useAlertHook } from '@/_hooks/alertHook';
+import { formatBmi } from '@/_lib/progressDisplay';
+import { cn } from '@/_lib/utils';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import type { ComponentProps } from 'react';
 import { useServerAction } from 'zsa-react';
 import { BmiBadge } from './bmiBadge';
 import { RecordFormModal } from './recordFormModal';
 
 interface HistoryListProps {
   records: MeasurementRecordResponseDTO[];
+}
+
+interface IconActionProps extends ComponentProps<'button'> {
+  /** Nome acessível do botão — é ele, não o tooltip, que o leitor de tela anuncia. */
+  label: string;
+  tooltip: string;
+}
+
+/**
+ * Ação compacta do histórico: só o ícone, com nome acessível próprio e um
+ * tooltip no hover ou no foco. O toque não depende do tooltip — o clique é o do
+ * próprio botão — e o alvo tem 44 px no celular.
+ */
+function IconAction({
+  label,
+  tooltip,
+  className,
+  children,
+  ...props
+}: IconActionProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={label}
+          className={cn('size-11 md:size-9', className)}
+          {...props}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{tooltip}</TooltipContent>
+    </Tooltip>
+  );
 }
 
 function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
@@ -50,8 +94,8 @@ function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
   }
 
   return (
-    <li className="flex flex-col gap-3 border-b py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
-      <div className="grid flex-1 gap-2 sm:grid-cols-3 sm:items-center">
+    <li className="flex items-center justify-between gap-3 border-b py-3 last:border-b-0 sm:py-4">
+      <div className="grid min-w-0 flex-1 gap-1 sm:grid-cols-3 sm:items-center sm:gap-2">
         <time
           className="text-sm text-muted-foreground"
           dateTime={record.recordedAt}
@@ -64,34 +108,31 @@ function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
         <p className="font-semibold">
           {record.weightKg.toLocaleString('pt-BR')} kg
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           <span className="text-sm font-medium">
-            IMC {record.bmi.toLocaleString('pt-BR')}
+            IMC {formatBmi(record.bmi)}
           </span>
           <BmiBadge classification={record.bmiClassification} />
         </div>
       </div>
-      <div className="flex gap-2 sm:justify-end">
+      <div className="flex shrink-0 gap-1 sm:justify-end sm:gap-2">
         <RecordFormModal
           existingRecord={record}
           trigger={
-            <Button variant="outline" size="sm" aria-label="Editar registro">
+            <IconAction label="Editar registro" tooltip="Editar">
               <Pencil aria-hidden="true" />
-              Editar
-            </Button>
+            </IconAction>
           }
         />
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
+            <IconAction
+              label="Excluir registro"
+              tooltip="Excluir"
               className="text-destructive"
-              aria-label="Excluir registro"
             >
               <Trash2 aria-hidden="true" />
-              Excluir
-            </Button>
+            </IconAction>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
