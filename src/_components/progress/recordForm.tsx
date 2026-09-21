@@ -352,7 +352,7 @@ export function RecordForm({
               <Button
                 type="button"
                 variant="ghost"
-                className="h-auto w-full justify-between gap-3 border-y border-line px-0 py-3 text-left"
+                className="h-auto w-full justify-between gap-3 border border-line px-2 py-3 text-left"
                 aria-expanded="false"
                 aria-controls={heightRegionId}
                 onClick={revealHeight}

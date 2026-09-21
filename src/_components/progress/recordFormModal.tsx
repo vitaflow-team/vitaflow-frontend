@@ -15,8 +15,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/_components/ui/sheet';
-import { useIsMobile } from '@/_hooks/useMobile';
 import { useLatestRecord } from '@/_hooks/useLatestRecord';
+import { useIsMobile } from '@/_hooks/useMobile';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
 import { Slot } from '@radix-ui/react-slot';
 import { Plus } from 'lucide-react';
@@ -111,7 +111,7 @@ export function RecordFormModal({
         <Sheet open onOpenChange={nextOpen => !nextOpen && closeForm()}>
           <SheetContent
             side="bottom"
-            className="max-h-[90dvh] overflow-y-auto rounded-t-2xl p-0 pb-[env(safe-area-inset-bottom)]"
+            className="max-h-[90dvh] overflow-y-auto rounded-t-2xl m-2 md:m-0 p-0 pb-[env(safe-area-inset-bottom)]"
           >
             <SheetHeader className="pb-0 text-left">
               <SheetTitle>{title}</SheetTitle>
