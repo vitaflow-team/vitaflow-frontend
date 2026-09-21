@@ -2,7 +2,8 @@
 
 import { apiClient } from '@/_lib/apiClient';
 import { stripe } from '@/_lib/stripe';
-import { auth } from '@/auth';
+import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
+import { auth, unstable_update } from '@/auth';
 import { z } from 'zod';
 import { createServerAction, ZSAError } from 'zsa';
 
@@ -82,8 +83,15 @@ export const actionChangeSubscriptionPlan = createServerAction()
               : updated.customer.id,
           stripeSubscriptionId: updated.id,
           subscriptionStatus: updated.status,
+          subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(updated),
         }),
       });
+
+      // A sessão congela o plano no login; sem isto o menu e o acesso só
+      // mudariam no próximo login. O callback relê o perfil do servidor, então
+      // não há dado do cliente aqui. Uma falha não desfaz a troca já feita:
+      // a página de Configurações ainda sincroniza na próxima visita (ADR-008).
+      await unstable_update({}).catch(() => undefined);
 
       return { success: true };
     } catch (error) {

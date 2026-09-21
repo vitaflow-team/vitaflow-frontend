@@ -2,6 +2,7 @@
 
 import { apiClient } from '@/_lib/apiClient';
 import { stripe } from '@/_lib/stripe';
+import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { auth } from '@/auth';
 import { z } from 'zod';
 import { createServerAction, ZSAError } from 'zsa';
@@ -69,6 +70,7 @@ export const actionUpdateSubscription = createServerAction()
           stripeCustomerId: customerId,
           stripeSubscriptionId: subscription.id,
           subscriptionStatus: subscription.status,
+          subscriptionCurrentPeriodEnd: getSubscriptionPeriodEnd(subscription),
         }),
       });
 
