@@ -61,12 +61,7 @@ export default async function ProgressPage({
               Acompanhe suas medidas e tendências ao longo do tempo.
             </p>
           </div>
-          {dashboard.latest && (
-            <RecordFormModal
-              defaultHeightCm={dashboard.latest.heightCm}
-              defaultWeightKg={dashboard.latest.weightKg}
-            />
-          )}
+          {dashboard.latest && <RecordFormModal />}
         </header>
 
         {dashboard.latest === null ? (
@@ -106,10 +101,7 @@ export default async function ProgressPage({
           </div>
         )}
       </div>
-      <FloatingRegisterButton
-        defaultHeightCm={dashboard.latest?.heightCm}
-        defaultWeightKg={dashboard.latest?.weightKg}
-      />
+      <FloatingRegisterButton />
     </DefaultLayout>
   );
 }
