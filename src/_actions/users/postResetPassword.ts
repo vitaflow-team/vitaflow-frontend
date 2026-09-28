@@ -1,8 +1,12 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { toSafeActionError, TOO_MANY_REQUESTS } from '@/_lib/safeActionError';
 import { resetPasswordSchema } from '@/_schema/resetPassword';
-import { createServerAction, ZSAError } from 'zsa';
+import type { ErrorMapping } from '@/_types/errorMapping';
+import { createServerAction } from 'zsa';
+
+const KNOWN_ERRORS: ErrorMapping[] = [TOO_MANY_REQUESTS];
 
 export const actionResetPassword = createServerAction()
   .input(resetPasswordSchema)
@@ -13,9 +17,6 @@ export const actionResetPassword = createServerAction()
         body: JSON.stringify({ email }),
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw new ZSAError('ERROR', error.message);
-      }
-      throw new ZSAError('ERROR', 'Erro ao solicitar recuperação de senha.');
+      throw toSafeActionError('postResetPassword', error, KNOWN_ERRORS);
     }
   });
