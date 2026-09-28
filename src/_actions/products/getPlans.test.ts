@@ -32,7 +32,11 @@ describe('plan category tabs — actionGetPlans', () => {
 
     expect(error).toBeNull();
     expect(result).toEqual(PLANS);
-    expect(apiClientMock).toHaveBeenCalledWith('/plans', { method: 'GET' });
+    expect(apiClientMock).toHaveBeenCalledWith('/plans', {
+      method: 'GET',
+      cache: 'force-cache',
+      next: { revalidate: 3600, tags: ['plans'] },
+    });
   });
 
   it('UT-032 turns a failure into a generic error', async () => {
@@ -44,7 +48,7 @@ describe('plan category tabs — actionGetPlans', () => {
 
     expect(result).toBeNull();
     expect(error?.code).toBe('ERROR');
-    // O motivo técnico fica no log, não na tela (US-006.EC-3).
+    // The technical reason stays in the log, not on screen (US-006.EC-3).
     expect(error?.message).toBe('Não foi possível carregar os planos.');
   });
 });

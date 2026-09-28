@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { apiClient } from '@/_lib/apiClient';
 
 // Módulo de servidor por construção: `apiClient` lê o cookie do token pelo

@@ -11,7 +11,7 @@ export interface ProductInfo {
   updatedAt: string;
 }
 
-/** Tipo de conta que o plano atende, como o backend devolve em `/plans`. */
+/** Account type the plan serves, as the backend returns it from `/plans`. */
 export type ProductTypeName = 'USER' | 'NUTRITIONIST' | 'PHYSICAL_EDUCATOR';
 
 export interface Product {
@@ -26,17 +26,22 @@ export interface Product {
   productInfos: ProductInfo[];
 }
 
-/** Mensagem única: o motivo da falha é do log, não da tela (ADR-003). */
+/** One message only: the failure reason belongs in the log, not on screen (ADR-003). */
 const LOAD_ERROR = 'Não foi possível carregar os planos.';
 
 /**
- * O catálogo inteiro em uma lista plana, já ordenado por preço e nome pelo
- * backend. A aba Plano carrega uma vez e filtra por categoria em memória, sem
- * refazer a chamada a cada troca de sub-aba (ADR-003).
+ * The whole catalog as one flat list, already sorted by price and name by the
+ * backend. The Plan tab loads it once and filters by category in memory,
+ * without calling again on every sub-tab switch (ADR-003). The catalog is
+ * public and changes rarely, so it is cached for an hour.
  */
 export const actionGetPlans = createServerAction().handler(async () => {
   try {
-    return await apiClient<Product[]>('/plans', { method: 'GET' });
+    return await apiClient<Product[]>('/plans', {
+      method: 'GET',
+      cache: 'force-cache',
+      next: { revalidate: 3600, tags: ['plans'] },
+    });
   } catch {
     throw new ZSAError('ERROR', LOAD_ERROR);
   }

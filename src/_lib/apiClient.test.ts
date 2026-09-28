@@ -1,24 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { cookieGetMock, cookiesMock, getEnvMock } = vi.hoisted(() => ({
+const { cookieGetMock, cookiesMock } = vi.hoisted(() => ({
   cookieGetMock: vi.fn(),
   cookiesMock: vi.fn(),
-  getEnvMock: vi.fn(),
 }));
 
 vi.mock('next/headers', () => ({
   cookies: cookiesMock,
 }));
 
-vi.mock('./getenv', () => ({
-  getEnv: getEnvMock,
+vi.mock('./env', () => ({
+  env: {
+    BACKEND_URL: 'https://backend.example.test',
+    APP_SECRET_KEY: 'application-secret',
+  },
 }));
 
 import { apiClient } from './apiClient';
 
 describe('apiClient access-token cookie', () => {
   beforeEach(() => {
-    vi.stubEnv('APP_SECRET_KEY', 'application-secret');
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
@@ -28,16 +29,13 @@ describe('apiClient access-token cookie', () => {
         })
       )
     );
-    getEnvMock.mockReturnValue('https://backend.example.test');
     cookiesMock.mockResolvedValue({ get: cookieGetMock });
     cookieGetMock.mockReset();
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     cookiesMock.mockReset();
-    getEnvMock.mockReset();
   });
 
   it('UT-054 authorizes with vf_access_token when present', async () => {

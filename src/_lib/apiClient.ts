@@ -1,13 +1,15 @@
+import 'server-only';
+
 import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_COOKIE_NAME } from './accessTokenCookie';
 import { AppError } from './AppError';
-import { getEnv } from './getenv';
+import { env } from './env';
 
 export async function apiClient<T = unknown>(
   path: string,
   init?: RequestInit
 ): Promise<T> {
-  const baseUrl = getEnv('BACKEND_URL');
+  const baseUrl = env.BACKEND_URL;
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   const url = `${baseUrl}${normalizedPath}`;
 
@@ -26,11 +28,7 @@ export async function apiClient<T = unknown>(
     headers.set('Content-Type', 'application/json');
   }
 
-  const appSecretKey = process.env.APP_SECRET_KEY;
-  if (!appSecretKey) {
-    throw new AppError('Internal Error: APP_SECRET_KEY is not defined.');
-  }
-  headers.set('x-application-secret', appSecretKey);
+  headers.set('x-application-secret', env.APP_SECRET_KEY);
 
   const config: RequestInit = {
     ...init,
@@ -38,11 +36,13 @@ export async function apiClient<T = unknown>(
     cache: init?.cache || 'no-store',
   };
 
+  // Neither failure is a backend answer, so neither may carry the 400 that
+  // Server Actions map to "check the data you sent" (safeActionError).
   const response = await fetch(url, config).catch(error => {
     if (error instanceof AppError) {
-      throw new AppError(error.message);
+      throw new AppError(error.message, error.statusCode);
     }
-    throw new AppError('Erro ao conectar com o servidor.');
+    throw new AppError('Erro ao conectar com o servidor.', 503);
   });
 
   if (!response.ok) {

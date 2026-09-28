@@ -1,7 +1,8 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
-import { createServerAction, ZSAError } from 'zsa';
+import { toSafeActionError } from '@/_lib/safeActionError';
+import { createServerAction } from 'zsa';
 
 interface ProductInfo {
   id: string;
@@ -11,7 +12,7 @@ interface ProductInfo {
   updatedAt: string;
 }
 
-/** Tipo de conta que o plano atende, como o backend devolve em `/products`. */
+/** Account type the plan serves, as the backend returns it from `/products`. */
 export type ProductTypeName = 'USER' | 'NUTRITIONIST' | 'PHYSICAL_EDUCATOR';
 
 export interface Product {
@@ -20,9 +21,9 @@ export interface Product {
   price: number;
   groupId: string;
   /**
-   * Fonte do tipo de plano na tela de Configurações: a aba Plano descobre o
-   * tipo do usuário pelo produto atual, não pela sessão, que congela no login
-   * (ADR-004).
+   * Source of the plan type on the Settings screen: the Plan tab finds the
+   * user's type from the current product, not from the session, which freezes
+   * at sign-in (ADR-004).
    */
   type: ProductTypeName;
   stripeId: string | null;
@@ -39,16 +40,16 @@ export interface ProductsPlan {
   products: Product[];
 }
 
+/** The public plan catalog, grouped by plan; cached for an hour. */
 export const actionGetProductsPlans = createServerAction().handler(async () => {
   try {
     const productsPlans = await apiClient<ProductsPlan[]>('/products', {
       method: 'GET',
+      cache: 'force-cache',
+      next: { revalidate: 3600, tags: ['plans'] },
     });
     return productsPlans;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new ZSAError('ERROR', error.message);
-    }
-    throw new ZSAError('ERROR', 'Erro ao buscar produtos e planos.');
+    throw toSafeActionError('getProductsPlans', error);
   }
 });

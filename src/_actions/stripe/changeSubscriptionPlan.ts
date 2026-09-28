@@ -1,6 +1,8 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { parseBackendId } from '@/_lib/idValidation';
+import { toSafeActionError } from '@/_lib/safeActionError';
 import { stripe } from '@/_lib/stripe';
 import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { auth, unstable_update } from '@/auth';
@@ -32,9 +34,11 @@ export const actionChangeSubscriptionPlan = createServerAction()
       throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado.');
     }
 
+    const productPathId = parseBackendId(productId);
+
     try {
       const [product, subscription] = await Promise.all([
-        apiClient<Product>(`/products/${productId}`, { method: 'GET' }),
+        apiClient<Product>(`/products/${productPathId}`, { method: 'GET' }),
         apiClient<SubscriptionState>('/users/subscription', {
           method: 'GET',
         }),
@@ -95,11 +99,6 @@ export const actionChangeSubscriptionPlan = createServerAction()
 
       return { success: true };
     } catch (error) {
-      if (error instanceof ZSAError) {
-        throw error;
-      }
-      const message =
-        error instanceof Error ? error.message : 'Erro ao trocar de plano.';
-      throw new ZSAError('ERROR', message);
+      throw toSafeActionError('changeSubscriptionPlan', error);
     }
   });

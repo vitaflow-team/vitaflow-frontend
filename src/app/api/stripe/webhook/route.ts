@@ -1,4 +1,5 @@
 import { apiClient } from '@/_lib/apiClient';
+import { env } from '@/_lib/env';
 import { stripe } from '@/_lib/stripe';
 import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { NextResponse } from 'next/server';
@@ -9,7 +10,7 @@ import type Stripe from 'stripe';
 // below, never from anything else in the request.
 export async function POST(request: Request) {
   const signature = request.headers.get('stripe-signature');
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
 
   if (!signature || !webhookSecret) {
     return NextResponse.json(

@@ -1,7 +1,9 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
-import { AppError } from '@/_lib/AppError';
+import { env } from '@/_lib/env';
+import { parseBackendId } from '@/_lib/idValidation';
+import { toSafeActionError } from '@/_lib/safeActionError';
 import { stripe } from '@/_lib/stripe';
 import { auth } from '@/auth';
 import { z } from 'zod';
@@ -33,9 +35,11 @@ export const actionCreateCheckoutSession = createServerAction()
       throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado.');
     }
 
+    const productPathId = parseBackendId(productId);
+
     try {
       const [product, subscription] = await Promise.all([
-        apiClient<Product>(`/products/${productId}`, { method: 'GET' }),
+        apiClient<Product>(`/products/${productPathId}`, { method: 'GET' }),
         apiClient<SubscriptionState>('/users/subscription', {
           method: 'GET',
         }),
@@ -58,7 +62,7 @@ export const actionCreateCheckoutSession = createServerAction()
         );
       }
 
-      const origin = process.env.NEXTAUTH_URL ?? 'http://localhost:3000';
+      const origin = env.NEXTAUTH_URL ?? 'http://localhost:3000';
 
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: 'subscription',
@@ -93,13 +97,6 @@ export const actionCreateCheckoutSession = createServerAction()
 
       return { url: checkoutSession.url };
     } catch (error) {
-      if (error instanceof ZSAError) {
-        throw error;
-      }
-      const message =
-        error instanceof AppError || error instanceof Error
-          ? error.message
-          : 'Erro ao iniciar o pagamento.';
-      throw new ZSAError('ERROR', message);
+      throw toSafeActionError('createCheckoutSession', error);
     }
   });

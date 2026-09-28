@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { apiClientMock, constructEventMock, retrieveSubscriptionMock } =
   vi.hoisted(() => ({
@@ -8,6 +8,14 @@ const { apiClientMock, constructEventMock, retrieveSubscriptionMock } =
   }));
 
 vi.mock('@/_lib/apiClient', () => ({ apiClient: apiClientMock }));
+vi.mock('@/_lib/env', () => ({
+  env: {
+    BACKEND_URL: 'https://backend.example.test',
+    APP_SECRET_KEY: 'application-secret',
+    STRIPE_API_KEY: 'sk_test_123',
+    STRIPE_WEBHOOK_SECRET: 'whsec_test',
+  },
+}));
 
 vi.mock('@/_lib/stripe', () => ({
   stripe: {
@@ -64,11 +72,6 @@ describe('Stripe webhook route', () => {
     constructEventMock.mockReset();
     retrieveSubscriptionMock.mockReset();
     apiClientMock.mockResolvedValue({});
-    vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test');
-  });
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   it('IT-001 sends the period end for customer.subscription.updated', async () => {
