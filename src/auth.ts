@@ -3,11 +3,11 @@ import { AppError } from '@/_lib/AppError';
 import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
-import {
-  actionSignIn,
-  actionSignInWithGoogle,
-} from './_actions/users/postSignin';
 import { clearAccessTokenCookie } from './_lib/accessTokenCookie';
+import {
+  signInWithCredentials,
+  signInWithGoogleIdToken,
+} from './_lib/backendSignIn';
 import { jwtCallback, sessionCallback } from './authCallbacks';
 
 // `unstable_update` é o único caminho de atualização de sessão do servidor no
@@ -25,7 +25,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
                 throw new AppError('Falha ao autenticar via Google.');
               }
 
-              const user = await actionSignInWithGoogle(tokens.id_token).catch(
+              const user = await signInWithGoogleIdToken(tokens.id_token).catch(
                 () => {
                   throw new AppError('Falha ao autenticar via Google.');
                 }
@@ -55,7 +55,7 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
         },
       },
       async authorize(credentials) {
-        const user = await actionSignIn({
+        const user = await signInWithCredentials({
           email: credentials!.email as string,
           password: credentials!.password as string,
         }).catch(error => {

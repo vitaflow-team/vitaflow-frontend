@@ -1,23 +1,15 @@
-'use server';
+import 'server-only';
 
-import { AppError } from '@/_lib/AppError';
-import { setAccessTokenCookie } from '@/_lib/accessTokenCookie';
-import { apiClient } from '@/_lib/apiClient';
+import type { AuthenticatedUser } from '@/_types/authenticatedUser';
+import type { SignInResponse } from '@/_types/signInResponse';
+import { setAccessTokenCookie } from './accessTokenCookie';
+import { apiClient } from './apiClient';
+import { AppError } from './AppError';
 
-interface SignInResponse {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string | null;
-  productId: string | null;
-  productType?: string;
-  productGroupId?: string;
-  accessToken: string;
-}
-
-type AuthenticatedUser = Omit<SignInResponse, 'accessToken'>;
-
-export async function actionSignIn({
+// Deliberately not a 'use server' module: these calls issue the access-token
+// cookie, so only the Auth.js callbacks in `auth.ts` may reach them. Exporting
+// them from a Server Action file would make them publicly invocable.
+export async function signInWithCredentials({
   email,
   password,
 }: {
@@ -40,7 +32,7 @@ export async function actionSignIn({
   }
 }
 
-export async function actionSignInWithGoogle(
+export async function signInWithGoogleIdToken(
   idToken: string
 ): Promise<AuthenticatedUser> {
   try {
