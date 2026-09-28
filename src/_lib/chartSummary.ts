@@ -1,29 +1,44 @@
+import type { ChartPoint } from '@/_types/chartPoint';
+import type { TrendPoint } from '@/_types/progress';
+
 export interface TrendSummaryPoint {
   t: number;
   value: number;
 }
 
 export interface TrendSummaryInput {
-  /** Nome da métrica como aparece na frase, por exemplo `Peso`. */
+  /** Metric name as it appears in the sentence, for example `Peso`. */
   label: string;
-  /** Unidade já no formato exibido, por exemplo `kg`. Vazia para o IMC. */
+  /** Unit as displayed, for example `kg`. Empty for BMI. */
   unit: string;
   weeks: number;
   points: TrendSummaryPoint[];
   format: (value: number) => string;
 }
 
-/** Sinal de menos de verdade (U+2212), não o hífen do teclado. */
+/** A real minus sign (U+2212), not the keyboard hyphen. */
 const MINUS_SIGN = '−';
 
-function withUnit(text: string, unit: string): string {
+/** Appends the unit when there is one: `82,4 kg`, but a bare `24,1` for BMI. */
+export function withUnit(text: string, unit: string): string {
   return unit ? `${text} ${unit}` : text;
 }
 
 /**
- * Frase neutra que descreve a série para quem não vê o gráfico (ADR-003):
- * primeiro valor, último valor, variação com sinal e o período. Nunca julga a
- * tendência — sem "melhora", "piora", "bom" ou "ruim".
+ * Plottable points in time order: timestamps parsed from `recordedAt`, and
+ * any point with an unparseable date or a non-finite value dropped.
+ */
+export function toChartPoints(points: TrendPoint[]): ChartPoint[] {
+  return points
+    .map(point => ({ t: Date.parse(point.recordedAt), value: point.value }))
+    .filter(point => Number.isFinite(point.t) && Number.isFinite(point.value))
+    .sort((a, b) => a.t - b.t);
+}
+
+/**
+ * Neutral sentence describing the series for whoever cannot see the chart
+ * (ADR-003): first value, last value, signed change and the period. It never
+ * judges the trend — no "melhora", "piora", "bom" or "ruim".
  */
 export function buildTrendSummary(input: TrendSummaryInput): string {
   const { label, unit, weeks, points, format } = input;

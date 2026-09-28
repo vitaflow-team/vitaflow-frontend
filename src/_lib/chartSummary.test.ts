@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildTrendSummary, type TrendSummaryPoint } from './chartSummary';
+import {
+  buildTrendSummary,
+  toChartPoints,
+  withUnit,
+  type TrendSummaryPoint,
+} from './chartSummary';
 
 const formatWeight = (value: number) =>
   value.toLocaleString('pt-BR', { maximumFractionDigits: 1 });
@@ -92,5 +97,29 @@ describe('progress dashboard refresh — chart text summary', () => {
           }),
       })
     ).toBe('IMC de 22,0 para 21,5 em 4 semanas, variação de −0,5');
+  });
+});
+
+describe('refactor — chart point helpers', () => {
+  // UT-004
+  it('appends the unit only when there is one', () => {
+    expect(withUnit('82,4', 'kg')).toBe('82,4 kg');
+    expect(withUnit('24,1', '')).toBe('24,1');
+  });
+
+  // UT-004 / UT-005
+  it('parses, filters and sorts the plotted points', () => {
+    expect(
+      toChartPoints([
+        { recordedAt: '2026-09-15T12:00:00.000Z', value: 82.4 },
+        { recordedAt: 'not a date', value: 90 },
+        { recordedAt: '2026-09-01T12:00:00.000Z', value: 83 },
+        { recordedAt: '2026-09-02T12:00:00.000Z', value: Number.NaN },
+      ])
+    ).toEqual([
+      { t: Date.parse('2026-09-01T12:00:00.000Z'), value: 83 },
+      { t: Date.parse('2026-09-15T12:00:00.000Z'), value: 82.4 },
+    ]);
+    expect(toChartPoints([])).toEqual([]);
   });
 });

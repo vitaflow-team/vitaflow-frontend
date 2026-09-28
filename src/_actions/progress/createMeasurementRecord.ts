@@ -1,10 +1,19 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { toSafeActionError } from '@/_lib/safeActionError';
 import { measurementRecordSchema } from '@/_schema/progress';
+import type { ErrorMapping } from '@/_types/errorMapping';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
 import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
+
+const KNOWN_ERRORS: ErrorMapping[] = [
+  {
+    status: 400,
+    message: 'Verifique os valores informados e tente novamente.',
+  },
+];
 
 export const createMeasurementRecord = createServerAction()
   .input(measurementRecordSchema)
@@ -23,9 +32,6 @@ export const createMeasurementRecord = createServerAction()
         }
       );
     } catch (error) {
-      if (error instanceof ZSAError) throw error;
-      const message =
-        error instanceof Error ? error.message : 'Erro ao registrar medida.';
-      throw new ZSAError('ERROR', message);
+      throw toSafeActionError('createMeasurementRecord', error, KNOWN_ERRORS);
     }
   });
