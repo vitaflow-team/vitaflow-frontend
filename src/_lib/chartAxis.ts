@@ -4,16 +4,20 @@ export interface NiceTicks {
   max: number;
 }
 
-/** Passos "redondos" aceitos para o eixo vertical, multiplicados por 10^n. */
+/** "Round" steps accepted for the vertical axis, multiplied by 10^n. */
 const STEP_MULTIPLES = [1, 2, 2.5, 5] as const;
+
+/** WHO "Peso normal" BMI range, drawn as a band on the BMI chart. */
+export const HEALTHY_BMI_MIN = 18.5;
+export const HEALTHY_BMI_MAX = 24.9;
 
 const MIN_TICKS = 4;
 const MAX_TICKS = 6;
 
-/** Tolerância para que 0.5 / 0.1 = 4.999999999999999 não vire uma marca extra. */
+/** Tolerance so that 0.5 / 0.1 = 4.999999999999999 does not become an extra tick. */
 const EPSILON = 1e-9;
 
-/** Remove o lixo de ponto flutuante de somas como 0.1 + 0.2. */
+/** Strips the floating-point noise of sums such as 0.1 + 0.2. */
 function clean(value: number): number {
   return Number(value.toFixed(10));
 }
@@ -31,14 +35,14 @@ function buildTicks(min: number, max: number, step: number): number[] {
 }
 
 /**
- * Marcas redondas para o eixo vertical: escolhe um passo de {1, 2, 2,5, 5} × 10ⁿ
- * que produza cerca de `count` marcas (nunca menos de quatro nem mais de seis)
- * envolvendo os dados. Valores iguais recebem uma abertura mínima (`minSpread`)
- * para que a linha reta caia no meio de um eixo válido (ADR-002).
+ * Round ticks for the vertical axis: picks a step of {1, 2, 2.5, 5} × 10ⁿ that
+ * yields about `count` ticks (never fewer than four nor more than six) around
+ * the data. Equal values get a minimum spread (`minSpread`) so the flat line
+ * sits in the middle of a valid axis (ADR-002).
  *
- * Para o IMC quem chama passa `min = Math.min(dataMin, 18.5)` e
- * `max = Math.max(dataMax, 24.9)`, de modo que a faixa saudável fique sempre
- * dentro do eixo.
+ * For BMI, `getValueAxis` passes `min = Math.min(dataMin, 18.5)` and
+ * `max = Math.max(dataMax, 24.9)`, so the healthy band always stays inside
+ * the axis.
  */
 export function niceTicks(
   min: number,
@@ -80,7 +84,7 @@ export function niceTicks(
 
       const withinBounds =
         ticks.length >= MIN_TICKS && ticks.length <= MAX_TICKS;
-      // Fora de 4–6 marcas a opção só serve como rede de segurança.
+      // Outside 4–6 ticks an option only serves as a safety net.
       const score =
         Math.abs(ticks.length - targetCount) + (withinBounds ? 0 : 100);
 
@@ -101,9 +105,9 @@ export function niceTicks(
 }
 
 /**
- * Marcas do eixo de tempo: `count` instantes igualmente espaçados cobrindo toda
- * a janela selecionada, sempre incluindo as duas pontas. Uma janela degenerada
- * (início igual ou posterior ao fim) rende uma única marca.
+ * Time axis ticks: `count` evenly spaced instants covering the whole selected
+ * window, always including both ends. A degenerate window (start equal to or
+ * after the end) yields a single tick.
  */
 export function getTimeTicks(
   startMs: number,
@@ -127,4 +131,23 @@ export function getTimeTicks(
 
   ticks[total - 1] = endMs;
   return ticks;
+}
+
+/**
+ * Vertical axis for a series. The BMI axis always includes the healthy band,
+ * even when every value falls outside it.
+ */
+export function getValueAxis(
+  values: number[],
+  includeHealthyBand: boolean
+): NiceTicks {
+  const dataMin = Math.min(...values);
+  const dataMax = Math.max(...values);
+
+  if (!includeHealthyBand) return niceTicks(dataMin, dataMax);
+
+  return niceTicks(
+    Math.min(dataMin, HEALTHY_BMI_MIN),
+    Math.max(dataMax, HEALTHY_BMI_MAX)
+  );
 }

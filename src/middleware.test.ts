@@ -19,6 +19,12 @@ vi.mock('@/_lib/ratelimit', () => ({
 
 import middleware, { config } from './middleware';
 
+/** The middleware let the request through to the page (with its CSP). */
+function expectPassThrough(response: Response | void | undefined) {
+  expect(response?.status).toBe(200);
+  expect(response?.headers.get('x-middleware-next')).toBe('1');
+}
+
 function matches(path: string): boolean {
   return unstable_doesMiddlewareMatch({
     config,
@@ -61,9 +67,110 @@ describe('middleware rate limiting', () => {
     });
     const response = await middleware(request, { params: Promise.resolve({}) });
 
-    expect(limitMock).toHaveBeenCalledWith('203.0.113.10');
+    expect(limitMock).toHaveBeenCalledWith('203.0.113.10:/signin');
     expect(response?.status).toBe(429);
     await expect(response?.text()).resolves.toBe('Too Many Requests');
+  });
+});
+
+describe('auth input hardening — middleware rate limiter integrity', () => {
+  function signinRequest(path = '/signin') {
+    return new NextRequest(`https://vitaflow.test${path}`, {
+      headers: {
+        'true-client-ip': '198.51.100.7',
+        'x-forwarded-for': '203.0.113.66, 172.71.195.123',
+      },
+    });
+  }
+
+  function withKvConfigured(nodeEnv: string) {
+    vi.stubEnv('KV_REST_API_URL', 'https://kv.example.test');
+    vi.stubEnv('KV_REST_API_TOKEN', 'test-token');
+    vi.stubEnv('NODE_ENV', nodeEnv);
+  }
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+    limitMock.mockReset();
+  });
+
+  it('matches the activation page', () => {
+    expect(matches('/signin/activate')).toBe(true);
+  });
+
+  it('rate limits the activation page on its own bucket', async () => {
+    withKvConfigured('production');
+    vi.stubEnv('RENDER', 'true');
+    limitMock.mockResolvedValue({ success: true });
+
+    await middleware(signinRequest('/signin/activate'), {
+      params: Promise.resolve({}),
+    });
+
+    expect(limitMock).toHaveBeenCalledWith('198.51.100.7:/signin/activate');
+  });
+
+  it('keys on the platform client IP on Render, not on X-Forwarded-For', async () => {
+    withKvConfigured('production');
+    vi.stubEnv('RENDER', 'true');
+    limitMock.mockResolvedValue({ success: true });
+
+    await middleware(signinRequest(), { params: Promise.resolve({}) });
+
+    expect(limitMock).toHaveBeenCalledWith('198.51.100.7:/signin');
+  });
+
+  it('blocks the request in production when the store call fails', async () => {
+    withKvConfigured('production');
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    limitMock.mockRejectedValue(new Error('ECONNREFUSED'));
+
+    const response = await middleware(signinRequest(), {
+      params: Promise.resolve({}),
+    });
+
+    expect(response?.status).toBe(429);
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(log.mock.calls)).not.toContain('198.51.100.7');
+  });
+
+  it('blocks the request in production when the store times out', async () => {
+    withKvConfigured('production');
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    limitMock.mockResolvedValue({ success: true, reason: 'timeout' });
+
+    const response = await middleware(signinRequest(), {
+      params: Promise.resolve({}),
+    });
+
+    expect(response?.status).toBe(429);
+  });
+
+  it('only warns outside production when the store call fails', async () => {
+    withKvConfigured('development');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    limitMock.mockRejectedValue(new Error('ECONNREFUSED'));
+
+    const response = await middleware(signinRequest(), {
+      params: Promise.resolve({}),
+    });
+
+    expectPassThrough(response);
+    expect(warn).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the no-op fallback when the KV variables are absent', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('KV_REST_API_URL', '');
+    vi.stubEnv('KV_REST_API_TOKEN', '');
+
+    const response = await middleware(signinRequest(), {
+      params: Promise.resolve({}),
+    });
+
+    expectPassThrough(response);
+    expect(limitMock).not.toHaveBeenCalled();
   });
 });
 
@@ -105,18 +212,18 @@ describe('middleware restricted route access', () => {
       'NUTRITIONIST'
     );
 
-    await expect(
-      middleware(request, { params: Promise.resolve({}) })
-    ).resolves.toBeUndefined();
+    expectPassThrough(
+      await middleware(request, { params: Promise.resolve({}) })
+    );
   });
 
   it('IT-004 keeps home and settings open with any or no product type', async () => {
     for (const path of ['/restrict', '/restrict/settings']) {
       for (const productType of ['USER', undefined]) {
         const request = authenticatedRequest(path, productType);
-        await expect(
-          middleware(request, { params: Promise.resolve({}) })
-        ).resolves.toBeUndefined();
+        expectPassThrough(
+          await middleware(request, { params: Promise.resolve({}) })
+        );
       }
     }
   });
@@ -147,9 +254,9 @@ describe('professional personal use — middleware access', () => {
     for (const productType of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
       const request = authenticatedRequest('/restrict/progress', productType);
 
-      await expect(
-        middleware(request, { params: Promise.resolve({}) })
-      ).resolves.toBeUndefined();
+      expectPassThrough(
+        await middleware(request, { params: Promise.resolve({}) })
+      );
     }
 
     const blocked = authenticatedRequest('/restrict/clients', 'USER');
@@ -161,5 +268,97 @@ describe('professional personal use — middleware access', () => {
     expect(response?.headers.get('location')).toBe(
       'https://vitaflow.test/restrict?aviso=sem-permissao'
     );
+  });
+});
+
+describe('platform hardening — CSP nonce', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  function scriptSource(policy: string | null | undefined): string {
+    return policy?.split('; ').find(d => d.startsWith('script-src')) ?? '';
+  }
+
+  it('M-003 authorizes scripts by a per-request nonce in production', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    const response = await middleware(
+      new NextRequest('https://vitaflow.test/'),
+      {
+        params: Promise.resolve({}),
+      }
+    );
+    const policy = response?.headers.get('content-security-policy');
+
+    expect(scriptSource(policy)).toMatch(
+      /^script-src 'self' 'nonce-[A-Za-z0-9+/=]+' https:\/\/js\.stripe\.com$/
+    );
+    expect(scriptSource(policy)).not.toContain('unsafe-inline');
+    expect(scriptSource(policy)).not.toContain('unsafe-eval');
+  });
+
+  it('M-003 forwards the same policy to Next so it can stamp the nonce', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    const response = await middleware(
+      new NextRequest('https://vitaflow.test/signin'),
+      { params: Promise.resolve({}) }
+    );
+
+    expect(
+      response?.headers.get('x-middleware-request-content-security-policy')
+    ).toBe(response?.headers.get('content-security-policy'));
+    expect(response?.headers.get('x-middleware-request-x-nonce')).toBeTruthy();
+  });
+
+  it('M-003 issues a fresh nonce for every request', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    const policyFor = async () =>
+      (
+        await middleware(new NextRequest('https://vitaflow.test/'), {
+          params: Promise.resolve({}),
+        })
+      )?.headers.get('content-security-policy');
+
+    expect(await policyFor()).not.toBe(await policyFor());
+  });
+
+  it('M-003 keeps the permissive development policy unchanged', async () => {
+    vi.stubEnv('NODE_ENV', 'development');
+
+    const response = await middleware(
+      new NextRequest('https://vitaflow.test/'),
+      {
+        params: Promise.resolve({}),
+      }
+    );
+
+    expect(scriptSource(response?.headers.get('content-security-policy'))).toBe(
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com"
+    );
+  });
+
+  it('M-003 sends the policy with the signed-out rewrite', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+
+    const response = await middleware(
+      new NextRequest('https://vitaflow.test/restrict/clients'),
+      { params: Promise.resolve({}) }
+    );
+
+    expect(response?.headers.get('x-middleware-rewrite')).toBeTruthy();
+    expect(
+      scriptSource(response?.headers.get('content-security-policy'))
+    ).toContain("'nonce-");
+  });
+
+  it('M-003 runs on every page and skips static assets', () => {
+    for (const path of ['/', '/functions', '/privacy', '/api/stripe/webhook']) {
+      expect(matches(path)).toBe(true);
+    }
+    for (const path of ['/_next/static/chunks/main.js', '/vitaflow.svg']) {
+      expect(matches(path)).toBe(false);
+    }
   });
 });

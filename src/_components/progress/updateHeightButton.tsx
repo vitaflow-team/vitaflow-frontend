@@ -1,12 +1,10 @@
-'use client';
-
 import { Button } from '@/_components/ui/button';
 import { RecordFormModal } from './recordFormModal';
 
 /**
- * Atalho do cartão de altura: abre o mesmo registro rápido já com o foco no
- * campo de altura. Fica em um componente de cliente próprio para que o cartão
- * de resumo continue sendo renderizado no servidor.
+ * Height card shortcut: opens the same quick record with the focus already on
+ * the height field. `RecordFormModal` is the client boundary, so this button
+ * and the summary card around it render on the server.
  */
 export function UpdateHeightButton() {
   return (

@@ -20,6 +20,15 @@ const eslintConfig = [
       'next-env.d.ts',
     ],
   },
+  {
+    ignores: ['src/_components/ui/**'],
+    rules: {
+      'max-lines-per-function': ['warn', 50],
+      'max-params': ['warn', 3],
+      'max-depth': ['warn', 2],
+      'max-nested-callbacks': ['warn', 2],
+    },
+  },
 ];
 
 export default eslintConfig;

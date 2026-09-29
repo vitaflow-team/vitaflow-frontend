@@ -1,9 +1,15 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { toSafeActionError } from '@/_lib/safeActionError';
 import { profileSchema } from '@/_schema/profile';
+import type { ErrorMapping } from '@/_types/errorMapping';
 import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
+
+const KNOWN_ERRORS: ErrorMapping[] = [
+  { status: 400, message: 'Verifique os dados do perfil e tente novamente.' },
+];
 
 export const actionChangeProfile = createServerAction()
   .input(profileSchema)
@@ -35,9 +41,6 @@ export const actionChangeProfile = createServerAction()
         body: formData,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        throw new ZSAError('ERROR', error.message);
-      }
-      throw new ZSAError('ERROR', 'Erro ao atualizar perfil.');
+      throw toSafeActionError('postChangeProfile', error, KNOWN_ERRORS);
     }
   });

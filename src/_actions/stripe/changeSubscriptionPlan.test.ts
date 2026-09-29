@@ -35,8 +35,11 @@ const PERIOD_END_ISO = '2026-09-10T00:26:40.000Z';
 function arrangeSuccessfulChange() {
   authMock.mockResolvedValue({ user: { id: 'user-id' } });
   apiClientMock.mockImplementation(async (path: string) => {
-    if (path === '/products/product-id') {
-      return { id: 'product-id', stripeId: 'price_new' };
+    if (path === '/products/0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c') {
+      return {
+        id: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
+        stripeId: 'price_new',
+      };
     }
     if (path === '/users/subscription') {
       return {
@@ -71,8 +74,11 @@ describe('actionChangeSubscriptionPlan', () => {
   it('IT-007 sends the updated subscription period end on a plan change', async () => {
     authMock.mockResolvedValue({ user: { id: 'user-id' } });
     apiClientMock.mockImplementation(async (path: string) => {
-      if (path === '/products/product-id') {
-        return { id: 'product-id', stripeId: 'price_new' };
+      if (path === '/products/0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c') {
+        return {
+          id: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
+          stripeId: 'price_new',
+        };
       }
       if (path === '/users/subscription') {
         return {
@@ -94,7 +100,7 @@ describe('actionChangeSubscriptionPlan', () => {
     });
 
     const [result, error] = await actionChangeSubscriptionPlan({
-      productId: 'product-id',
+      productId: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
     });
 
     expect(error).toBeNull();
@@ -105,7 +111,7 @@ describe('actionChangeSubscriptionPlan', () => {
     );
     expect(patchCall?.[0]).toBe('/users/subscription');
     expect(JSON.parse(patchCall?.[1].body as string)).toEqual({
-      productId: 'product-id',
+      productId: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
       stripeCustomerId: 'cus_123',
       stripeSubscriptionId: 'sub_123',
       subscriptionStatus: 'active',
@@ -128,7 +134,7 @@ describe('immediate access update — actionChangeSubscriptionPlan', () => {
     arrangeSuccessfulChange();
 
     const [result, error] = await actionChangeSubscriptionPlan({
-      productId: 'product-id',
+      productId: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
     });
 
     expect(error).toBeNull();
@@ -146,10 +152,29 @@ describe('immediate access update — actionChangeSubscriptionPlan', () => {
     unstableUpdateMock.mockRejectedValue(new Error('no cookie context'));
 
     const [result, error] = await actionChangeSubscriptionPlan({
-      productId: 'product-id',
+      productId: '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5c',
     });
 
     expect(error).toBeNull();
     expect(result).toEqual({ success: true });
+  });
+});
+
+describe('path id validation — actionChangeSubscriptionPlan', () => {
+  beforeEach(() => {
+    apiClientMock.mockReset();
+    authMock.mockReset();
+    updateSubscriptionMock.mockReset();
+    authMock.mockResolvedValue({ user: { id: 'user-id' } });
+  });
+
+  it('UT-013 rejects a non-UUID product id before calling the API', async () => {
+    const [, error] = await actionChangeSubscriptionPlan({
+      productId: '../users/subscription',
+    });
+
+    expect(error?.message).toBe('Identificador inválido.');
+    expect(apiClientMock).not.toHaveBeenCalled();
+    expect(updateSubscriptionMock).not.toHaveBeenCalled();
   });
 });

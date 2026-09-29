@@ -1,6 +1,7 @@
 import { AlertError } from '@/_components/ui/alert-error';
 import type { Metadata, Viewport } from 'next';
 import { Fraunces, Manrope } from 'next/font/google';
+import { connection } from 'next/server';
 import './globals.css';
 
 const manrope = Manrope({
@@ -57,11 +58,16 @@ const organizationJsonLd = {
 
 import { AuthProvider } from '@/_components/providers/auth-provider';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Every page ships inline bootstrap scripts that need this request's CSP
+  // nonce, which only exists at request time: no page can be prerendered
+  // (ADR-002).
+  await connection();
+
   return (
     <html lang="pt-BR">
       <body

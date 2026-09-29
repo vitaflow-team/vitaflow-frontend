@@ -1,5 +1,3 @@
-'use client';
-
 import { getInitialsName } from '@/_lib/getInitials';
 import { cn } from '@/_lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';

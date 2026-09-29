@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { getTimeTicks, niceTicks } from './chartAxis';
+import {
+  getTimeTicks,
+  getValueAxis,
+  HEALTHY_BMI_MAX,
+  HEALTHY_BMI_MIN,
+  niceTicks,
+} from './chartAxis';
 
 function spacings(ticks: number[]): number[] {
   return ticks
@@ -88,5 +94,24 @@ describe('progress dashboard refresh — chart axis helpers', () => {
     expect(getTimeTicks(start, end, 2)).toEqual([start, end]);
     expect(getTimeTicks(start, start)).toEqual([start]);
     expect(getTimeTicks(end, start)).toEqual([end]);
+  });
+});
+
+describe('refactor — getValueAxis', () => {
+  // UT-004
+  it('brackets a weight series with round ticks', () => {
+    expect(getValueAxis([63.1, 60.9, 68.2], false)).toEqual(
+      niceTicks(60.9, 68.2)
+    );
+  });
+
+  // UT-004 / UT-005
+  it('always holds the healthy band on the BMI axis', () => {
+    expect(getValueAxis([29.2, 30.1], true)).toEqual(
+      niceTicks(HEALTHY_BMI_MIN, 30.1)
+    );
+    expect(getValueAxis([17], true)).toEqual(niceTicks(17, HEALTHY_BMI_MAX));
+    expect(HEALTHY_BMI_MIN).toBe(18.5);
+    expect(HEALTHY_BMI_MAX).toBe(24.9);
   });
 });

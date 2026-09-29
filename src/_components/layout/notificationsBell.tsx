@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/_components/ui/button';
 import {
   Popover,
@@ -9,9 +7,9 @@ import {
 import { Bell } from 'lucide-react';
 
 /**
- * Painel honesto: enquanto não existe recurso de notificações, o sino nunca
- * mostra ponto nem contador e o texto não promete notificações futuras
- * específicas (ADR-004).
+ * Honest panel: while there is no notifications feature, the bell never shows
+ * a dot or a counter and the text promises no specific future notifications
+ * (ADR-004). The Radix popover primitives are the client boundary.
  */
 export function NotificationsBell() {
   return (

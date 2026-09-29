@@ -1,6 +1,7 @@
 'use server';
 
 import { apiClient } from '@/_lib/apiClient';
+import { toSafeActionError } from '@/_lib/safeActionError';
 import { stripe } from '@/_lib/stripe';
 import { getSubscriptionPeriodEnd } from '@/_lib/stripePeriod';
 import { auth } from '@/auth';
@@ -50,12 +51,7 @@ export const actionReactivateSubscription = createServerAction().handler(
 
       return { success: true };
     } catch (error) {
-      if (error instanceof ZSAError) {
-        throw error;
-      }
-      const message =
-        error instanceof Error ? error.message : 'Erro ao reativar assinatura.';
-      throw new ZSAError('ERROR', message);
+      throw toSafeActionError('reactivateSubscription', error);
     }
   }
 );

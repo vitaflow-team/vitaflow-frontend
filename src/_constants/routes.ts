@@ -64,6 +64,7 @@ const ACCOUNT: AppRoute[] = [
 export const APP_ROUTES = {
   HOME: '/',
   SIGN_IN: '/signin',
+  SIGN_IN_ACTIVATE: '/signin/activate',
   SIGN_UP: '/signup',
   ROUTE_PRIVATE: '/restrict',
   USER_SETTINGS: '/restrict/settings',

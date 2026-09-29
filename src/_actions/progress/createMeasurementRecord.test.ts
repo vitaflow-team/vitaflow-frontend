@@ -8,6 +8,7 @@ const { apiClientMock, authMock } = vi.hoisted(() => ({
 vi.mock('@/_lib/apiClient', () => ({ apiClient: apiClientMock }));
 vi.mock('@/auth', () => ({ auth: authMock }));
 
+import { AppError } from '@/_lib/AppError';
 import { createMeasurementRecord } from './createMeasurementRecord';
 
 describe('createMeasurementRecord', () => {
@@ -55,15 +56,19 @@ describe('createMeasurementRecord', () => {
     expect(error).toBeNull();
   });
 
-  it('UT-046 carries the backend validation message', async () => {
+  it('UT-046 maps a backend validation error to a safe message', async () => {
     authMock.mockResolvedValue({ user: { id: 'user-id' } });
-    apiClientMock.mockRejectedValue(new Error('Peso deve ser no máximo 300.'));
+    apiClientMock.mockRejectedValue(
+      new AppError('Peso deve ser no máximo 300.', 400)
+    );
 
     const [, error] = await createMeasurementRecord({
       weightKg: 61.4,
       heightCm: 168,
     });
 
-    expect(error?.message).toBe('Peso deve ser no máximo 300.');
+    expect(error?.message).toBe(
+      'Verifique os valores informados e tente novamente.'
+    );
   });
 });

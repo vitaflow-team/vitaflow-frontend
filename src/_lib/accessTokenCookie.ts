@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { cookies } from 'next/headers';
 
 export const ACCESS_TOKEN_COOKIE_NAME = 'vf_access_token';
