@@ -1,6 +1,7 @@
 'use client';
 
-import { ModalAdd } from '@/_components/layout/modalAdd';
+import { actionPatchWorkoutExercise } from '@/_actions/workouts/patchWorkoutExercise';
+import { Button } from '@/_components/ui/button';
 import {
   Form,
   FormControl,
@@ -9,126 +10,151 @@ import {
   FormLabel,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
+import { useAlertHook } from '@/_hooks/alertHook';
+import {
+  updateWorkoutExerciseFormData,
+  updateWorkoutExerciseSchema,
+} from '@/_schema/exercise';
+import type { Exercise } from '@/_types/exercise';
+import type { WorkoutExercise } from '@/_types/workout';
 import { zodResolverFixed } from '@/_lib/zodResolverHelper';
-import { exerciseFormData, exerciseSchema } from '@/_schema/exercise';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { useServerAction } from 'zsa-react';
 
-export default function FormExercice() {
-  const methods = useForm<exerciseFormData, undefined, exerciseFormData>({
-    resolver: zodResolverFixed(exerciseSchema),
+interface FormExerciseProps {
+  workoutExerciseId: string;
+  current: WorkoutExercise;
+  canRemove: boolean;
+  candidates: Exercise[];
+}
+
+export default function FormExercise({
+  workoutExerciseId,
+  current,
+  canRemove,
+  candidates,
+}: FormExerciseProps) {
+  const methods = useForm<updateWorkoutExerciseFormData>({
+    resolver: zodResolverFixed(updateWorkoutExerciseSchema),
     defaultValues: {
-      name: '',
-      videoLink: '',
-      weight: 0,
-      reps: 0,
-      restBetweenReps: 0,
+      workoutExerciseId,
+      exerciseId: current.exercise?.id,
+      sets: current.sets,
+      reps: current.reps,
     },
   });
+  const { isPending, execute } = useServerAction(actionPatchWorkoutExercise);
+  const { isPending: isRemoving, execute: executeRemove } = useServerAction(
+    actionPatchWorkoutExercise
+  );
+  const { openError } = useAlertHook();
+  const router = useRouter();
 
-  async function submitExercice({
-    name,
-    videoLink,
-    weight,
-    reps,
-    restBetweenReps,
-  }: exerciseFormData) {
-    console.log(name, videoLink, weight, reps, restBetweenReps);
-    return;
+  async function submit(data: updateWorkoutExerciseFormData) {
+    const [, error] = await execute(data);
+    if (error) {
+      openError(error.message, 'Não foi possível salvar', 'error');
+      return;
+    }
+    router.push('/restrict/workouts');
+    router.refresh();
   }
 
-  const formId = 'exercise-form';
+  async function remove() {
+    const [, error] = await executeRemove({
+      workoutExerciseId,
+      remove: true,
+    });
+    if (error) {
+      openError(error.message, 'Não foi possível remover', 'error');
+      return;
+    }
+    router.push('/restrict/workouts');
+    router.refresh();
+  }
 
   return (
-    <ModalAdd title="Exercício" formId={formId}>
-      <Form {...methods}>
-        <form
-          id={formId}
-          onSubmit={methods.handleSubmit(submitExercice)}
-          className="flex flex-col w-full gap-2 p-1"
-        >
-          <div className="grid grid-cols-3 gap-x-4 w-full">
-            <FormField
-              control={methods.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="col-span-3">
-                  <FormLabel>Exercício:</FormLabel>
-                  <FormControl>
-                    <Input id="name" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+    <Form {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(submit)}
+        className="flex flex-col w-full gap-4 p-1"
+      >
+        <FormField
+          control={methods.control}
+          name="exerciseId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Exercício</FormLabel>
+              <FormControl>
+                <select
+                  id="exerciseId"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={field.value}
+                  onChange={event => field.onChange(event.target.value)}
+                >
+                  {current.exercise && (
+                    <option value={current.exercise.id}>
+                      {current.exercise.name} (atual)
+                    </option>
+                  )}
+                  {candidates
+                    .filter(candidate => candidate.id !== current.exercise?.id)
+                    .map(candidate => (
+                      <option key={candidate.id} value={candidate.id}>
+                        {candidate.name}
+                      </option>
+                    ))}
+                </select>
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={methods.control}
-              name="videoLink"
-              render={({ field }) => (
-                <FormItem className="col-span-3">
-                  <FormLabel>Link:</FormLabel>
-                  <FormControl>
-                    <Input id="videoLink" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={methods.control}
+            name="sets"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Séries</FormLabel>
+                <FormControl>
+                  <Input id="sets" type="number" min={1} max={20} {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={methods.control}
-              name="weight"
-              render={({ field }) => (
-                <FormItem className="col-span-3 md:col-span-1">
-                  <FormLabel>Peso:</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="weight"
-                      type="number"
-                      inputMode="numeric"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={methods.control}
+            name="reps"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Repetições</FormLabel>
+                <FormControl>
+                  <Input id="reps" type="number" min={1} max={100} {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
 
-            <FormField
-              control={methods.control}
-              name="reps"
-              render={({ field }) => (
-                <FormItem className="col-span-3 md:col-span-1">
-                  <FormLabel>Repetições:</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="reps"
-                      type="number"
-                      inputMode="numeric"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={methods.control}
-              name="restBetweenReps"
-              render={({ field }) => (
-                <FormItem className="col-span-3 md:col-span-1">
-                  <FormLabel>Intervalo:</FormLabel>
-                  <FormControl>
-                    <Input
-                      id="restBetweenReps"
-                      type="number"
-                      inputMode="numeric"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
-        </form>
-      </Form>
-    </ModalAdd>
+        <div className="flex gap-2 justify-end pt-2">
+          {canRemove && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isRemoving}
+              onClick={remove}
+            >
+              Remover deste dia
+            </Button>
+          )}
+          <Button type="submit" disabled={isPending}>
+            Salvar
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
