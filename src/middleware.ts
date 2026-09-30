@@ -20,7 +20,19 @@ const AUTH_PATHS = [
   APP_ROUTES.SIGN_IN_ACTIVATE,
   APP_ROUTES.SIGN_UP,
 ];
-const AUTH_PREFIXES = ['/api/auth', APP_ROUTES.ROUTE_PRIVATE];
+const AUTH_PREFIXES = [APP_ROUTES.ROUTE_PRIVATE];
+// Auth.js's own route handler (app/api/auth/[...nextauth]/route.ts) is the
+// only thing that may run its core request pipeline for these paths.
+// Wrapping them in the `auth()` middleware HOC as well — as this file used
+// to do by including this prefix in AUTH_PREFIXES — runs that pipeline a
+// second time per request: confirmed by curl against a clean dev server
+// returning two different `authjs.csrf-token` Set-Cookie headers on one
+// GET /api/auth/csrf response. During the Google OAuth leg this corrupts
+// the PKCE cookie (the code_challenge sent to Google is derived from one
+// pipeline run, the verifier actually stored in the cookie from the other),
+// surfacing as `InvalidCheck: pkceCodeVerifier value could not be parsed`
+// on callback — reproduced locally and root-caused this way.
+const API_AUTH_PREFIX = '/api/auth';
 
 function tooManyRequests(): NextResponse {
   return new NextResponse('Too Many Requests', { status: 429 });
@@ -101,6 +113,18 @@ function isAuthPath(path: string): boolean {
   );
 }
 
+// Rate-limits and adds security headers to Auth.js's own routes WITHOUT
+// wrapping them in the `auth()` HOC — see the comment on API_AUTH_PREFIX for
+// why that wrapping is never safe here.
+async function authApiMiddleware(request: NextRequest): Promise<NextResponse> {
+  const path = request.nextUrl.pathname;
+  if (isRateLimitedPath(path)) {
+    const limited = await enforceRateLimit(request.headers, path);
+    if (limited) return limited;
+  }
+  return passThrough(securityContext(request));
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const authMiddleware = auth(async (req: any) => {
   const path = req.nextUrl.pathname;
@@ -143,7 +167,11 @@ export default function middleware(
   request: NextRequest,
   context: Parameters<typeof authMiddleware>[1]
 ) {
-  if (!isAuthPath(request.nextUrl.pathname)) {
+  const path = request.nextUrl.pathname;
+  if (path === API_AUTH_PREFIX || path.startsWith(`${API_AUTH_PREFIX}/`)) {
+    return authApiMiddleware(request);
+  }
+  if (!isAuthPath(path)) {
     return passThrough(securityContext(request));
   }
   return authMiddleware(request, context);

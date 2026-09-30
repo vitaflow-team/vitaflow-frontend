@@ -1,14 +1,29 @@
 import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server';
 import { NextRequest } from 'next/server';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { limitMock } = vi.hoisted(() => ({
+const { limitMock, authHandlerInvocations } = vi.hoisted(() => ({
   limitMock: vi.fn(),
+  authHandlerInvocations: vi.fn(),
 }));
 
+// The mocked `auth()` wraps the handler like the real one, but also records
+// every time the wrapped handler actually runs — the real `auth()`'s core
+// Auth.js pipeline is what runs a second time per request for `/api/auth/*`
+// paths if this app's own dispatch ever routes them there again (the bug
+// this suite guards against below).
 vi.mock('@/auth', () => ({
-  auth: (handler: (request: NextRequest) => Promise<Response | undefined>) =>
-    handler,
+  auth:
+    (
+      handler: (
+        request: NextRequest,
+        context: unknown
+      ) => Promise<Response | undefined>
+    ) =>
+    (request: NextRequest, context: unknown) => {
+      authHandlerInvocations(request.nextUrl.pathname);
+      return handler(request, context);
+    },
 }));
 
 vi.mock('@/_lib/ratelimit', () => ({
@@ -70,6 +85,49 @@ describe('middleware rate limiting', () => {
     expect(limitMock).toHaveBeenCalledWith('203.0.113.10:/signin');
     expect(response?.status).toBe(429);
     await expect(response?.text()).resolves.toBe('Too Many Requests');
+  });
+});
+
+// Regression coverage for a real bug found via manual verification: this
+// app's own dispatch used to route `/api/auth/*` through the `auth()`-
+// wrapped handler *in addition to* Auth.js's own route handler
+// (app/api/auth/[...nextauth]/route.ts), running Auth.js's core request
+// pipeline twice per request. Confirmed by curl against a clean dev server:
+// two different `authjs.csrf-token` Set-Cookie headers on one
+// GET /api/auth/csrf response. During the Google OAuth leg this corrupts
+// the PKCE cookie — the code_challenge sent to Google came from one pipeline
+// run, the verifier actually stored in the cookie from the other — and
+// surfaced as `InvalidCheck: pkceCodeVerifier value could not be parsed` on
+// callback, breaking Google sign-in both locally and in production.
+describe('auth API routes never double-run the Auth.js pipeline', () => {
+  beforeEach(() => {
+    authHandlerInvocations.mockReset();
+  });
+
+  it('never wraps /api/auth/* in the auth() HOC', async () => {
+    await middleware(new NextRequest('https://vitaflow.test/api/auth/csrf'), {
+      params: Promise.resolve({}),
+    });
+    await middleware(
+      new NextRequest('https://vitaflow.test/api/auth/callback/google'),
+      { params: Promise.resolve({}) }
+    );
+    await middleware(
+      new NextRequest('https://vitaflow.test/api/auth/signin/google', {
+        method: 'POST',
+      }),
+      { params: Promise.resolve({}) }
+    );
+
+    expect(authHandlerInvocations).not.toHaveBeenCalled();
+  });
+
+  it('still wraps private and sign-in pages in the auth() HOC', async () => {
+    await middleware(new NextRequest('https://vitaflow.test/restrict'), {
+      params: Promise.resolve({}),
+    });
+
+    expect(authHandlerInvocations).toHaveBeenCalledWith('/restrict');
   });
 });
 
