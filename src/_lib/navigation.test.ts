@@ -63,6 +63,7 @@ describe('restricted shell navigation — getBottomNavItems', () => {
       'Início',
       'Treinos',
       'Evolução',
+      'Exercícios',
       'Conta',
     ]);
   });
@@ -113,7 +114,10 @@ describe('restricted shell navigation — getMenuGroups', () => {
         items: group.items.map(item => item.title),
       }))
     ).toEqual([
-      { label: 'Meu dia', items: ['Início', 'Treinos', 'Minha evolução'] },
+      {
+        label: 'Meu dia',
+        items: ['Início', 'Treinos', 'Minha evolução', 'Exercícios'],
+      },
       { label: 'Conta', items: ['Configurações'] },
     ]);
 
@@ -137,6 +141,7 @@ describe('restricted shell navigation — getMenuGroups', () => {
       'Pessoas',
       'Treinos',
       'Minha evolução',
+      'Exercícios',
     ]);
     expect(groups[1].items.map(item => item.title)).toEqual(['Configurações']);
   });
@@ -191,6 +196,21 @@ describe('restricted shell navigation — getTopbarContext', () => {
     });
   });
 
+  it('shows the exercise library title and the exercise detail trail', () => {
+    expect(getTopbarContext('/restrict/exercises')).toEqual({
+      kind: 'title',
+      title: 'Exercícios',
+    });
+    expect(getTopbarContext('/restrict/exercises/abc')).toEqual({
+      kind: 'trail',
+      items: [
+        { label: 'Vita Flow', href: '/restrict' },
+        { label: 'Exercícios', href: '/restrict/exercises' },
+        { label: 'Exercício' },
+      ],
+    });
+  });
+
   it('UT-017 shows nothing for an unknown path', () => {
     expect(getTopbarContext('/restrict/unknown')).toBeNull();
   });
@@ -231,7 +251,13 @@ describe('professional personal use — navigation', () => {
     }
 
     const userItems = getBottomNavItems('USER').map(item => item.title);
-    expect(userItems).toEqual(['Início', 'Treinos', 'Evolução', 'Conta']);
+    expect(userItems).toEqual([
+      'Início',
+      'Treinos',
+      'Evolução',
+      'Exercícios',
+      'Conta',
+    ]);
     expect(userItems.at(-1)).toBe('Conta');
   });
 
@@ -245,6 +271,7 @@ describe('professional personal use — navigation', () => {
         'Pessoas',
         'Treinos',
         'Minha evolução',
+        'Exercícios',
       ]);
     }
   });
@@ -254,6 +281,7 @@ describe('professional personal use — navigation', () => {
       'Início',
       'Treinos',
       'Minha evolução',
+      'Exercícios',
     ]);
 
     for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
@@ -262,6 +290,7 @@ describe('professional personal use — navigation', () => {
         'Pessoas',
         'Treinos',
         'Minha evolução',
+        'Exercícios',
       ]);
     }
 
