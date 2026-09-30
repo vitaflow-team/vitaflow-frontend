@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: PAGE_TITLES.workouts,
 };
 
-export default function WorkoutsPage() {
-  return <WorkoutsView />;
+interface WorkoutsPageProps {
+  searchParams: Promise<{ gerar?: string }>;
+}
+
+export default function WorkoutsPage({ searchParams }: WorkoutsPageProps) {
+  return <WorkoutsView searchParams={searchParams} />;
 }
