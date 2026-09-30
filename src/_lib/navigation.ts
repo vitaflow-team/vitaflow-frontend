@@ -1,4 +1,5 @@
 import { APP_ROUTES, type AppRoute } from '@/_constants/routes';
+import { EXERCISE_PAGE_TITLES } from '@/_constants/exerciseCatalog';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import type { LucideIcon } from 'lucide-react';
 
@@ -132,6 +133,10 @@ const SECTIONS: Record<string, SectionDescriptor> = {
     childLabel: PAGE_TITLES.workoutForm,
   },
   progress: { label: PAGE_TITLES.progress },
+  exercises: {
+    label: EXERCISE_PAGE_TITLES.library,
+    childLabel: EXERCISE_PAGE_TITLES.exercise,
+  },
   settings: { label: PAGE_TITLES.settings },
 };
 

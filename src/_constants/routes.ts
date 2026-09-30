@@ -2,6 +2,7 @@ import {
   ChartNoAxesCombined,
   Dumbbell,
   Home,
+  Library,
   Settings,
   User2,
   type LucideIcon,
@@ -44,6 +45,15 @@ const PRIVATE: AppRoute[] = [
     // evolução própria vale para os três tipos. O acesso é dado aqui, em dado,
     // e não em regra espalhada: menus e middleware leem esta mesma lista
     // (ADR-006).
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Por último de propósito: a barra inferior mostra no máximo cinco
+    // destinos, e entrar antes cortaria "Evolução" de quem é profissional. O
+    // catálogo segue no menu lateral para todos.
+    TITLE: 'Exercícios',
+    URL: '/restrict/exercises',
+    ICON: Library,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];

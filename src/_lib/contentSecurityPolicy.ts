@@ -21,7 +21,8 @@ export function buildContentSecurityPolicy(nonce?: string): string {
     // Inline styles stay allowed for now (PRD Non-Goals); adding a nonce here
     // would make browsers ignore 'unsafe-inline'.
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://lh3.googleusercontent.com",
+    // Exercise images are links the backoffice types in, from any HTTPS host.
+    "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
     // Stripe's browser SDK needs its API and hosted checkout frame.
     "connect-src 'self' https://api.stripe.com",
