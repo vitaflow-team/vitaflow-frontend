@@ -5,6 +5,7 @@ import {
   Library,
   Settings,
   User2,
+  UtensilsCrossed,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -54,6 +55,14 @@ const PRIVATE: AppRoute[] = [
     TITLE: 'Exercícios',
     URL: '/restrict/exercises',
     ICON: Library,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão do item anterior.
+    TITLE: 'Diário Alimentar',
+    SHORT_TITLE: 'Diário',
+    URL: '/restrict/food-diary',
+    ICON: UtensilsCrossed,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];
