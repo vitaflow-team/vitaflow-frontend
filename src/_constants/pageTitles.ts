@@ -6,4 +6,5 @@ export const PAGE_TITLES = {
   settings: 'Configurações',
   clients: 'Pessoas',
   client: 'Cliente',
+  foodDiary: 'Diário Alimentar',
 } as const;

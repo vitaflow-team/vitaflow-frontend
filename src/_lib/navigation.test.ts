@@ -116,7 +116,13 @@ describe('restricted shell navigation — getMenuGroups', () => {
     ).toEqual([
       {
         label: 'Meu dia',
-        items: ['Início', 'Treinos', 'Minha evolução', 'Exercícios'],
+        items: [
+          'Início',
+          'Treinos',
+          'Minha evolução',
+          'Exercícios',
+          'Diário Alimentar',
+        ],
       },
       { label: 'Conta', items: ['Configurações'] },
     ]);
@@ -142,6 +148,7 @@ describe('restricted shell navigation — getMenuGroups', () => {
       'Treinos',
       'Minha evolução',
       'Exercícios',
+      'Diário Alimentar',
     ]);
     expect(groups[1].items.map(item => item.title)).toEqual(['Configurações']);
   });
@@ -272,6 +279,7 @@ describe('professional personal use — navigation', () => {
         'Treinos',
         'Minha evolução',
         'Exercícios',
+        'Diário Alimentar',
       ]);
     }
   });
@@ -282,6 +290,7 @@ describe('professional personal use — navigation', () => {
       'Treinos',
       'Minha evolução',
       'Exercícios',
+      'Diário Alimentar',
     ]);
 
     for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
@@ -291,6 +300,7 @@ describe('professional personal use — navigation', () => {
         'Treinos',
         'Minha evolução',
         'Exercícios',
+        'Diário Alimentar',
       ]);
     }
 
