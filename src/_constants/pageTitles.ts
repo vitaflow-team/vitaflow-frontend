@@ -9,4 +9,6 @@ export const PAGE_TITLES = {
   foodDiary: 'Diário Alimentar',
   professionals: 'Buscar profissional',
   professionalProfile: 'Perfil do profissional',
+  nutritionistMirror: 'Minha nutricionista',
+  educatorMirror: 'Meu educador físico',
 } as const;

@@ -123,6 +123,8 @@ describe('restricted shell navigation — getMenuGroups', () => {
           'Exercícios',
           'Diário Alimentar',
           'Buscar profissional',
+          'Minha nutricionista',
+          'Meu educador físico',
         ],
       },
       { label: 'Conta', items: ['Configurações'] },
@@ -151,6 +153,8 @@ describe('restricted shell navigation — getMenuGroups', () => {
       'Exercícios',
       'Diário Alimentar',
       'Buscar profissional',
+      'Minha nutricionista',
+      'Meu educador físico',
     ]);
     expect(groups[1].items.map(item => item.title)).toEqual(['Configurações']);
   });
@@ -283,6 +287,8 @@ describe('professional personal use — navigation', () => {
         'Exercícios',
         'Diário Alimentar',
         'Buscar profissional',
+        'Minha nutricionista',
+        'Meu educador físico',
       ]);
     }
   });
@@ -295,6 +301,8 @@ describe('professional personal use — navigation', () => {
       'Exercícios',
       'Diário Alimentar',
       'Buscar profissional',
+      'Minha nutricionista',
+      'Meu educador físico',
     ]);
 
     for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
@@ -306,6 +314,8 @@ describe('professional personal use — navigation', () => {
         'Exercícios',
         'Diário Alimentar',
         'Buscar profissional',
+        'Minha nutricionista',
+        'Meu educador físico',
       ]);
     }
 
