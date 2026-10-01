@@ -5,6 +5,7 @@ import {
   Dumbbell,
   Home,
   Library,
+  MessageCircle,
   Search,
   Settings,
   User2,
@@ -96,6 +97,15 @@ const PRIVATE: AppRoute[] = [
     SHORT_TITLE: 'Educador',
     URL: '/restrict/physical-educator',
     ICON: Activity,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão dos itens acima. Visível aos três tipos:
+    // tanto um usuário quanto um profissional podem ter vínculos elegíveis
+    // para troca de mensagens (TechSpec § Integration Points).
+    TITLE: 'Mensagens',
+    URL: '/restrict/messages',
+    ICON: MessageCircle,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];
