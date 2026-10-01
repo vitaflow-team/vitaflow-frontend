@@ -1,4 +1,9 @@
-export const SETTINGS_TABS = ['perfil', 'plano', 'conta'] as const;
+export const SETTINGS_TABS = [
+  'perfil',
+  'plano',
+  'conta',
+  'notificacoes',
+] as const;
 
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
 
@@ -6,6 +11,7 @@ export const SETTINGS_TAB_LABELS: Record<SettingsTab, string> = {
   perfil: 'Perfil',
   plano: 'Plano',
   conta: 'Conta',
+  notificacoes: 'Notificações',
 };
 
 export const SETTINGS_PATH = '/restrict/settings';

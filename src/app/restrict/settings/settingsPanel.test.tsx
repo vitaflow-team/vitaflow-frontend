@@ -15,6 +15,11 @@ vi.mock('@/_components/settings/planPanel', () => ({
     <pre data-section="plan">{JSON.stringify(props)}</pre>
   ),
 }));
+vi.mock('@/_components/settings/notificationPreferencesPanel', () => ({
+  NotificationPreferencesPanel: (props: object) => (
+    <pre data-section="notifications">{JSON.stringify(props)}</pre>
+  ),
+}));
 vi.mock('./form', () => ({
   default: (props: object) => (
     <pre data-section="profile">{JSON.stringify(props)}</pre>
@@ -59,7 +64,13 @@ function sectionProps(markup: string): Record<string, unknown> {
 
 function render(tab: 'perfil' | 'plano' | 'conta', profile = PROFILE) {
   return renderToStaticMarkup(
-    <SettingsPanel tab={tab} profile={profile} plans={PLANS} plansFailed />
+    <SettingsPanel
+      tab={tab}
+      profile={profile}
+      plans={PLANS}
+      plansFailed
+      preferences={null}
+    />
   );
 }
 
@@ -131,6 +142,7 @@ describe('refactor — settings plan panel and load failure', () => {
         profile={null}
         plans={[]}
         plansFailed={false}
+        preferences={null}
       />
     );
 

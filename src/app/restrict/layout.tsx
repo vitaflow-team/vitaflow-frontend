@@ -2,6 +2,7 @@ import { AccessNotice } from '@/_components/layout/accessNotice';
 import { AppSidebar } from '@/_components/layout/appSidebar';
 import { BottomNav } from '@/_components/layout/bottomNav';
 import { MobileHeader } from '@/_components/layout/mobileHeader';
+import { NotificationsBell } from '@/_components/layout/notificationsBell';
 import { Topbar } from '@/_components/layout/topbar';
 import { SidebarProvider } from '@/_components/ui/sidebar';
 import { SIDEBAR_COOKIE_NAME } from '@/_constants/sidebar';
@@ -45,7 +46,7 @@ export default async function RestrictLayout({
         />
         <div className="flex min-h-svh w-full min-w-0 flex-col">
           <MobileHeader />
-          <Topbar />
+          <Topbar notificationsBell={<NotificationsBell />} />
           {/* Alvo do link "Pular para o conteúdo" do layout raiz. O espaço
               embaixo reserva a altura da barra inferior mais a área segura do
               aparelho, e some a partir de md, onde a barra não existe. */}

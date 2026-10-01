@@ -1,5 +1,6 @@
 import type { Product } from '@/_actions/products/getPlans';
 import { AccountPanel } from '@/_components/settings/accountPanel';
+import { NotificationPreferencesPanel } from '@/_components/settings/notificationPreferencesPanel';
 import { PlanPanel } from '@/_components/settings/planPanel';
 import { Title } from '@/_components/ui/title';
 import { toFormSettingsProfile } from '@/_lib/formSettingsProfile';
@@ -9,6 +10,7 @@ import {
   profileClientsCount,
 } from '@/_lib/settingsProfile';
 import type { SettingsTab } from '@/_lib/settingsTabs';
+import type { NotificationPreferences } from '@/_types/notifications';
 import type { SettingsProfile } from '@/_types/settingsProfile';
 import FormSettings from './form';
 
@@ -75,6 +77,7 @@ interface SettingsPanelProps {
   profile: SettingsProfile | null;
   plans: Product[];
   plansFailed: boolean;
+  preferences: NotificationPreferences | null;
 }
 
 /**
@@ -86,7 +89,22 @@ export function SettingsPanel({
   profile,
   plans,
   plansFailed,
+  preferences,
 }: SettingsPanelProps) {
+  if (tab === 'notificacoes') {
+    if (!preferences) {
+      return (
+        <div>Erro ao carregar preferências. Tente novamente mais tarde.</div>
+      );
+    }
+    return (
+      <>
+        <PanelTitle label="Notificações" />
+        <NotificationPreferencesPanel preferences={preferences} />
+      </>
+    );
+  }
+
   if (!profile) {
     return <div>Erro ao carregar perfil. Tente novamente mais tarde.</div>;
   }

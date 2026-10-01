@@ -1,12 +1,20 @@
 'use client';
 
 import { Breadcrumbs } from '@/_components/layout/breadcrumbs';
-import { NotificationsBell } from '@/_components/layout/notificationsBell';
 import { SidebarTrigger } from '@/_components/ui/sidebar';
 import { getTopbarContext } from '@/_lib/navigation';
 import { usePathname } from 'next/navigation';
+import type { ReactNode } from 'react';
 
-export function Topbar() {
+interface TopbarProps {
+  // Passed in from the Server Component layout rather than imported
+  // directly: NotificationsBell is an async Server Component reading
+  // server-only data, which a Client Component (this one, for
+  // usePathname) cannot import and render itself.
+  notificationsBell: ReactNode;
+}
+
+export function Topbar({ notificationsBell }: TopbarProps) {
   const pathname = usePathname();
   const context = getTopbarContext(pathname);
 
@@ -22,7 +30,7 @@ export function Topbar() {
           <span className="truncate text-sm font-medium">{context.title}</span>
         )}
       </div>
-      <NotificationsBell />
+      {notificationsBell}
     </header>
   );
 }

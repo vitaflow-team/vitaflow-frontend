@@ -8,6 +8,7 @@ import { UnsavedChangesProvider } from '@/_components/settings/unsavedChangesPro
 import { Title } from '@/_components/ui/title';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { apiClient } from '@/_lib/apiClient';
+import { isLoadFailure, loadPreferences } from '@/_lib/notificationsData';
 import {
   isSettingsPlanStale,
   parseCheckoutSessionId,
@@ -80,6 +81,10 @@ export default async function Settings({ searchParams }: SettingsProps) {
 
   const profile = await loadProfile();
   const { plans, plansFailed } = await loadPlans(tab);
+  // Only fetched for the Notificações tab, same pattern as the plan catalog.
+  const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
+  const preferences =
+    prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
   const planStale = isSettingsPlanStale({
     sessionProductId: session.user?.productId,
     profile,
@@ -108,6 +113,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
             profile={profile}
             plans={plans}
             plansFailed={plansFailed}
+            preferences={preferences}
           />
         </div>
       </UnsavedChangesProvider>
