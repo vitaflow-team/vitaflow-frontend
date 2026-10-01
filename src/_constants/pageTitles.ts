@@ -7,4 +7,6 @@ export const PAGE_TITLES = {
   clients: 'Pessoas',
   client: 'Cliente',
   foodDiary: 'Diário Alimentar',
+  professionals: 'Buscar profissional',
+  professionalProfile: 'Perfil do profissional',
 } as const;

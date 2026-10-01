@@ -138,6 +138,10 @@ const SECTIONS: Record<string, SectionDescriptor> = {
     childLabel: EXERCISE_PAGE_TITLES.exercise,
   },
   settings: { label: PAGE_TITLES.settings },
+  professionals: {
+    label: PAGE_TITLES.professionals,
+    childLabel: PAGE_TITLES.professionalProfile,
+  },
 };
 
 /**
