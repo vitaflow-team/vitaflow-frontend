@@ -1,4 +1,6 @@
 import {
+  Apple,
+  Activity,
   ChartNoAxesCombined,
   Dumbbell,
   Home,
@@ -75,6 +77,25 @@ const PRIVATE: AppRoute[] = [
     SHORT_TITLE: 'Buscar',
     URL: '/restrict/professionals',
     ICON: Search,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão dos itens acima. Visível aos três tipos:
+    // o backend não restringe por tipo de conta (qualquer conta pode ter um
+    // Client vinculado a um profissional), mesma lógica de "Buscar
+    // profissional".
+    TITLE: 'Minha nutricionista',
+    SHORT_TITLE: 'Nutricionista',
+    URL: '/restrict/nutritionist',
+    ICON: Apple,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão do item anterior.
+    TITLE: 'Meu educador físico',
+    SHORT_TITLE: 'Educador',
+    URL: '/restrict/physical-educator',
+    ICON: Activity,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];
