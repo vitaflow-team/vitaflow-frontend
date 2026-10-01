@@ -6,6 +6,7 @@ describe('settings tabs', () => {
     expect(parseSettingsTab('perfil')).toBe('perfil');
     expect(parseSettingsTab('plano')).toBe('plano');
     expect(parseSettingsTab('conta')).toBe('conta');
+    expect(parseSettingsTab('notificacoes')).toBe('notificacoes');
   });
 
   it('UT-016 falls back to Perfil for unknown, empty, repeated and other-case values', () => {

@@ -14,14 +14,19 @@ vi.mock('./progress/recordFormModal', () => ({
   }) => <div data-focus={focusField ?? 'none'}>{trigger}</div>,
 }));
 
-import { NotificationsBell } from './layout/notificationsBell';
 import { UserAvatar } from './layout/userAvatar';
 import { FloatingRegisterButton } from './progress/floatingRegisterButton';
 import { UpdateHeightButton } from './progress/updateHeightButton';
 
+// NotificationsBell was reviewed here while it was a dependency-free,
+// synchronous stub. It is now a real async Server Component with
+// server-only data dependencies (notificationsData.ts) — a different
+// category from the simple client-primitive wrappers below, and no longer
+// renderable via a plain renderToStaticMarkup call in this suite. Its own
+// behavior is covered by notificationsList.test.tsx and
+// notificationsPopoverContent.test.tsx instead.
 const REVIEWED = [
   './layout/userAvatar.tsx',
-  './layout/notificationsBell.tsx',
   './progress/floatingRegisterButton.tsx',
   './progress/updateHeightButton.tsx',
 ];
@@ -45,14 +50,6 @@ describe('refactor — reviewed client boundaries', () => {
 
     expect(markup).toContain('h-40 w-40');
     expect(markup).toContain('AS');
-  });
-
-  // UT-008
-  it('renders the notifications trigger', () => {
-    const markup = renderToStaticMarkup(<NotificationsBell />);
-
-    expect(markup).toContain('aria-label="Notificações"');
-    expect(markup).toContain('aria-haspopup="dialog"');
   });
 
   // UT-008

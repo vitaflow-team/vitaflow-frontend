@@ -1,34 +1,27 @@
-import { Button } from '@/_components/ui/button';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/_components/ui/popover';
-import { Bell } from 'lucide-react';
+  isLoadFailure,
+  loadNotifications,
+  loadUnreadCount,
+} from '@/_lib/notificationsData';
+import { NotificationsPopoverContent } from './notificationsPopoverContent';
 
 /**
- * Honest panel: while there is no notifications feature, the bell never shows
- * a dot or a counter and the text promises no specific future notifications
- * (ADR-004). The Radix popover primitives are the client boundary.
+ * Real data now (Notifications PRD) — replaces the former permanent empty
+ * state (prior ADR-004). The empty-state copy itself is preserved
+ * unconditionally for the genuinely-empty case, just rendered from real
+ * data instead of hardcoded. The Radix popover primitives, inside
+ * `NotificationsPopoverContent`, are the client boundary.
  */
-export function NotificationsBell() {
+export async function NotificationsBell() {
+  const [notifications, unreadCount] = await Promise.all([
+    loadNotifications(),
+    loadUnreadCount(),
+  ]);
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Notificações">
-          <Bell aria-hidden="true" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        collisionPadding={8}
-        className="w-72 max-w-[calc(100vw-1rem)]"
-      >
-        <p className="text-sm font-semibold">Notificações</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Você não tem notificações.
-        </p>
-      </PopoverContent>
-    </Popover>
+    <NotificationsPopoverContent
+      notifications={isLoadFailure(notifications) ? [] : notifications}
+      unreadCount={isLoadFailure(unreadCount) ? 0 : unreadCount}
+    />
   );
 }
