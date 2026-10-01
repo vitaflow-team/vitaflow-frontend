@@ -144,6 +144,10 @@ const SECTIONS: Record<string, SectionDescriptor> = {
   },
   nutritionist: { label: PAGE_TITLES.nutritionistMirror },
   'physical-educator': { label: PAGE_TITLES.educatorMirror },
+  messages: {
+    label: PAGE_TITLES.messages,
+    childLabel: PAGE_TITLES.messageThread,
+  },
 };
 
 /**

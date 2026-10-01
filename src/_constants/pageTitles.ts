@@ -11,4 +11,6 @@ export const PAGE_TITLES = {
   professionalProfile: 'Perfil do profissional',
   nutritionistMirror: 'Minha nutricionista',
   educatorMirror: 'Meu educador físico',
+  messages: 'Mensagens',
+  messageThread: 'Conversa',
 } as const;
