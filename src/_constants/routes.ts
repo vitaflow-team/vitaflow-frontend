@@ -3,6 +3,7 @@ import {
   Dumbbell,
   Home,
   Library,
+  Search,
   Settings,
   User2,
   UtensilsCrossed,
@@ -63,6 +64,17 @@ const PRIVATE: AppRoute[] = [
     SHORT_TITLE: 'Diário',
     URL: '/restrict/food-diary',
     ICON: UtensilsCrossed,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão dos dois itens acima: recurso novo,
+    // barra inferior já apertada. Visível aos três tipos — a busca e a
+    // solicitação de conexão não têm restrição de tipo de conta (PRD
+    // Business Rules), e um profissional também usa as abas de solicitação.
+    TITLE: 'Buscar profissional',
+    SHORT_TITLE: 'Buscar',
+    URL: '/restrict/professionals',
+    ICON: Search,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];
