@@ -13,4 +13,6 @@ export const PAGE_TITLES = {
   educatorMirror: 'Meu educador físico',
   messages: 'Mensagens',
   messageThread: 'Conversa',
+  scheduling: 'Agenda',
+  schedulingBook: 'Agendar horário',
 } as const;
