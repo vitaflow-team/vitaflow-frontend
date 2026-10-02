@@ -1,6 +1,7 @@
 import {
   Apple,
   Activity,
+  CalendarDays,
   ChartNoAxesCombined,
   Dumbbell,
   Home,
@@ -106,6 +107,15 @@ const PRIVATE: AppRoute[] = [
     TITLE: 'Mensagens',
     URL: '/restrict/messages',
     ICON: MessageCircle,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão dos itens acima. Visível aos três
+    // tipos: o profissional publica disponibilidade, o usuário agenda nela
+    // (PRD Business Rules — sem restrição de plano).
+    TITLE: 'Agenda',
+    URL: '/restrict/scheduling',
+    ICON: CalendarDays,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
 ];

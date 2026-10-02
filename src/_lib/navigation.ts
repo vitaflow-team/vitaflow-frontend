@@ -148,6 +148,10 @@ const SECTIONS: Record<string, SectionDescriptor> = {
     label: PAGE_TITLES.messages,
     childLabel: PAGE_TITLES.messageThread,
   },
+  // No childLabel: /restrict/scheduling/book/:id is 3 segments deep, past
+  // getTopbarContext's 2-level trail support — it shows nothing there,
+  // same as any other path beyond that depth (never a trail that lies).
+  scheduling: { label: PAGE_TITLES.scheduling },
 };
 
 /**
