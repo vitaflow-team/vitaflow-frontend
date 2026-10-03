@@ -27,7 +27,7 @@ const STUDENT: Student = {
   hasAccount: true,
   userId: 'user-9',
   createdAt: '2026-09-15T15:00:00.000Z',
-  overview: { latest: null, variation: null },
+  overview: { latest: null, variation: null, currentWorkout: null },
 };
 
 const LATEST = {
@@ -98,7 +98,7 @@ describe('student record header', () => {
       <StudentHeader
         student={{
           ...STUDENT,
-          overview: { latest: LATEST, variation: null },
+          overview: { latest: LATEST, variation: null, currentWorkout: null },
         }}
       />
     );
@@ -120,15 +120,16 @@ describe('student record header', () => {
 });
 
 describe('student record tabs', () => {
-  it('UT-126 lists exactly Visão geral and Avaliação física', () => {
+  it('UT-088 lists exactly Visão geral, Avaliação física and Treinos', () => {
     const html = renderToStaticMarkup(
       <StudentTabList studentId="s1" selected="overview" />
     );
 
-    expect(html.match(/role="tab"/g)).toHaveLength(2);
+    expect(html.match(/role="tab"/g)).toHaveLength(3);
     expect(html).toContain('Visão geral');
     expect(html).toContain('Avaliação física');
-    expect(html).not.toMatch(/Treinos|Horários|Vídeos|Cobrança|Academia/);
+    expect(html).toContain('Treinos');
+    expect(html).not.toMatch(/Horários|Vídeos|Cobrança|Academia/);
   });
 
   it('UT-168 marks the assessment tab as the selected one', () => {
@@ -151,6 +152,7 @@ describe('student overview', () => {
         overview={{
           latest: LATEST,
           variation: { weightKg: -2.1, bodyFatPoints: -1.5 },
+          currentWorkout: null,
         }}
       />
     );
@@ -167,7 +169,7 @@ describe('student overview', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
-        overview={{ latest: null, variation: null }}
+        overview={{ latest: null, variation: null, currentWorkout: null }}
       />
     );
 
@@ -181,7 +183,7 @@ describe('student overview', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
-        overview={{ latest: LATEST, variation: null }}
+        overview={{ latest: LATEST, variation: null, currentWorkout: null }}
       />
     );
 
@@ -196,6 +198,7 @@ describe('student overview', () => {
         overview={{
           latest: { ...LATEST, bodyFatPercent: null },
           variation: null,
+          currentWorkout: null,
         }}
       />
     );

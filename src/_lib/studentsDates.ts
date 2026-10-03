@@ -52,3 +52,10 @@ export function shiftYears(isoDay: string, years: number): string {
 
   return `${Number(match[1]) + years}-${match[2]}-${match[3]}`;
 }
+
+/** The calendar day (Brasília time) of a timestamp, as `dd/mm/aaaa`. */
+export function formatTimestampDay(timestamp: string): string {
+  return new Date(timestamp).toLocaleDateString('pt-BR', {
+    timeZone: BRAZIL_TIME_ZONE,
+  });
+}

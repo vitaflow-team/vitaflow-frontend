@@ -40,6 +40,6 @@ export function describeVariation(variation: AssessmentVariation): string[] {
 /** What removing a student costs, stated in the confirmation. */
 export function removalWarning(hasAssessments: boolean): string {
   return hasAssessments
-    ? 'O histórico de avaliações físicas será perdido permanentemente.'
-    : 'Este aluno não tem avaliações registradas, então não há histórico a perder.';
+    ? 'O histórico de avaliações físicas e os treinos serão perdidos permanentemente.'
+    : 'Este aluno não tem avaliações registradas; os treinos que ele tiver serão perdidos permanentemente.';
 }

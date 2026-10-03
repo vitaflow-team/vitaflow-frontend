@@ -48,9 +48,18 @@ export interface StudentList {
   pageSize: number;
 }
 
+export interface CurrentWorkoutSummary {
+  id: string;
+  title: string;
+  weeklyFrequency: number | null;
+  sessionNames: string[];
+}
+
 export interface StudentOverview {
   latest: Assessment | null;
   variation: AssessmentVariation | null;
+  /** The educator's active workout for this student, or null. */
+  currentWorkout: CurrentWorkoutSummary | null;
 }
 
 export interface Student {

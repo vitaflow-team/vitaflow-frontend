@@ -4,13 +4,14 @@ import { STUDENTS_PATH } from '@/_lib/studentsList';
  * Only the tabs that have content: workouts, schedule, videos and billing are
  * not listed until they exist (ADR-001).
  */
-export const STUDENT_TABS = ['overview', 'assessment'] as const;
+export const STUDENT_TABS = ['overview', 'assessment', 'workouts'] as const;
 
 export type StudentTab = (typeof STUDENT_TABS)[number];
 
 export const STUDENT_TAB_LABELS: Record<StudentTab, string> = {
   overview: 'Visão geral',
   assessment: 'Avaliação física',
+  workouts: 'Treinos',
 };
 
 export function studentTabHref(studentId: string, tab: StudentTab): string {
@@ -23,12 +24,13 @@ export function activeStudentTab(
   pathname: string,
   studentId: string
 ): StudentTab {
-  const assessmentPath = studentTabHref(studentId, 'assessment');
+  const under = (tab: StudentTab) => {
+    const path = studentTabHref(studentId, tab);
+    return pathname === path || pathname.startsWith(`${path}/`);
+  };
 
-  return pathname === assessmentPath ||
-    pathname.startsWith(`${assessmentPath}/`)
-    ? 'assessment'
-    : 'overview';
+  if (under('assessment')) return 'assessment';
+  return under('workouts') ? 'workouts' : 'overview';
 }
 
 export function studentTabId(tab: StudentTab): string {

@@ -54,7 +54,19 @@ export function useUnsavedChanges(): UnsavedChangesContextValue {
  * - o botão Voltar do navegador também não: ali só vale o aviso do
  *   `beforeunload`, e apenas quando ele sai do documento.
  */
-export function UnsavedChangesProvider({ children }: { children: ReactNode }) {
+const DEFAULT_MESSAGE =
+  'Se sair agora, as alterações feitas no seu perfil serão perdidas.';
+
+interface UnsavedChangesProviderProps {
+  children: ReactNode;
+  /** What the discard dialog says is lost; defaults to the profile wording. */
+  message?: string;
+}
+
+export function UnsavedChangesProvider({
+  children,
+  message = DEFAULT_MESSAGE,
+}: UnsavedChangesProviderProps) {
   const router = useRouter();
   const [dirty, setDirty] = useState(false);
   const [pendingHref, setPendingHref] = useState<string | null>(null);
@@ -134,9 +146,7 @@ export function UnsavedChangesProvider({ children }: { children: ReactNode }) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Você tem alterações não salvas</AlertDialogTitle>
-            <AlertDialogDescription>
-              Se sair agora, as alterações feitas no seu perfil serão perdidas.
-            </AlertDialogDescription>
+            <AlertDialogDescription>{message}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Continuar editando</AlertDialogCancel>

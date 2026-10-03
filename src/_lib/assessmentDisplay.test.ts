@@ -31,7 +31,7 @@ describe('assessment display', () => {
   });
 
   it('UT-148 and UT-149 state the loss, or that there is nothing to lose', () => {
-    expect(removalWarning(true)).toContain('perdido permanentemente');
-    expect(removalWarning(false)).toContain('não há histórico a perder');
+    expect(removalWarning(true)).toContain('perdidos permanentemente');
+    expect(removalWarning(false)).toContain('não tem avaliações registradas');
   });
 });

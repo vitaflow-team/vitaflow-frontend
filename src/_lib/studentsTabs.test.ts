@@ -10,10 +10,11 @@ import {
 const ID = '01890a5d-ac96-774b-bcce-b302099a8057';
 
 describe('student record tabs', () => {
-  it('UT-126 has exactly the tabs Visão geral and Avaliação física', () => {
+  it('UT-088 has exactly the tabs Visão geral, Avaliação física and Treinos', () => {
     expect(STUDENT_TABS.map(tab => STUDENT_TAB_LABELS[tab])).toEqual([
       'Visão geral',
       'Avaliação física',
+      'Treinos',
     ]);
   });
 
@@ -21,6 +22,9 @@ describe('student record tabs', () => {
     expect(studentTabHref(ID, 'overview')).toBe(`/restrict/students/${ID}`);
     expect(studentTabHref(ID, 'assessment')).toBe(
       `/restrict/students/${ID}/assessment`
+    );
+    expect(studentTabHref(ID, 'workouts')).toBe(
+      `/restrict/students/${ID}/workouts`
     );
     expect(newAssessmentHref(ID)).toBe(
       `/restrict/students/${ID}/assessment?nova=1`
@@ -33,6 +37,27 @@ describe('student record tabs', () => {
     );
     expect(activeStudentTab(`/restrict/students/${ID}/assessment/x`, ID)).toBe(
       'assessment'
+    );
+  });
+
+  it('reads the workouts address, and the editor under it, as the workouts tab', () => {
+    expect(activeStudentTab(`/restrict/students/${ID}/workouts`, ID)).toBe(
+      'workouts'
+    );
+    expect(activeStudentTab(`/restrict/students/${ID}/workouts/abc`, ID)).toBe(
+      'workouts'
+    );
+  });
+
+  it('reads the workouts address, and the editor under it, as the workouts tab', () => {
+    expect(studentTabHref(ID, 'workouts')).toBe(
+      `/restrict/students/${ID}/workouts`
+    );
+    expect(activeStudentTab(`/restrict/students/${ID}/workouts`, ID)).toBe(
+      'workouts'
+    );
+    expect(activeStudentTab(`/restrict/students/${ID}/workouts/abc`, ID)).toBe(
+      'workouts'
     );
   });
 
