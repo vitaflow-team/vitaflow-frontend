@@ -23,9 +23,31 @@ export interface MirrorAssessment {
   bodyFatPercent: number | null;
 }
 
+export interface MirrorWorkoutSession {
+  id: string;
+  /** A, B, C… from the position. */
+  label: string;
+  name: string;
+  exerciseCount: number;
+}
+
+/**
+ * The educator's active workout as a summary. "Today's workout" exists only
+ * through the schedule, so no session is marked as today's (`todaySessionId`
+ * stays null until the scheduling feature fills it).
+ */
+export interface MirrorWorkout {
+  id: string;
+  title: string;
+  weeklyFrequency: number | null;
+  sessions: MirrorWorkoutSession[];
+  todaySessionId: string | null;
+}
+
 export interface EducatorMirror {
   professional: MirrorProfessional;
-  todayWorkout: null;
+  /** The educator's active workout for this student, or null when none is active. */
+  todayWorkout: MirrorWorkout | null;
   nextSchedule: null;
   /** The educator's latest assessments (up to three, newest first), or null when there are none. */
   physicalAssessment: MirrorAssessment[] | null;

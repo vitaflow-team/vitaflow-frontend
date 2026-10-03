@@ -1,4 +1,5 @@
 import { StudentOverviewCard } from '@/_components/students/studentOverviewCard';
+import { CurrentWorkoutCard } from '@/_components/students/workouts/currentWorkoutCard';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { isLoadFailure, loadStudent } from '@/_lib/studentsData';
 import type { Metadata } from 'next';
@@ -20,6 +21,12 @@ export default async function StudentOverviewPage({
   if (isLoadFailure(student)) return null;
 
   return (
-    <StudentOverviewCard studentId={student.id} overview={student.overview} />
+    <div className="flex flex-col gap-4">
+      <StudentOverviewCard studentId={student.id} overview={student.overview} />
+      <CurrentWorkoutCard
+        studentId={student.id}
+        workout={student.overview.currentWorkout}
+      />
+    </div>
   );
 }

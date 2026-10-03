@@ -13,6 +13,7 @@ import { NotificationPreferencesPanel } from './notificationPreferencesPanel';
 
 const PREFERENCES_DEFAULT_NEW_USER: NotificationPreferences = {
   WORKOUT_REMINDER: true,
+  WORKOUT_PLAN: true,
   CONSULTATION_REMINDER: true,
   MESSAGES: true,
   BILLING: true,
@@ -28,6 +29,7 @@ describe('NotificationPreferencesPanel', () => {
     );
 
     expect(markup).toContain('Lembrete de treino');
+    expect(markup).toContain('Treino do seu educador');
     expect(markup).toContain('Lembrete de consulta');
     expect(markup).toContain('Mensagens');
     expect(markup).toContain('Cobranças');
@@ -44,7 +46,7 @@ describe('NotificationPreferencesPanel', () => {
     // Each row renders a checkbox whose checked state reflects the
     // preference; the product-news row is the only one expected unchecked.
     const rows = markup.split('<li').slice(1);
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     const productNewsRow = rows.find(row =>
       row.includes('Novidades Vita Flow')
     );
@@ -52,6 +54,9 @@ describe('NotificationPreferencesPanel', () => {
 
     const billingRow = rows.find(row => row.includes('Cobranças'));
     expect(billingRow).toContain('data-state="checked"');
+
+    const planRow = rows.find(row => row.includes('Treino do seu educador'));
+    expect(planRow).toContain('data-state="checked"');
   });
 
   it('renders every category as toggleable even when nothing triggers it yet (US-007)', () => {

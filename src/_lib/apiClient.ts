@@ -5,6 +5,23 @@ import { ACCESS_TOKEN_COOKIE_NAME } from './accessTokenCookie';
 import { AppError } from './AppError';
 import { env } from './env';
 
+/** The backend's `{ message, code, details }` answer as an AppError. */
+async function backendError(response: Response): Promise<AppError> {
+  let message = 'Ocorreu um erro inesperado.';
+  let code: string | undefined;
+  let details: unknown;
+  try {
+    const data = await response.json();
+    if (data && typeof data.message === 'string') message = data.message;
+    if (data && typeof data.code === 'string') code = data.code;
+    if (data && data.details !== undefined) details = data.details;
+  } catch {}
+
+  const error = new AppError(message, response.status, code);
+  error.details = details;
+  return error;
+}
+
 export async function apiClient<T = unknown>(
   path: string,
   init?: RequestInit
@@ -45,20 +62,7 @@ export async function apiClient<T = unknown>(
     throw new AppError('Erro ao conectar com o servidor.', 503);
   });
 
-  if (!response.ok) {
-    let errorMessage = 'Ocorreu um erro inesperado.';
-    let errorCode: string | undefined;
-    try {
-      const data = await response.json();
-      if (data && typeof data.message === 'string') {
-        errorMessage = data.message;
-      }
-      if (data && typeof data.code === 'string') {
-        errorCode = data.code;
-      }
-    } catch {}
-    throw new AppError(errorMessage, response.status, errorCode);
-  }
+  if (!response.ok) throw await backendError(response);
 
   if (response.status === 204) {
     return {} as T;

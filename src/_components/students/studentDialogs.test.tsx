@@ -52,7 +52,7 @@ const STUDENT: Student = {
   hasAccount: false,
   userId: null,
   createdAt: '2026-09-15T15:00:00.000Z',
-  overview: { latest: null, variation: null },
+  overview: { latest: null, variation: null, currentWorkout: null },
 };
 
 function remove(hasAssessments: boolean) {
@@ -71,15 +71,15 @@ describe('remove student dialog', () => {
 
     expect(html).toContain('Remover Diego Martins?');
     expect(html).toContain(
-      'O histórico de avaliações físicas será perdido permanentemente.'
+      'O histórico de avaliações físicas e os treinos serão perdidos permanentemente.'
     );
   });
 
   it('UT-149 says there is no history to lose for a student without assessments', () => {
     const html = remove(false);
 
-    expect(html).toContain('não há histórico a perder');
-    expect(html).not.toContain('perdido permanentemente');
+    expect(html).toContain('não tem avaliações registradas');
+    expect(html).not.toContain('O histórico de avaliações físicas');
   });
 
   it('UT-150 offers a cancel that is not the destructive button', () => {

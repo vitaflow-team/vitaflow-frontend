@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 interface WorkoutsPageProps {
-  searchParams: Promise<{ gerar?: string }>;
+  searchParams: Promise<{ gerar?: string; plano?: string }>;
 }
 
 export default function WorkoutsPage({ searchParams }: WorkoutsPageProps) {

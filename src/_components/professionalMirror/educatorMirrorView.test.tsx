@@ -50,6 +50,42 @@ describe('EducatorMirrorView', () => {
     expect(body).not.toContain('Nenhuma avaliação física registrada ainda.');
   });
 
+  it('UT-128 shows the current workout title and sessions, no session as today and a link to the educator plan', () => {
+    const html = renderToStaticMarkup(
+      <EducatorMirrorView
+        mirror={{
+          ...MIRROR,
+          todayWorkout: {
+            id: 'w1',
+            title: 'Hipertrofia',
+            weeklyFrequency: 4,
+            todaySessionId: null,
+            sessions: [
+              { id: 's1', label: 'A', name: 'Peito', exerciseCount: 6 },
+              { id: 's2', label: 'B', name: 'Costas', exerciseCount: 5 },
+            ],
+          },
+        }}
+      />
+    );
+    const body = text(html);
+
+    expect(body).toContain('Hipertrofia');
+    expect(body).toContain('4x por semana');
+    expect(body).toContain('Sessão A — Peito');
+    expect(body).toContain('Sessão B — Costas');
+    expect(html).toContain('href="/restrict/workouts?plano=educador"');
+    expect(body).not.toMatch(/hoje|Hoje/);
+    expect(body).not.toContain('ainda não configurou o treino');
+  });
+
+  it('UT-128 keeps the honest empty state when todayWorkout is null', () => {
+    const html = renderToStaticMarkup(<EducatorMirrorView mirror={MIRROR} />);
+
+    expect(text(html)).toContain('ainda não configurou o treino de hoje');
+    expect(html).not.toContain('plano=educador');
+  });
+
   it('UT-165 keeps the honest empty state when there is no assessment', () => {
     const html = renderToStaticMarkup(<EducatorMirrorView mirror={MIRROR} />);
 

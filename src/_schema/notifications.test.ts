@@ -31,6 +31,15 @@ describe('setPreferenceSchema', () => {
     ).toBe(true);
   });
 
+  it('UT-129 accepts the workout plan category', () => {
+    expect(
+      setPreferenceSchema.safeParse({
+        category: 'WORKOUT_PLAN',
+        enabled: true,
+      }).success
+    ).toBe(true);
+  });
+
   it('rejects an unknown category', () => {
     expect(
       setPreferenceSchema.safeParse({ category: 'SPAM', enabled: true }).success

@@ -3,6 +3,7 @@ import { CalendarClock, ClipboardList, Dumbbell, Receipt } from 'lucide-react';
 import { MirrorAssessmentCard } from './mirrorAssessmentCard';
 import { MirrorIdentityCard } from './mirrorIdentityCard';
 import { MirrorSectionCard } from './mirrorSectionCard';
+import { MirrorWorkoutCard } from './mirrorWorkoutCard';
 
 interface EducatorMirrorViewProps {
   mirror: EducatorMirror;
@@ -19,11 +20,15 @@ export function EducatorMirrorView({ mirror }: EducatorMirrorViewProps) {
         aria-label="Seções ainda não configuradas"
         className="grid gap-4 sm:grid-cols-2"
       >
-        <MirrorSectionCard
-          title="Treino de hoje"
-          icon={Dumbbell}
-          emptyMessage="Seu educador físico ainda não configurou o treino de hoje."
-        />
+        {mirror.todayWorkout ? (
+          <MirrorWorkoutCard workout={mirror.todayWorkout} />
+        ) : (
+          <MirrorSectionCard
+            title="Treino de hoje"
+            icon={Dumbbell}
+            emptyMessage="Seu educador físico ainda não configurou o treino de hoje."
+          />
+        )}
         <MirrorSectionCard
           title="Próximo horário"
           icon={CalendarClock}
