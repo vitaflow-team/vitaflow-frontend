@@ -1,5 +1,5 @@
 import { Button } from '@/_components/ui/button';
-import { formatTimeRange } from '@/_lib/scheduleFormat';
+import { formatTimeRange, weekdayName } from '@/_lib/scheduleFormat';
 import type { FixedTime } from '@/_types/educatorSchedule';
 import { FixedTimeDialog } from './fixedTimeDialog';
 import { RemoveFixedTimeDialog } from './removeFixedTimeDialog';
@@ -51,7 +51,12 @@ export function FixedTimeItem({
           fixedTime={fixedTime}
           sessionNames={sessionNames}
           trigger={
-            <Button type="button" variant="outline" size="sm">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              aria-label={`Alterar horário de ${weekdayName(fixedTime.weekday).toLowerCase()} às ${range.slice(0, 5)}`}
+            >
               Alterar
             </Button>
           }

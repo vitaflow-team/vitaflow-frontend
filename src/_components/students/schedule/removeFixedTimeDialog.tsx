@@ -53,6 +53,7 @@ export function RemoveFixedTimeDialog({
           variant="outline"
           size="sm"
           disabled={remove.isPending}
+          aria-label={`Remover horário de ${weekdayName(weekday).toLowerCase()} às ${time}`}
         >
           Remover
         </Button>

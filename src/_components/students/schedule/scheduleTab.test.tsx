@@ -178,6 +178,19 @@ describe('schedule tab (UT-101 to UT-106)', () => {
   });
 });
 
+describe('fixed time row names for screen readers', () => {
+  it('names each Alterar and Remover button with its weekday and time', () => {
+    const html = render(schedule([fixed({ weekday: 3, startMinute: 1140 })]));
+
+    expect(html).toContain(
+      'aria-label="Alterar horário de quarta-feira às 19:00"'
+    );
+    expect(html).toContain(
+      'aria-label="Remover horário de quarta-feira às 19:00"'
+    );
+  });
+});
+
 describe('fixed time form (UT-107, UT-108)', () => {
   it('UT-108 shows the link field only for online times', () => {
     const presencial = renderToStaticMarkup(

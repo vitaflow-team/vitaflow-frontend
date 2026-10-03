@@ -19,7 +19,9 @@ vi.mock('@/_actions/scheduling/setOnlineLink', () => ({
   actionSetOnlineLink: vi.fn(),
 }));
 
-import { UpcomingSlotCard } from './upcomingSlotCard';
+import { actionCancelFixedSession } from '@/_actions/scheduling/cancelFixedSession';
+import { actionCancelSlot } from '@/_actions/scheduling/cancelSlot';
+import { cancelActionFor, UpcomingSlotCard } from './upcomingSlotCard';
 
 function fixed(overrides: Partial<UpcomingSlot> = {}): UpcomingSlot {
   return {
@@ -59,5 +61,30 @@ describe('upcoming card for a fixed session (UT-115)', () => {
     expect(withoutLink).not.toContain('Entrar na chamada');
     expect(withLink).toContain('Cancelar');
     expect(withLink).not.toContain('Salvar link');
+  });
+});
+
+describe('educator upcoming card for a fixed session (UT-114)', () => {
+  it('cancels one date through the fixed-session action and edits the link through its own action', () => {
+    expect(cancelActionFor('FIXED')).toBe(actionCancelFixedSession);
+    const markup = renderToStaticMarkup(
+      <UpcomingSlotCard slot={fixed()} viewerIsProfessional />
+    );
+    expect(markup).toContain('Cancelar');
+    expect(markup).toContain('Salvar link');
+  });
+});
+
+describe('agenda with only booked sessions (UT-123)', () => {
+  it('keeps the booking cancel action and renders no fixed-session controls', () => {
+    const booked = fixed({ source: undefined, type: 'PRESENCIAL' });
+    expect(cancelActionFor(undefined)).toBe(actionCancelSlot);
+    const markup = renderToStaticMarkup(
+      <UpcomingSlotCard slot={booked} viewerIsProfessional={false} />
+    );
+    expect(markup).toContain('Presencial');
+    expect(markup).toContain('Cancelar');
+    expect(markup).not.toContain('Entrar na chamada');
+    expect(markup).not.toContain('Treino');
   });
 });
