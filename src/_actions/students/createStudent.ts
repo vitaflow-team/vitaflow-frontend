@@ -5,6 +5,7 @@ import {
   SELF_REGISTRATION_MESSAGE,
   STUDENT_VALIDATION,
 } from '@/_constants/studentErrors';
+import { accountNameFor } from '@/_lib/accountLookup';
 import { apiClient } from '@/_lib/apiClient';
 import { isBackendError } from '@/_lib/backendError';
 import { TOO_MANY_REQUESTS, toSafeActionError } from '@/_lib/safeActionError';
@@ -12,7 +13,7 @@ import { assertEducator } from '@/_lib/studentsAuthorization';
 import { createStudentInputSchema } from '@/_schema/students';
 import type { CreateStudentOutcome } from '@/_types/createStudentOutcome';
 import type { ErrorMapping } from '@/_types/errorMapping';
-import type { AccountLookup, Student } from '@/_types/students';
+import type { Student } from '@/_types/students';
 import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
 
@@ -30,20 +31,6 @@ const CREATE_ERRORS: ErrorMapping[] = [
   },
   TOO_MANY_REQUESTS,
 ];
-
-// Best effort: the 409 itself carries no name, so the confirmation step asks
-// the lookup for it. When that fails the step still opens, without a name.
-async function accountNameFor(email: string): Promise<string | null> {
-  try {
-    const lookup = await apiClient<AccountLookup>(
-      `/educator/students/account-lookup?email=${encodeURIComponent(email)}`,
-      { method: 'GET', cache: 'no-store' }
-    );
-    return lookup.found ? lookup.name : null;
-  } catch {
-    return null;
-  }
-}
 
 export const createStudent = createServerAction()
   .input(createStudentInputSchema)
