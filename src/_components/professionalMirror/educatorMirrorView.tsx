@@ -1,5 +1,6 @@
 import type { EducatorMirror } from '@/_types/professionalMirror';
 import { CalendarClock, ClipboardList, Dumbbell, Receipt } from 'lucide-react';
+import { MirrorAssessmentCard } from './mirrorAssessmentCard';
 import { MirrorIdentityCard } from './mirrorIdentityCard';
 import { MirrorSectionCard } from './mirrorSectionCard';
 
@@ -28,11 +29,15 @@ export function EducatorMirrorView({ mirror }: EducatorMirrorViewProps) {
           icon={CalendarClock}
           emptyMessage="Nenhum horário agendado ainda."
         />
-        <MirrorSectionCard
-          title="Avaliação física"
-          icon={ClipboardList}
-          emptyMessage="Nenhuma avaliação física registrada ainda."
-        />
+        {mirror.physicalAssessment ? (
+          <MirrorAssessmentCard assessments={mirror.physicalAssessment} />
+        ) : (
+          <MirrorSectionCard
+            title="Avaliação física"
+            icon={ClipboardList}
+            emptyMessage="Nenhuma avaliação física registrada ainda."
+          />
+        )}
         <MirrorSectionCard
           title="Cobrança"
           icon={Receipt}

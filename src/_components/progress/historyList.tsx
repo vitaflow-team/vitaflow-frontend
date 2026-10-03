@@ -25,10 +25,10 @@ import {
   TooltipTrigger,
 } from '@/_components/ui/tooltip';
 import { useAlertHook } from '@/_hooks/alertHook';
-import { formatBmi } from '@/_lib/progressDisplay';
+import { educatorSourceLabel, formatBmi } from '@/_lib/progressDisplay';
 import { cn } from '@/_lib/utils';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, UserRound } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import { useServerAction } from 'zsa-react';
@@ -75,7 +75,7 @@ function IconAction({
   );
 }
 
-function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
+function OwnHistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
   const deleteAction = useServerAction(deleteMeasurementRecord);
   const router = useRouter();
   const { openError } = useAlertHook();
@@ -156,6 +156,54 @@ function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
         </AlertDialog>
       </div>
     </li>
+  );
+}
+
+/**
+ * A point an educator measured: date only (it is a calendar date, not a
+ * moment), the educator's name as text, and no edit or delete — it is theirs
+ * to change. The label is words and an icon, never color alone.
+ */
+function EducatorHistoryRow({
+  record,
+}: {
+  record: MeasurementRecordResponseDTO;
+}) {
+  return (
+    <li className="flex items-center justify-between gap-3 border-b py-3 last:border-b-0 sm:py-4">
+      <div className="grid min-w-0 flex-1 gap-1 sm:grid-cols-3 sm:items-center sm:gap-2">
+        <time
+          className="text-sm text-muted-foreground"
+          dateTime={record.recordedAt}
+        >
+          {new Date(record.recordedAt).toLocaleDateString('pt-BR', {
+            dateStyle: 'short',
+            timeZone: 'America/Sao_Paulo',
+          })}
+        </time>
+        <p className="font-semibold">
+          {record.weightKg.toLocaleString('pt-BR')} kg
+        </p>
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="text-sm font-medium">
+            IMC {formatBmi(record.bmi)}
+          </span>
+          <BmiBadge classification={record.bmiClassification} />
+        </div>
+      </div>
+      <p className="flex shrink-0 items-center gap-1 text-sm text-muted-foreground">
+        <UserRound className="size-4" aria-hidden="true" />
+        {educatorSourceLabel(record.educatorName ?? 'seu educador físico')}
+      </p>
+    </li>
+  );
+}
+
+function HistoryRow({ record }: { record: MeasurementRecordResponseDTO }) {
+  return record.readOnly ? (
+    <EducatorHistoryRow record={record} />
+  ) : (
+    <OwnHistoryRow record={record} />
   );
 }
 

@@ -15,6 +15,9 @@ const record: MeasurementRecordResponseDTO = {
   recordedAt: '2026-09-15T15:00:00Z',
   bmi: 29.2,
   bmiClassification: 'SOBREPESO',
+  source: 'SELF',
+  readOnly: false,
+  educatorName: null,
 };
 
 const loading = (token: number): LatestState => ({ status: 'loading', token });

@@ -70,4 +70,35 @@ describe('apiClient access-token cookie', () => {
     const [, init] = vi.mocked(fetch).mock.calls[0];
     expect(new Headers(init?.headers).has('Authorization')).toBe(false);
   });
+
+  it('carries the backend error code on the thrown AppError', async () => {
+    cookieGetMock.mockReturnValue(undefined);
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          statusCode: 409,
+          message: 'x',
+          code: 'account_exists',
+        }),
+        { status: 409, headers: { 'Content-Type': 'application/json' } }
+      )
+    );
+
+    await expect(apiClient('/educator/students')).rejects.toMatchObject({
+      statusCode: 409,
+      code: 'account_exists',
+    });
+  });
+
+  it('leaves the code undefined when the backend sends none', async () => {
+    cookieGetMock.mockReturnValue(undefined);
+    vi.mocked(fetch).mockResolvedValue(
+      new Response(JSON.stringify({ message: 'x' }), { status: 404 })
+    );
+
+    await expect(apiClient('/profile')).rejects.toMatchObject({
+      statusCode: 404,
+      code: undefined,
+    });
+  });
 });

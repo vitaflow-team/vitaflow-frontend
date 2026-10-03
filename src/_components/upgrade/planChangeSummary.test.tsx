@@ -123,7 +123,7 @@ describe('plan change summary dialog block', () => {
     const body = render(PE_TO_PREMIUM);
 
     expect(body).toContain('A conta passa de educador físico para uso pessoal');
-    expect(body).toContain('Você deixa de ter acesso a: Pessoas');
+    expect(body).toContain('Você deixa de ter acesso a: Alunos');
     expect(body).toContain('3 alunos/pacientes ficarão ocultos, não apagados');
     expect(body).toContain('proporcionalmente');
   });
@@ -131,7 +131,7 @@ describe('plan change summary dialog block', () => {
   it('Should keep silent about clients when the professional has none', () => {
     const body = render({ ...PE_TO_PREMIUM, clientsCount: 0 });
 
-    expect(body).toContain('Você deixa de ter acesso a: Pessoas');
+    expect(body).toContain('Você deixa de ter acesso a: Alunos');
     expect(body).not.toContain('ficarão ocultos');
     expect(body).not.toContain('ficará oculto');
   });
@@ -155,7 +155,7 @@ describe('plan change summary dialog block', () => {
     expect(body.trim()).toBe('');
   });
 
-  it('Should not mention access changes when only the profession changes', () => {
+  it('Should name the section swap, and no hidden clients, when only the profession changes', () => {
     const body = render({
       currentId: 'nutri-pro',
       currentType: 'NUTRITIONIST',
@@ -170,8 +170,8 @@ describe('plan change summary dialog block', () => {
     expect(body).toContain(
       'A conta passa de nutricionista para educador físico'
     );
-    expect(body).not.toContain('passa a ter acesso');
-    expect(body).not.toContain('deixa de ter acesso');
+    expect(body).toContain('Você passa a ter acesso a: Alunos');
+    expect(body).toContain('Você deixa de ter acesso a: Pessoas');
     expect(body).not.toContain('ficarão ocultos');
   });
 });

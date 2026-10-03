@@ -61,6 +61,7 @@ export async function MedidasTab({ semanas }: MedidasTabProps) {
               points={dashboard.weightSeries.map(point => ({
                 recordedAt: point.recordedAt,
                 value: point.weightKg,
+                educatorName: point.educatorName,
               }))}
             />
             <TrendChart
@@ -70,6 +71,7 @@ export async function MedidasTab({ semanas }: MedidasTabProps) {
               points={dashboard.bmiSeries.map(point => ({
                 recordedAt: point.recordedAt,
                 value: point.bmi,
+                educatorName: point.educatorName,
               }))}
             />
           </section>

@@ -23,6 +23,9 @@ const LATEST: MeasurementRecordResponseDTO = {
   recordedAt: NOW.toISOString(),
   bmi: 29.2,
   bmiClassification: 'SOBREPESO',
+  source: 'SELF',
+  readOnly: false,
+  educatorName: null,
 };
 
 const SERIES = [

@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Search,
   Settings,
+  GraduationCap,
   User2,
   UtensilsCrossed,
   type LucideIcon,
@@ -34,7 +35,16 @@ const PRIVATE: AppRoute[] = [
     TITLE: 'Pessoas',
     URL: '/restrict/clients',
     ICON: User2,
-    PRODUCT_TYPE: ['NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+    // Só a nutricionista: o educador físico tem a própria área de alunos.
+    PRODUCT_TYPE: ['NUTRITIONIST'],
+  },
+  {
+    // Logo depois de "Pessoas" (um só dos dois aparece para cada tipo), para
+    // o educador manter o mesmo lugar no menu e na barra inferior.
+    TITLE: 'Alunos',
+    URL: '/restrict/students',
+    ICON: GraduationCap,
+    PRODUCT_TYPE: ['PHYSICAL_EDUCATOR'],
   },
   {
     TITLE: 'Treinos',

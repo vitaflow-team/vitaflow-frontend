@@ -107,3 +107,8 @@ export function formatRecordDate(iso: string): string {
     year: 'numeric',
   }).format(new Date(iso));
 }
+
+/** "Medido por Thiago Ramos": how a point measured by an educator is named. */
+export function educatorSourceLabel(educatorName: string): string {
+  return `Medido por ${educatorName}`;
+}

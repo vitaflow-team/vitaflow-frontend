@@ -47,13 +47,17 @@ export async function apiClient<T = unknown>(
 
   if (!response.ok) {
     let errorMessage = 'Ocorreu um erro inesperado.';
+    let errorCode: string | undefined;
     try {
       const data = await response.json();
       if (data && typeof data.message === 'string') {
         errorMessage = data.message;
       }
+      if (data && typeof data.code === 'string') {
+        errorCode = data.code;
+      }
     } catch {}
-    throw new AppError(errorMessage, response.status);
+    throw new AppError(errorMessage, response.status, errorCode);
   }
 
   if (response.status === 204) {

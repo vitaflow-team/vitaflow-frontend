@@ -28,7 +28,11 @@ export default async function Home() {
   if (PROFESSIONAL_TYPES.includes(session.user.productType ?? '')) {
     return (
       <DefaultLayout>
-        <HomeProfessional nowIso={nowIso} firstName={firstName} />
+        <HomeProfessional
+          nowIso={nowIso}
+          firstName={firstName}
+          productType={session.user.productType}
+        />
       </DefaultLayout>
     );
   }

@@ -30,7 +30,11 @@ export function withUnit(text: string, unit: string): string {
  */
 export function toChartPoints(points: TrendPoint[]): ChartPoint[] {
   return points
-    .map(point => ({ t: Date.parse(point.recordedAt), value: point.value }))
+    .map(point => ({
+      t: Date.parse(point.recordedAt),
+      value: point.value,
+      ...(point.educatorName ? { educatorName: point.educatorName } : {}),
+    }))
     .filter(point => Number.isFinite(point.t) && Number.isFinite(point.value))
     .sort((a, b) => a.t - b.t);
 }

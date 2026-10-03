@@ -39,3 +39,22 @@ export function formatAxisDate(timestamp: number): string {
 export function formatFullDate(timestamp: number): string {
   return fullDateFormatter.format(timestamp);
 }
+
+const dayOnlyFormatter = new Intl.DateTimeFormat('pt-BR', {
+  dateStyle: 'short',
+  timeZone: 'America/Sao_Paulo',
+});
+
+/**
+ * The date of one plotted point. A point an educator measured is a calendar
+ * date, not a moment, so it shows no time of day; the user's own points keep
+ * theirs.
+ */
+export function formatPointDate(point: {
+  t: number;
+  educatorName?: string;
+}): string {
+  return point.educatorName
+    ? dayOnlyFormatter.format(point.t)
+    : formatFullDate(point.t);
+}

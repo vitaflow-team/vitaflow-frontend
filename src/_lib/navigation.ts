@@ -128,6 +128,9 @@ interface SectionDescriptor {
 
 const SECTIONS: Record<string, SectionDescriptor> = {
   clients: { label: PAGE_TITLES.clients, childLabel: PAGE_TITLES.client },
+  // No childLabel: the record draws its own trail with the student's name, and
+  // the topbar shows nothing there (never a trail that lies).
+  students: { label: PAGE_TITLES.students },
   workouts: {
     label: PAGE_TITLES.workouts,
     childLabel: PAGE_TITLES.workoutForm,
