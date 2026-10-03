@@ -16,8 +16,7 @@ interface MirrorWorkoutCardProps {
 
 /**
  * The educator's current workout, read only: the title, how often, and the
- * sessions by name. No session is named as today's, because "today" only
- * exists through the schedule.
+ * sessions by name. Today's session (from the schedule) is marked in text.
  */
 export function MirrorWorkoutCard({ workout }: MirrorWorkoutCardProps) {
   return (
@@ -38,6 +37,9 @@ export function MirrorWorkoutCard({ workout }: MirrorWorkoutCardProps) {
             <li key={session.id} className="text-sm">
               <span className="font-medium">Sessão {session.label}</span>
               {` — ${session.name}`}
+              {session.id === workout.todaySessionId ? (
+                <span className="ml-2 font-semibold">Hoje</span>
+              ) : null}
             </li>
           ))}
         </ul>

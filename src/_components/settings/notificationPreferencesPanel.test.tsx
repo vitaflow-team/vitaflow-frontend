@@ -14,6 +14,7 @@ import { NotificationPreferencesPanel } from './notificationPreferencesPanel';
 const PREFERENCES_DEFAULT_NEW_USER: NotificationPreferences = {
   WORKOUT_REMINDER: true,
   WORKOUT_PLAN: true,
+  SCHEDULE_CHANGE: true,
   CONSULTATION_REMINDER: true,
   MESSAGES: true,
   BILLING: true,
@@ -46,7 +47,7 @@ describe('NotificationPreferencesPanel', () => {
     // Each row renders a checkbox whose checked state reflects the
     // preference; the product-news row is the only one expected unchecked.
     const rows = markup.split('<li').slice(1);
-    expect(rows).toHaveLength(6);
+    expect(rows).toHaveLength(7);
     const productNewsRow = rows.find(row =>
       row.includes('Novidades Vita Flow')
     );
@@ -67,5 +68,17 @@ describe('NotificationPreferencesPanel', () => {
     );
 
     expect(markup).not.toContain('disabled=""');
+  });
+});
+
+describe('schedule change category (UT-121)', () => {
+  it('shows the label of the schedule change category', () => {
+    const markup = renderToStaticMarkup(
+      <NotificationPreferencesPanel
+        preferences={PREFERENCES_DEFAULT_NEW_USER}
+      />
+    );
+
+    expect(markup).toContain('Horários com seu educador');
   });
 });

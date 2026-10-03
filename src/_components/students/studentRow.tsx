@@ -1,4 +1,5 @@
 import { formatIsoDay } from '@/_lib/studentsDates';
+import { formatSessionWhen } from '@/_lib/scheduleFormat';
 import { STUDENTS_PATH } from '@/_lib/studentsList';
 import type { StudentListItem } from '@/_types/students';
 import Link from 'next/link';
@@ -24,6 +25,11 @@ export function StudentRow({ student }: StudentRowProps) {
         </div>
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <AccountChip hasAccount={student.hasAccount} />
+          <span>
+            {student.nextSession
+              ? `Próximo: ${formatSessionWhen(student.nextSession.startAt)}`
+              : 'Sem horário definido'}
+          </span>
           <span>
             {student.lastAssessedOn
               ? `Última avaliação: ${formatIsoDay(student.lastAssessedOn)}`

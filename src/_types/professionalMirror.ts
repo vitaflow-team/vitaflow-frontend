@@ -44,11 +44,22 @@ export interface MirrorWorkout {
   todaySessionId: string | null;
 }
 
+/** The student's next time with the educator: a fixed session or a booking. */
+export interface MirrorNextSchedule {
+  startAt: string;
+  endAt: string;
+  type: 'PRESENCIAL' | 'ONLINE';
+  onlineLink: string | null;
+  workoutLetter: string | null;
+  workoutSessionName: string | null;
+}
+
 export interface EducatorMirror {
   professional: MirrorProfessional;
   /** The educator's active workout for this student, or null when none is active. */
   todayWorkout: MirrorWorkout | null;
-  nextSchedule: null;
+  /** The next time with the educator, or null when none is scheduled. */
+  nextSchedule: MirrorNextSchedule | null;
   /** The educator's latest assessments (up to three, newest first), or null when there are none. */
   physicalAssessment: MirrorAssessment[] | null;
   billingStatus: null;

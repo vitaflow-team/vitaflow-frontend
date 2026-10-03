@@ -52,7 +52,12 @@ const STUDENT: Student = {
   hasAccount: false,
   userId: null,
   createdAt: '2026-09-15T15:00:00.000Z',
-  overview: { latest: null, variation: null, currentWorkout: null },
+  overview: {
+    latest: null,
+    variation: null,
+    currentWorkout: null,
+    nextSession: null,
+  },
 };
 
 function remove(hasAssessments: boolean) {

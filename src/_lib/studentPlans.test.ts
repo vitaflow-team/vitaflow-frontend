@@ -5,6 +5,7 @@ import { buildPlanOptions, planHref, selectPlan } from './studentPlans';
 function educator(id: string, name: string): StudentEducatorWorkout {
   return {
     educator: { id, name },
+    todaySessionId: null,
     workout: {
       id: `w-${id}`,
       title: 'T',

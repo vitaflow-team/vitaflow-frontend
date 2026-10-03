@@ -1,6 +1,8 @@
 'use client';
 
+import { actionCancelFixedSession } from '@/_actions/scheduling/cancelFixedSession';
 import { actionCancelSlot } from '@/_actions/scheduling/cancelSlot';
+import { actionSetFixedSessionLink } from '@/_actions/scheduling/setFixedSessionLink';
 import { actionSetOnlineLink } from '@/_actions/scheduling/setOnlineLink';
 import {
   AlertDialog,
@@ -37,6 +39,11 @@ function formatDateTime(iso: string): string {
   });
 }
 
+/** A fixed session is canceled for this one date; a booking reopens its slot. */
+export function cancelActionFor(source: UpcomingSlot['source']) {
+  return source === 'FIXED' ? actionCancelFixedSession : actionCancelSlot;
+}
+
 /** US-003/US-007: one upcoming session, from either side — join link or
  * link-editing (US-009), and cancellation (US-004/US-008). */
 export function UpcomingSlotCard({
@@ -51,7 +58,7 @@ export function UpcomingSlotCard({
   async function cancel() {
     setIsPending(true);
     try {
-      const [, error] = await actionCancelSlot({ slotId: slot.id });
+      const [, error] = await cancelActionFor(slot.source)({ slotId: slot.id });
       if (error) {
         openError(error.message || FALLBACK, 'Atenção!', 'error');
       } else {
@@ -67,7 +74,11 @@ export function UpcomingSlotCard({
     event.preventDefault();
     setIsPending(true);
     try {
-      const [, error] = await actionSetOnlineLink({
+      const save =
+        slot.source === 'FIXED'
+          ? actionSetFixedSessionLink
+          : actionSetOnlineLink;
+      const [, error] = await save({
         slotId: slot.id,
         link: linkDraft,
       });

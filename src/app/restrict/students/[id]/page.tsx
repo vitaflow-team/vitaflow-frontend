@@ -1,5 +1,6 @@
 import { StudentOverviewCard } from '@/_components/students/studentOverviewCard';
 import { CurrentWorkoutCard } from '@/_components/students/workouts/currentWorkoutCard';
+import { NextSessionCard } from '@/_components/students/schedule/nextSessionCard';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { isLoadFailure, loadStudent } from '@/_lib/studentsData';
 import type { Metadata } from 'next';
@@ -26,6 +27,10 @@ export default async function StudentOverviewPage({
       <CurrentWorkoutCard
         studentId={student.id}
         workout={student.overview.currentWorkout}
+      />
+      <NextSessionCard
+        studentId={student.id}
+        nextSession={student.overview.nextSession}
       />
     </div>
   );

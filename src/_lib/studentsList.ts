@@ -5,6 +5,8 @@ const MAX_SEARCH_LENGTH = 100;
 export interface StudentsParams {
   search?: string;
   page: number;
+  /** 'name' sorts alphabetically; absent means the soonest next session first. */
+  order?: 'name';
 }
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -18,6 +20,7 @@ function firstValue(value: string | string[] | undefined): string | undefined {
 export function parseStudentsParams(input: {
   q?: string | string[];
   page?: string | string[];
+  ordem?: string | string[];
 }): StudentsParams {
   const search = firstValue(input.q)?.trim().slice(0, MAX_SEARCH_LENGTH);
   const page = Number(firstValue(input.page));
@@ -25,13 +28,15 @@ export function parseStudentsParams(input: {
   return {
     search: search ? search : undefined,
     page: Number.isInteger(page) && page >= 1 ? page : 1,
+    order: firstValue(input.ordem) === 'nome' ? 'name' : undefined,
   };
 }
 
 /** The list address for a search and page; page 1 and no search stay implicit. */
-export function studentsHref({ search, page }: StudentsParams): string {
+export function studentsHref({ search, page, order }: StudentsParams): string {
   const params = new URLSearchParams();
   if (search) params.set('q', search);
+  if (order === 'name') params.set('ordem', 'nome');
   if (page > 1) params.set('page', String(page));
 
   const query = params.toString();

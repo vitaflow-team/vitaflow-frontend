@@ -20,6 +20,7 @@ const STUDENTS: StudentListItem[] = [
     email: 'diego@exemplo.com',
     hasAccount: true,
     lastAssessedOn: '2026-09-15',
+    nextSession: null,
   },
   {
     id: 's2',
@@ -27,6 +28,7 @@ const STUDENTS: StudentListItem[] = [
     email: 'ana@exemplo.com',
     hasAccount: false,
     lastAssessedOn: null,
+    nextSession: null,
   },
 ];
 

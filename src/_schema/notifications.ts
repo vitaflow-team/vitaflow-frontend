@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const notificationCategorySchema = z.enum([
   'WORKOUT_REMINDER',
   'WORKOUT_PLAN',
+  'SCHEDULE_CHANGE',
   'CONSULTATION_REMINDER',
   'MESSAGES',
   'BILLING',
