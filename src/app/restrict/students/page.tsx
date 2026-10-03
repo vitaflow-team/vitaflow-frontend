@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 };
 
 interface StudentsPageProps {
-  searchParams: Promise<{ q?: string | string[]; page?: string | string[] }>;
+  searchParams: Promise<{
+    q?: string | string[];
+    page?: string | string[];
+    ordem?: string | string[];
+  }>;
 }
 
 /** "Alunos": the physical educator's own students (E1). */
@@ -30,7 +34,7 @@ export default async function StudentsPage({
           instantes.
         </p>
       ) : (
-        <StudentsView list={list} search={params.search} />
+        <StudentsView list={list} search={params.search} order={params.order} />
       )}
     </DefaultLayout>
   );

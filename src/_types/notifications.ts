@@ -1,6 +1,7 @@
 export type NotificationCategory =
   | 'WORKOUT_REMINDER'
   | 'WORKOUT_PLAN'
+  | 'SCHEDULE_CHANGE'
   | 'CONSULTATION_REMINDER'
   | 'MESSAGES'
   | 'BILLING'

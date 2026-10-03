@@ -8,6 +8,7 @@ import Link from 'next/link';
 
 interface StudentsPaginationProps {
   search?: string;
+  order?: 'name';
   page: number;
   total: number;
   pageSize: number;
@@ -33,6 +34,7 @@ function PageLink({
 /** Previous and next as real links, so the address stays shareable. */
 export function StudentsPagination({
   search,
+  order,
   page,
   total,
   pageSize,
@@ -46,7 +48,7 @@ export function StudentsPagination({
       className="flex items-center justify-between gap-2 pt-4"
     >
       {page > 1 ? (
-        <PageLink label="Anterior" params={{ search, page: page - 1 }} />
+        <PageLink label="Anterior" params={{ search, order, page: page - 1 }} />
       ) : (
         <span />
       )}
@@ -54,7 +56,7 @@ export function StudentsPagination({
         Página {page} de {pages}
       </span>
       {page < pages ? (
-        <PageLink label="Próxima" params={{ search, page: page + 1 }} />
+        <PageLink label="Próxima" params={{ search, order, page: page + 1 }} />
       ) : (
         <span />
       )}

@@ -29,4 +29,8 @@ export interface SlotCounterpart {
 
 export interface UpcomingSlot extends Slot {
   counterpart: SlotCounterpart;
+  /** A booking, or a fixed session of a weekly time (cancel and link act on that one). */
+  source?: 'BOOKING' | 'FIXED';
+  workoutLetter?: string | null;
+  workoutSessionName?: string | null;
 }

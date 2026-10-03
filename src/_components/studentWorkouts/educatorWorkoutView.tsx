@@ -62,6 +62,9 @@ export function EducatorWorkoutView({ item }: EducatorWorkoutViewProps) {
             className="text-lg font-semibold"
           >
             Sessão {session.label} — {session.name}
+            {session.id === item.todaySessionId ? (
+              <span className="ml-2 text-sm font-semibold">Hoje</span>
+            ) : null}
           </h2>
           <ul>
             {session.exercises.map((exercise, index) => (

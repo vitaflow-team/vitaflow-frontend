@@ -86,6 +86,8 @@ export interface StudentWorkoutSession {
 
 export interface StudentEducatorWorkout {
   educator: { id: string; name: string };
+  /** The id of today's scheduled session of this workout, or null. */
+  todaySessionId: string | null;
   workout: {
     id: string;
     title: string;

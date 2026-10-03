@@ -1,3 +1,5 @@
+import type { NextSessionSummary } from '@/_types/educatorSchedule';
+
 export interface AssessmentVariation {
   /** Latest minus first weight, in kg (1 decimal). */
   weightKg: number;
@@ -39,6 +41,8 @@ export interface StudentListItem {
   email: string;
   hasAccount: boolean;
   lastAssessedOn: string | null;
+  /** The next fixed session or booking with this educator, or null. */
+  nextSession: NextSessionSummary | null;
 }
 
 export interface StudentList {
@@ -56,6 +60,8 @@ export interface CurrentWorkoutSummary {
 }
 
 export interface StudentOverview {
+  /** The next fixed session or booking with this educator, or null. */
+  nextSession: NextSessionSummary | null;
   latest: Assessment | null;
   variation: AssessmentVariation | null;
   /** The educator's active workout for this student, or null. */

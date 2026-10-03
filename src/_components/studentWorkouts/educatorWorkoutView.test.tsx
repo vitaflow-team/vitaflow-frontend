@@ -26,6 +26,7 @@ function item(
 ): StudentEducatorWorkout {
   return {
     educator: { id: 'e1', name: 'Thiago Ramos' },
+    todaySessionId: null,
     workout: {
       id: 'w1',
       title: 'Hipertrofia',

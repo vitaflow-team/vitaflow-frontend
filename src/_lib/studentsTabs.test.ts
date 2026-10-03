@@ -10,12 +10,22 @@ import {
 const ID = '01890a5d-ac96-774b-bcce-b302099a8057';
 
 describe('student record tabs', () => {
-  it('UT-088 has exactly the tabs Visão geral, Avaliação física and Treinos', () => {
+  it('UT-122 has exactly the tabs Visão geral, Avaliação física, Treinos and Horários', () => {
     expect(STUDENT_TABS.map(tab => STUDENT_TAB_LABELS[tab])).toEqual([
       'Visão geral',
       'Avaliação física',
       'Treinos',
+      'Horários',
     ]);
+  });
+
+  it('reads the schedule address as the schedule tab', () => {
+    expect(studentTabHref(ID, 'schedule')).toBe(
+      `/restrict/students/${ID}/schedule`
+    );
+    expect(activeStudentTab(`/restrict/students/${ID}/schedule`, ID)).toBe(
+      'schedule'
+    );
   });
 
   it('gives each tab its own address', () => {

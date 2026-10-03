@@ -27,7 +27,12 @@ const STUDENT: Student = {
   hasAccount: true,
   userId: 'user-9',
   createdAt: '2026-09-15T15:00:00.000Z',
-  overview: { latest: null, variation: null, currentWorkout: null },
+  overview: {
+    latest: null,
+    variation: null,
+    currentWorkout: null,
+    nextSession: null,
+  },
 };
 
 const LATEST = {
@@ -98,7 +103,12 @@ describe('student record header', () => {
       <StudentHeader
         student={{
           ...STUDENT,
-          overview: { latest: LATEST, variation: null, currentWorkout: null },
+          overview: {
+            latest: LATEST,
+            variation: null,
+            currentWorkout: null,
+            nextSession: null,
+          },
         }}
       />
     );
@@ -120,16 +130,17 @@ describe('student record header', () => {
 });
 
 describe('student record tabs', () => {
-  it('UT-088 lists exactly Visão geral, Avaliação física and Treinos', () => {
+  it('UT-122 lists exactly Visão geral, Avaliação física, Treinos and Horários', () => {
     const html = renderToStaticMarkup(
       <StudentTabList studentId="s1" selected="overview" />
     );
 
-    expect(html.match(/role="tab"/g)).toHaveLength(3);
+    expect(html.match(/role="tab"/g)).toHaveLength(4);
     expect(html).toContain('Visão geral');
     expect(html).toContain('Avaliação física');
     expect(html).toContain('Treinos');
-    expect(html).not.toMatch(/Horários|Vídeos|Cobrança|Academia/);
+    expect(html).toContain('Horários');
+    expect(html).not.toMatch(/Vídeos|Cobrança|Academia/);
   });
 
   it('UT-168 marks the assessment tab as the selected one', () => {
@@ -153,6 +164,7 @@ describe('student overview', () => {
           latest: LATEST,
           variation: { weightKg: -2.1, bodyFatPoints: -1.5 },
           currentWorkout: null,
+          nextSession: null,
         }}
       />
     );
@@ -169,7 +181,12 @@ describe('student overview', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
-        overview={{ latest: null, variation: null, currentWorkout: null }}
+        overview={{
+          latest: null,
+          variation: null,
+          currentWorkout: null,
+          nextSession: null,
+        }}
       />
     );
 
@@ -183,7 +200,12 @@ describe('student overview', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
-        overview={{ latest: LATEST, variation: null, currentWorkout: null }}
+        overview={{
+          latest: LATEST,
+          variation: null,
+          currentWorkout: null,
+          nextSession: null,
+        }}
       />
     );
 
@@ -199,6 +221,7 @@ describe('student overview', () => {
           latest: { ...LATEST, bodyFatPercent: null },
           variation: null,
           currentWorkout: null,
+          nextSession: null,
         }}
       />
     );
