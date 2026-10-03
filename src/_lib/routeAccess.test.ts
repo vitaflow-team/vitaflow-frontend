@@ -126,14 +126,29 @@ describe('professional personal use — route access', () => {
   it('UT-012 keeps Pessoas professional-only and a typeless account denied', () => {
     expect(canAccess('/restrict/clients', 'USER')).toBe(false);
 
-    for (const productType of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
-      expect(canAccess('/restrict/clients', productType)).toBe(true);
-    }
+    expect(canAccess('/restrict/clients', 'NUTRITIONIST')).toBe(true);
+    expect(canAccess('/restrict/clients', 'PHYSICAL_EDUCATOR')).toBe(false);
 
     expect(canAccess('/restrict/clients', '')).toBe(false);
     expect(canAccess('/restrict/progress', '')).toBe(false);
     expect(canAccess('/restrict/workouts', '')).toBe(false);
     expect(canAccess('/restrict', '')).toBe(true);
     expect(canAccess('/restrict/settings', '')).toBe(true);
+  });
+});
+
+describe('educator student area — route access (UT-157)', () => {
+  it('UT-157 denies a nutritionist the students area and an educator the clients area', () => {
+    for (const path of [
+      '/restrict/students',
+      '/restrict/students/abc',
+      '/restrict/students/abc/assessment',
+    ]) {
+      expect(canAccess(path, 'PHYSICAL_EDUCATOR')).toBe(true);
+      expect(canAccess(path, 'NUTRITIONIST')).toBe(false);
+      expect(canAccess(path, 'USER')).toBe(false);
+      expect(canAccess(path, '')).toBe(false);
+    }
+    expect(canAccess('/restrict/clients/abc', 'PHYSICAL_EDUCATOR')).toBe(false);
   });
 });

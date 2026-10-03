@@ -143,13 +143,13 @@ describe('restricted shell navigation — getMenuGroups', () => {
     ]);
   });
 
-  it('UT-012 gives the professional Pessoas alongside Minha evolução', () => {
+  it('UT-012 gives the educator Alunos, and not Pessoas, alongside Minha evolução', () => {
     const groups = getMenuGroups('PHYSICAL_EDUCATOR');
 
     expect(groups[0].label).toBe('Meu dia');
     expect(groups[0].items.map(item => item.title)).toEqual([
       'Início',
-      'Pessoas',
+      'Alunos',
       'Treinos',
       'Minha evolução',
       'Exercícios',
@@ -258,7 +258,7 @@ describe('professional personal use — navigation', () => {
 
       expect(items).toEqual([
         'Início',
-        'Pessoas',
+        type === 'NUTRITIONIST' ? 'Pessoas' : 'Alunos',
         'Treinos',
         'Evolução',
         'Conta',
@@ -285,7 +285,7 @@ describe('professional personal use — navigation', () => {
       expect(sections).toContain('Minha evolução');
       expect(sections).toEqual([
         'Início',
-        'Pessoas',
+        type === 'NUTRITIONIST' ? 'Pessoas' : 'Alunos',
         'Treinos',
         'Minha evolução',
         'Exercícios',
@@ -316,7 +316,7 @@ describe('professional personal use — navigation', () => {
     for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
       expect(sectionsForType(type)).toEqual([
         'Início',
-        'Pessoas',
+        type === 'NUTRITIONIST' ? 'Pessoas' : 'Alunos',
         'Treinos',
         'Minha evolução',
         'Exercícios',
@@ -330,5 +330,44 @@ describe('professional personal use — navigation', () => {
     }
 
     expect(sectionsForType(null)).toEqual(['Início']);
+  });
+});
+
+describe('educator student area — navigation (UT-155, UT-156)', () => {
+  it('UT-155 shows Alunos, pointing to /restrict/students, and not Pessoas to a physical educator', () => {
+    const menu = getMenuGroups('PHYSICAL_EDUCATOR')[0].items;
+    const bottom = getBottomNavItems('PHYSICAL_EDUCATOR');
+
+    expect(menu.find(item => item.title === 'Alunos')?.url).toBe(
+      '/restrict/students'
+    );
+    expect(menu.map(item => item.title)).not.toContain('Pessoas');
+    expect(bottom.map(item => item.title)).toEqual([
+      'Início',
+      'Alunos',
+      'Treinos',
+      'Evolução',
+      'Conta',
+    ]);
+  });
+
+  it('UT-156 keeps Pessoas for a nutritionist and shows neither section to a regular user', () => {
+    const nutritionist = getMenuGroups('NUTRITIONIST')[0].items;
+    const user = getMenuGroups('USER')[0].items.map(item => item.title);
+
+    expect(nutritionist.find(item => item.title === 'Pessoas')?.url).toBe(
+      '/restrict/clients'
+    );
+    expect(nutritionist.map(item => item.title)).not.toContain('Alunos');
+    expect(user).not.toContain('Pessoas');
+    expect(user).not.toContain('Alunos');
+  });
+
+  it('shows only the title of the students list in the topbar and no trail below it', () => {
+    expect(getTopbarContext('/restrict/students')).toEqual({
+      kind: 'title',
+      title: 'Alunos',
+    });
+    expect(getTopbarContext('/restrict/students/abc')).toBeNull();
   });
 });

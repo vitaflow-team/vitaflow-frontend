@@ -27,7 +27,7 @@ describe('auth input hardening — client-data role authorization', () => {
     redirectMock.mockReset();
   });
 
-  it.each(['USER', null])(
+  it.each(['USER', 'PHYSICAL_EDUCATOR', null])(
     'UT-011 rejects a caller whose profile productType is %j',
     async productType => {
       fetchPlanClaimsMock.mockResolvedValue({ productType });
@@ -42,14 +42,13 @@ describe('auth input hardening — client-data role authorization', () => {
     }
   );
 
-  it.each(['NUTRITIONIST', 'PHYSICAL_EDUCATOR'])(
-    'UT-011 lets a %s through',
-    async productType => {
-      fetchPlanClaimsMock.mockResolvedValue({ productType });
+  // The physical educator has their own area (/restrict/students); the
+  // clients area belongs to the nutritionist only.
+  it('UT-011 lets a NUTRITIONIST through', async () => {
+    fetchPlanClaimsMock.mockResolvedValue({ productType: 'NUTRITIONIST' });
 
-      await expect(assertProfessional()).resolves.toBeUndefined();
-    }
-  );
+    await expect(assertProfessional()).resolves.toBeUndefined();
+  });
 
   it('fails closed with a safe message when the profile cannot be read', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});

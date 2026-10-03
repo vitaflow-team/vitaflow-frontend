@@ -5,9 +5,13 @@ import {
   CardTitle,
 } from '@/_components/ui/card';
 import { buildSparkline } from '@/_lib/sparkline';
-import { formatBmi, formatWeightVariation } from '@/_lib/progressDisplay';
+import {
+  educatorSourceLabel,
+  formatBmi,
+  formatWeightVariation,
+} from '@/_lib/progressDisplay';
 import type { MeasurementRecordResponseDTO } from '@/_types/progress';
-import { Activity, Ruler, Scale } from 'lucide-react';
+import { Activity, Ruler, Scale, UserRound } from 'lucide-react';
 import { BmiBadge } from './bmiBadge';
 import { UpdateHeightButton } from './updateHeightButton';
 
@@ -92,6 +96,12 @@ export function SummaryCards({
                 vectorEffect="non-scaling-stroke"
               />
             </svg>
+          )}
+          {latest.source === 'EDUCATOR' && latest.educatorName && (
+            <p className="mt-1 flex items-center gap-1 text-[0.6875rem] leading-tight text-muted-foreground md:mt-2 md:text-sm">
+              <UserRound className="size-3 shrink-0" aria-hidden="true" />
+              {educatorSourceLabel(latest.educatorName)}
+            </p>
           )}
           {variation && (
             <p

@@ -1,7 +1,7 @@
 import { HEALTHY_BMI_MAX, HEALTHY_BMI_MIN } from '@/_lib/chartAxis';
 import { withUnit } from '@/_lib/chartSummary';
-import { formatBmi } from '@/_lib/progressDisplay';
-import { formatFullDate } from '@/_lib/trendMetrics';
+import { educatorSourceLabel, formatBmi } from '@/_lib/progressDisplay';
+import { formatPointDate } from '@/_lib/trendMetrics';
 import type { ChartPoint } from '@/_types/chartPoint';
 import type { TrendMetricConfig } from '@/_types/trendMetricConfig';
 
@@ -62,6 +62,10 @@ export function TrendChartTable({
   config,
   chartPoints,
 }: TrendChartTableProps) {
+  // The source column exists only when an educator measured some point, so a
+  // user with no educator points gets the table exactly as before.
+  const hasEducatorPoints = chartPoints.some(point => point.educatorName);
+
   return (
     <table className="sr-only">
       <caption>{`${title} — registros das últimas ${weeks} semanas`}</caption>
@@ -69,13 +73,21 @@ export function TrendChartTable({
         <tr>
           <th scope="col">Data</th>
           <th scope="col">{config.label}</th>
+          {hasEducatorPoints && <th scope="col">Origem</th>}
         </tr>
       </thead>
       <tbody>
         {chartPoints.map((point, index) => (
           <tr key={`${point.t}-${index}`}>
-            <td>{formatFullDate(point.t)}</td>
+            <td>{formatPointDate(point)}</td>
             <td>{withUnit(config.format(point.value), config.unit)}</td>
+            {hasEducatorPoints && (
+              <td>
+                {point.educatorName
+                  ? educatorSourceLabel(point.educatorName)
+                  : 'Registro próprio'}
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

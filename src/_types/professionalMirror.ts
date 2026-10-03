@@ -15,11 +15,20 @@ export interface NutritionistMirror {
   billingStatus: null;
 }
 
+export interface MirrorAssessment {
+  id: string;
+  /** Calendar date, `YYYY-MM-DD`. */
+  assessedOn: string;
+  weightKg: number;
+  bodyFatPercent: number | null;
+}
+
 export interface EducatorMirror {
   professional: MirrorProfessional;
   todayWorkout: null;
   nextSchedule: null;
-  physicalAssessment: null;
+  /** The educator's latest assessments (up to three, newest first), or null when there are none. */
+  physicalAssessment: MirrorAssessment[] | null;
   billingStatus: null;
 }
 

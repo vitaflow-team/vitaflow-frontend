@@ -65,11 +65,23 @@ describe('auth input hardening — client actions re-check the role', () => {
   );
 
   it.each(ACTIONS)(
-    'UT-011 %s serves a PHYSICAL_EDUCATOR profile',
+    'UT-157 %s rejects a PHYSICAL_EDUCATOR profile without calling the API',
     async (_, run) => {
       fetchPlanClaimsMock.mockResolvedValue({
         productType: 'PHYSICAL_EDUCATOR',
       });
+
+      const [, error] = await run();
+
+      expect(error?.code).toBe('NOT_AUTHORIZED');
+      expect(apiClientMock).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each(ACTIONS)(
+    'UT-011 %s serves a NUTRITIONIST profile',
+    async (_, run) => {
+      fetchPlanClaimsMock.mockResolvedValue({ productType: 'NUTRITIONIST' });
 
       const [, error] = await run();
 

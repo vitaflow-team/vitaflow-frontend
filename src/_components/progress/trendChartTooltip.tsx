@@ -1,5 +1,6 @@
 import { withUnit } from '@/_lib/chartSummary';
-import { formatFullDate } from '@/_lib/trendMetrics';
+import { educatorSourceLabel } from '@/_lib/progressDisplay';
+import { formatPointDate } from '@/_lib/trendMetrics';
 import type { ChartPoint } from '@/_types/chartPoint';
 import type { TrendMetricConfig } from '@/_types/trendMetricConfig';
 
@@ -19,7 +20,12 @@ export function TrendTooltip({ active, payload, config }: TrendTooltipProps) {
       <p className="font-semibold">
         {withUnit(config.format(point.value), config.unit)}
       </p>
-      <p className="opacity-80">{formatFullDate(point.t)}</p>
+      <p className="opacity-80">{formatPointDate(point)}</p>
+      {point.educatorName && (
+        <p className="mt-0.5 font-medium">
+          {educatorSourceLabel(point.educatorName)}
+        </p>
+      )}
     </div>
   );
 }

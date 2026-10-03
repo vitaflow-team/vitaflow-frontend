@@ -2,4 +2,6 @@
 export interface ChartPoint {
   t: number;
   value: number;
+  /** Set when an educator measured this point. */
+  educatorName?: string;
 }
