@@ -7,7 +7,6 @@ import type {
   AcademiaEmployment,
   AcademiaInvitation,
   AcademiaStaffMember,
-  AcademiaStudent,
 } from '@/_types/academia';
 import type { SettingsProfile } from '@/_types/settingsProfile';
 
@@ -16,7 +15,6 @@ export interface AcademiaSettingsData {
   employments: AcademiaEmployment[];
   staff: AcademiaStaffMember[];
   accessPlans: AcademiaAccessPlan[];
-  students: AcademiaStudent[];
 }
 
 async function loadList<T>(path: string): Promise<T[]> {
@@ -29,16 +27,14 @@ async function loadList<T>(path: string): Promise<T[]> {
 }
 
 async function loadAcademiaSettingsData(): Promise<AcademiaSettingsData> {
-  const [invitations, employments, staff, accessPlans, students] =
-    await Promise.all([
-      loadList<AcademiaInvitation>('/academia/invitations'),
-      loadList<AcademiaEmployment>('/academia/educators'),
-      loadList<AcademiaStaffMember>('/academia/staff'),
-      loadList<AcademiaAccessPlan>('/academia/access-plans'),
-      loadList<AcademiaStudent>('/academia/students'),
-    ]);
+  const [invitations, employments, staff, accessPlans] = await Promise.all([
+    loadList<AcademiaInvitation>('/academia/invitations'),
+    loadList<AcademiaEmployment>('/academia/educators'),
+    loadList<AcademiaStaffMember>('/academia/staff'),
+    loadList<AcademiaAccessPlan>('/academia/access-plans'),
+  ]);
 
-  return { invitations, employments, staff, accessPlans, students };
+  return { invitations, employments, staff, accessPlans };
 }
 
 export async function loadAcademiaDataForTab(
