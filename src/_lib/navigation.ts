@@ -166,6 +166,7 @@ const SECTIONS: Record<string, SectionDescriptor> = {
   'academia-turmas': { label: PAGE_TITLES.academiaTurmas },
   'academia-engajamento': { label: PAGE_TITLES.academiaEngajamento },
   'academia-checkin': { label: PAGE_TITLES.academiaCheckin },
+  'employment-invitations': { label: PAGE_TITLES.employmentInvitations },
 };
 
 /**

@@ -2,16 +2,8 @@ import 'server-only';
 
 import { apiClient } from '@/_lib/apiClient';
 import type { SettingsTab } from '@/_lib/settingsTabs';
-import type {
-  EducatorAcademiaInvitation,
-  EducatorEmployment,
-} from '@/_types/educatorEmployment';
+import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import type { SettingsProfile } from '@/_types/settingsProfile';
-
-export interface EducatorEmploymentData {
-  invitations: EducatorAcademiaInvitation[];
-  employments: EducatorEmployment[];
-}
 
 async function loadList<T>(path: string): Promise<T[]> {
   try {
@@ -29,14 +21,9 @@ export async function loadEducatorEmployments(): Promise<EducatorEmployment[]> {
 export async function loadEducatorEmploymentTab(
   tab: SettingsTab,
   profile: SettingsProfile | null
-): Promise<EducatorEmploymentData | null> {
+): Promise<EducatorEmployment[] | null> {
   if (tab !== 'vinculos' || profile?.productType !== 'PHYSICAL_EDUCATOR') {
     return null;
   }
-
-  const [invitations, employments] = await Promise.all([
-    loadList<EducatorAcademiaInvitation>('/educators/me/academia-invitations'),
-    loadEducatorEmployments(),
-  ]);
-  return { invitations, employments };
+  return await loadEducatorEmployments();
 }

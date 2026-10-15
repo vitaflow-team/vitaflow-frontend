@@ -81,7 +81,7 @@ function render(tab: 'perfil' | 'plano' | 'conta', profile = PROFILE) {
       plansFailed
       preferences={null}
       academiaData={null}
-      educatorEmploymentData={null}
+      educatorEmployments={null}
     />
   );
 }
@@ -156,7 +156,7 @@ describe('refactor — settings plan panel and load failure', () => {
         plansFailed={false}
         preferences={null}
         academiaData={null}
-        educatorEmploymentData={null}
+        educatorEmployments={null}
       />
     );
 

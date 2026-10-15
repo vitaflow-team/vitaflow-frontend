@@ -24,4 +24,5 @@ export const PAGE_TITLES = {
   academiaTurmas: 'Turmas',
   academiaEngajamento: 'Engajamento',
   academiaCheckin: 'Check-in',
+  employmentInvitations: 'Convites recebidos',
 } as const;
