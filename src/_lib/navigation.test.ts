@@ -159,6 +159,7 @@ describe('restricted shell navigation — getMenuGroups', () => {
       'Meu educador físico',
       'Mensagens',
       'Agenda',
+      'Convites',
     ]);
     expect(groups[1].items.map(item => item.title)).toEqual(['Configurações']);
   });
@@ -295,6 +296,7 @@ describe('professional personal use — navigation', () => {
         'Meu educador físico',
         'Mensagens',
         'Agenda',
+        ...(type === 'PHYSICAL_EDUCATOR' ? ['Convites'] : []),
       ]);
     }
   });
@@ -326,6 +328,7 @@ describe('professional personal use — navigation', () => {
         'Meu educador físico',
         'Mensagens',
         'Agenda',
+        ...(type === 'PHYSICAL_EDUCATOR' ? ['Convites'] : []),
       ]);
     }
 

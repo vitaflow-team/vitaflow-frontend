@@ -6,6 +6,7 @@ import {
   ChartNoAxesCombined,
   Dumbbell,
   Home,
+  Inbox,
   LayoutDashboard,
   Library,
   MessageCircle,
@@ -168,6 +169,12 @@ const PRIVATE: AppRoute[] = [
     URL: '/restrict/scheduling',
     ICON: CalendarDays,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    TITLE: 'Convites',
+    URL: '/restrict/employment-invitations',
+    ICON: Inbox,
+    PRODUCT_TYPE: ['PHYSICAL_EDUCATOR'],
   },
 ];
 

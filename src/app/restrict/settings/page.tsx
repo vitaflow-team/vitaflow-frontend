@@ -86,7 +86,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
   const profile = await loadProfile();
   const { plans, plansFailed } = await loadPlans(tab);
   const academiaData = await loadAcademiaDataForTab(tab, profile);
-  const educatorEmploymentData = await loadEducatorEmploymentTab(tab, profile);
+  const educatorEmployments = await loadEducatorEmploymentTab(tab, profile);
   const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
   const preferences =
     prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
@@ -117,7 +117,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
             plansFailed={plansFailed}
             preferences={preferences}
             academiaData={academiaData}
-            educatorEmploymentData={educatorEmploymentData}
+            educatorEmployments={educatorEmployments}
           />
         </div>
       </UnsavedChangesProvider>

@@ -34,7 +34,7 @@ describe('plan change summary — summarizePlanChange', () => {
 
     expect(summary).toEqual({
       audienceChange: true,
-      gainedSections: ['Alunos'],
+      gainedSections: ['Alunos', 'Convites'],
       lostSections: ['Pessoas'],
       hiddenClients: 0,
       charge: 'immediate-proration',
@@ -49,7 +49,7 @@ describe('plan change summary — summarizePlanChange', () => {
       clientsCount: 7,
     });
 
-    expect(summary?.lostSections).toEqual(['Alunos']);
+    expect(summary?.lostSections).toEqual(['Alunos', 'Convites']);
     expect(summary?.gainedSections).toEqual([]);
     expect(summary?.hiddenClients).toBe(7);
     expect(summary?.audienceChange).toBe(true);

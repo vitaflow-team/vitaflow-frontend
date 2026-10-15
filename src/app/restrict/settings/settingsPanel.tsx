@@ -5,8 +5,8 @@ import { NotificationPreferencesPanel } from '@/_components/settings/notificatio
 import { PlanPanel } from '@/_components/settings/planPanel';
 import { EducatorEmploymentPanel } from '@/_components/educatorEmployment/educatorEmploymentPanel';
 import { Title } from '@/_components/ui/title';
+import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import type { AcademiaSettingsData } from '@/_lib/academiaSettingsData';
-import type { EducatorEmploymentData } from '@/_lib/educatorEmploymentData';
 import { toFormSettingsProfile } from '@/_lib/formSettingsProfile';
 import {
   hasPaidSubscription,
@@ -83,7 +83,7 @@ interface SettingsPanelProps {
   plansFailed: boolean;
   preferences: NotificationPreferences | null;
   academiaData: AcademiaSettingsData | null;
-  educatorEmploymentData: EducatorEmploymentData | null;
+  educatorEmployments: EducatorEmployment[] | null;
 }
 
 /**
@@ -97,7 +97,7 @@ export function SettingsPanel({
   plansFailed,
   preferences,
   academiaData,
-  educatorEmploymentData,
+  educatorEmployments,
 }: SettingsPanelProps) {
   if (tab === 'academia') {
     if (!profile || profile.productType !== 'ACADEMIA' || !academiaData) {
@@ -115,17 +115,14 @@ export function SettingsPanel({
     if (
       !profile ||
       profile.productType !== 'PHYSICAL_EDUCATOR' ||
-      !educatorEmploymentData
+      !educatorEmployments
     ) {
       return <div>Esta área não está disponível para o seu tipo de conta.</div>;
     }
     return (
       <>
         <PanelTitle label="Vínculos com academias" />
-        <EducatorEmploymentPanel
-          invitations={educatorEmploymentData.invitations}
-          employments={educatorEmploymentData.employments}
-        />
+        <EducatorEmploymentPanel employments={educatorEmployments} />
       </>
     );
   }
