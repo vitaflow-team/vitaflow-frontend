@@ -1,7 +1,6 @@
 import { Title } from '@/_components/ui/title';
 import type { AcademiaSettingsData } from '@/_lib/academiaSettingsData';
 import { AccessPlansSection } from './accessPlansSection';
-import { StudentsAssignSection } from './studentsAssignSection';
 import { TeamSection } from './teamSection';
 
 interface AcademiaSettingsPanelProps {
@@ -23,14 +22,6 @@ export function AcademiaSettingsPanel({ data }: AcademiaSettingsPanelProps) {
       <section className="flex flex-col gap-3">
         <Title label="Planos de acesso" size="h2" className="text-left" />
         <AccessPlansSection plans={data.accessPlans} />
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <Title label="Alunos da academia" size="h2" className="text-left" />
-        <StudentsAssignSection
-          students={data.students}
-          employments={data.employments}
-        />
       </section>
     </div>
   );

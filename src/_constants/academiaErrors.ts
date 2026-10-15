@@ -48,6 +48,25 @@ export const STUDENT_NOT_FOUND: ErrorMapping = {
   message: 'Aluno não encontrado nesta academia.',
 };
 
+export const STUDENT_ALREADY_REGISTERED_ACADEMIA: ErrorMapping = {
+  status: 409,
+  code: 'student_already_registered',
+  message: 'Já existe um aluno cadastrado nesta academia com este e-mail.',
+};
+
+export const ACCOUNT_EXISTS: ErrorMapping = {
+  status: 409,
+  code: 'account_exists',
+  message:
+    'Já existe uma conta Vita Flow confirmada com este e-mail. Peça para o aluno criar o vínculo por conta própria.',
+};
+
+export const STUDENT_INVALID: ErrorMapping = {
+  status: 400,
+  code: 'student_invalid',
+  message: 'Informe o nome do aluno.',
+};
+
 export const ACCESS_PLAN_INVALID: ErrorMapping = {
   status: 400,
   code: 'access_plan_invalid',
@@ -75,6 +94,13 @@ export const REMOVE_STAFF_ERRORS: ErrorMapping[] = [STAFF_NOT_FOUND];
 export const ASSIGN_EDUCATOR_ERRORS: ErrorMapping[] = [
   NOT_EMPLOYED_HERE,
   STUDENT_NOT_FOUND,
+];
+
+export const REGISTER_ACADEMIA_STUDENT_ERRORS: ErrorMapping[] = [
+  NOT_EMPLOYED_HERE,
+  STUDENT_ALREADY_REGISTERED_ACADEMIA,
+  ACCOUNT_EXISTS,
+  STUDENT_INVALID,
 ];
 
 export const ACCESS_PLAN_WRITE_ERRORS: ErrorMapping[] = [

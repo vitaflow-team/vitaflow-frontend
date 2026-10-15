@@ -41,10 +41,3 @@ export interface AcademiaAccessPlan {
   referencePrice: string | number;
   active: boolean;
 }
-
-export interface AcademiaStudent {
-  id: string;
-  name: string;
-  email: string;
-  professionalId: string | null;
-}
