@@ -1,11 +1,11 @@
 'use client';
 
 import {
-  SETTINGS_TABS,
   SETTINGS_TAB_LABELS,
   settingsPanelId,
   settingsTabHref,
   settingsTabId,
+  settingsTabsForType,
   type SettingsTab,
 } from '@/_lib/settingsTabs';
 import { cn } from '@/_lib/utils';
@@ -14,6 +14,7 @@ import { useEffect, useRef, type KeyboardEvent } from 'react';
 
 interface SettingsTabsProps {
   selected: SettingsTab;
+  productType?: string | null;
 }
 
 /**
@@ -25,9 +26,10 @@ interface SettingsTabsProps {
  * Os links não carregam `checkout_session_id`: trocar de aba depois da volta do
  * Checkout não deve disparar a sincronização de novo.
  */
-export function SettingsTabs({ selected }: SettingsTabsProps) {
+export function SettingsTabs({ selected, productType }: SettingsTabsProps) {
+  const tabs = settingsTabsForType(productType);
   const tabRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const selectedIndex = SETTINGS_TABS.indexOf(selected);
+  const selectedIndex = tabs.indexOf(selected);
 
   useEffect(() => {
     const current = tabRefs.current[selectedIndex];
@@ -53,7 +55,7 @@ export function SettingsTabs({ selected }: SettingsTabsProps) {
     if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
       event.preventDefault();
       const step = event.key === 'ArrowRight' ? 1 : -1;
-      const next = (index + step + SETTINGS_TABS.length) % SETTINGS_TABS.length;
+      const next = (index + step + tabs.length) % tabs.length;
       tabRefs.current[next]?.focus();
       return;
     }
@@ -73,7 +75,7 @@ export function SettingsTabs({ selected }: SettingsTabsProps) {
       aria-orientation="horizontal"
       className="flex w-full gap-1 overflow-x-auto border-b border-line"
     >
-      {SETTINGS_TABS.map((tab, index) => {
+      {tabs.map((tab, index) => {
         const isSelected = tab === selected;
 
         return (

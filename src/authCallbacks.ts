@@ -26,6 +26,7 @@ export async function jwtCallback({
     token.productId = authUser.productId;
     token.productGroupId = authUser.productGroupId;
     token.productType = authUser.productType;
+    token.role = authUser.role;
   }
 
   if (trigger === 'update') {
@@ -63,6 +64,7 @@ export async function sessionCallback({
     session.user.productId = token.productId;
     session.user.productGroupId = token.productGroupId;
     session.user.productType = token.productType;
+    session.user.role = token.role;
   }
 
   return session;

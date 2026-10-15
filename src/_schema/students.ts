@@ -78,13 +78,14 @@ export type RegisterStudentFormInput = z.input<typeof registerStudentSchema>;
 export type RegisterStudentData = z.output<typeof registerStudentSchema>;
 export type EditStudentData = z.output<typeof editStudentSchema>;
 
-/** Input of the `createStudent` action. */
 export const createStudentInputSchema = z.object({
   name: z.string().trim().min(1).max(STUDENT_NAME_MAX_LENGTH).optional(),
   email: studentEmailSchema,
   phone: studentPhone,
   birthDate: studentBirthDate,
   linkExistingAccount: z.boolean(),
+  ownership: z.enum(['PARTICULAR', 'ACADEMIA']).default('PARTICULAR'),
+  academiaId: z.string().optional(),
 });
 
 export const lookupInputSchema = z.object({ email: studentEmailSchema });

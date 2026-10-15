@@ -90,6 +90,11 @@ describe('add student panel steps', () => {
         isPending={false}
         error={null}
         onSubmit={noop}
+        employments={[]}
+        ownership="PARTICULAR"
+        academiaId={null}
+        onOwnershipChange={noop}
+        onAcademiaChange={noop}
       />
     );
 
@@ -105,6 +110,11 @@ describe('add student panel steps', () => {
         isPending
         error={null}
         onSubmit={noop}
+        employments={[]}
+        ownership="PARTICULAR"
+        academiaId={null}
+        onOwnershipChange={noop}
+        onAcademiaChange={noop}
       />
     );
 

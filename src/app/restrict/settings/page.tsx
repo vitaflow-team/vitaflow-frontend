@@ -7,7 +7,10 @@ import { SettingsTabs } from '@/_components/settings/settingsTabs';
 import { UnsavedChangesProvider } from '@/_components/settings/unsavedChangesProvider';
 import { Title } from '@/_components/ui/title';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
+import { redirectIfReceptionist } from '@/_lib/academiaAuthorization';
+import { loadAcademiaDataForTab } from '@/_lib/academiaSettingsData';
 import { apiClient } from '@/_lib/apiClient';
+import { loadEducatorEmploymentTab } from '@/_lib/educatorEmploymentData';
 import { isLoadFailure, loadPreferences } from '@/_lib/notificationsData';
 import {
   isSettingsPlanStale,
@@ -72,6 +75,7 @@ async function loadPlans(
 export default async function Settings({ searchParams }: SettingsProps) {
   const session = await auth();
   if (!session) return null;
+  await redirectIfReceptionist();
 
   const { tab: tabParam, checkout_session_id: sessionIdParam } =
     await searchParams;
@@ -81,7 +85,8 @@ export default async function Settings({ searchParams }: SettingsProps) {
 
   const profile = await loadProfile();
   const { plans, plansFailed } = await loadPlans(tab);
-  // Only fetched for the Notificações tab, same pattern as the plan catalog.
+  const academiaData = await loadAcademiaDataForTab(tab, profile);
+  const educatorEmploymentData = await loadEducatorEmploymentTab(tab, profile);
   const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
   const preferences =
     prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
@@ -93,13 +98,10 @@ export default async function Settings({ searchParams }: SettingsProps) {
 
   return (
     <DefaultLayout>
-      {/* The app layout read the session before the sync above; without this
-          step the menu and the plan block would keep the previous state until
-          a new sign-in (ADR-004, ADR-008). */}
       <PlanSessionSync stale={planStale} />
       <SettingsBreadcrumb tab={tab} />
       <Title label={PAGE_TITLES.settings} className="text-left" />
-      <SettingsTabs selected={tab} />
+      <SettingsTabs selected={tab} productType={session.user?.productType} />
       <UnsavedChangesProvider>
         <div
           role="tabpanel"
@@ -114,6 +116,8 @@ export default async function Settings({ searchParams }: SettingsProps) {
             plans={plans}
             plansFailed={plansFailed}
             preferences={preferences}
+            academiaData={academiaData}
+            educatorEmploymentData={educatorEmploymentData}
           />
         </div>
       </UnsavedChangesProvider>

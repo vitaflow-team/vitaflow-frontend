@@ -94,10 +94,11 @@ describe('plan category tabs and expiry — plan panel', () => {
     const html = render({ profileType: 'NUTRITIONIST' });
 
     expect(html).toContain('role="tablist"');
-    expect(html.match(/role="tab"/g)).toHaveLength(3);
+    expect(html.match(/role="tab"/g)).toHaveLength(4);
     expect(text(html)).toContain('Usuário');
     expect(text(html)).toContain('Nutricionista');
     expect(text(html)).toContain('Educador físico');
+    expect(text(html)).toContain('Academia');
 
     // Só a categoria do perfil nasce selecionada.
     expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
@@ -122,7 +123,7 @@ describe('plan category tabs and expiry — plan panel', () => {
     expect(html).toContain('<label for="plan-category-select"');
     expect(text(html)).toContain('Tipo de plano');
     expect(html).toContain('<select');
-    expect(html.match(/<option /g)).toHaveLength(3);
+    expect(html.match(/<option /g)).toHaveLength(4);
     // O select nasce na mesma categoria das abas.
     expect(html).toContain('<select id="plan-category-select" class=');
     expect(html).toContain('value="educador-fisico" selected=""');

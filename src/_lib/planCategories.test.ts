@@ -52,11 +52,13 @@ describe('plan category tabs — planCategories', () => {
     expect(categoryOfType('USER')).toBe('usuario');
     expect(categoryOfType('NUTRITIONIST')).toBe('nutricionista');
     expect(categoryOfType('PHYSICAL_EDUCATOR')).toBe('educador-fisico');
+    expect(categoryOfType('ACADEMIA')).toBe('academia');
 
     expect(PLAN_CATEGORY_LABELS).toEqual({
       usuario: 'Usuário',
       nutricionista: 'Nutricionista',
       'educador-fisico': 'Educador físico',
+      academia: 'Academia',
     });
   });
 
@@ -88,13 +90,13 @@ describe('plan category tabs — planCategories', () => {
   });
 
   it('UT-021 moves between categories with the arrow, Home and End keys', () => {
-    expect(moveCategory('educador-fisico', 'ArrowRight')).toBe('usuario');
+    expect(moveCategory('academia', 'ArrowRight')).toBe('usuario');
     expect(moveCategory('usuario', 'ArrowRight')).toBe('nutricionista');
-    expect(moveCategory('usuario', 'ArrowLeft')).toBe('educador-fisico');
+    expect(moveCategory('usuario', 'ArrowLeft')).toBe('academia');
     expect(moveCategory('nutricionista', 'ArrowLeft')).toBe('usuario');
 
     expect(moveCategory('nutricionista', 'Home')).toBe('usuario');
-    expect(moveCategory('nutricionista', 'End')).toBe('educador-fisico');
+    expect(moveCategory('nutricionista', 'End')).toBe('academia');
 
     for (const key of ['ArrowUp', 'Enter', ' ', 'a']) {
       expect(moveCategory('nutricionista', key)).toBe('nutricionista');
@@ -131,12 +133,12 @@ describe('plan category tabs — planCategories', () => {
     const seen = new Set<PlanCategoryKey>();
     let cursor: PlanCategoryKey = 'usuario';
 
-    for (let step = 0; step < 3; step += 1) {
+    for (let step = 0; step < 4; step += 1) {
       seen.add(cursor);
       cursor = moveCategory(cursor, 'ArrowRight');
     }
 
-    expect(seen.size).toBe(3);
+    expect(seen.size).toBe(4);
     expect(cursor).toBe('usuario');
   });
 });

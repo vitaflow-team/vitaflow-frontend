@@ -1,4 +1,5 @@
 import { APP_ROUTES } from '@/_constants/routes';
+import { effectiveAccountType } from '@/_lib/accountType';
 import {
   isRateLimitedPath,
   rateLimitKey,
@@ -147,7 +148,7 @@ const authMiddleware = auth(async (req: any) => {
   }
 
   if (isLogged && !APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
-    const productType = req.auth?.user?.productType;
+    const productType = effectiveAccountType(req.auth?.user);
     if (!canAccess(path, productType)) {
       return NextResponse.redirect(
         resolveRedirect({

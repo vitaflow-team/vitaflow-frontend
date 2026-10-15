@@ -1,8 +1,12 @@
 import type { Product } from '@/_actions/products/getPlans';
+import { AcademiaSettingsPanel } from '@/_components/academia/academiaSettingsPanel';
 import { AccountPanel } from '@/_components/settings/accountPanel';
 import { NotificationPreferencesPanel } from '@/_components/settings/notificationPreferencesPanel';
 import { PlanPanel } from '@/_components/settings/planPanel';
+import { EducatorEmploymentPanel } from '@/_components/educatorEmployment/educatorEmploymentPanel';
 import { Title } from '@/_components/ui/title';
+import type { AcademiaSettingsData } from '@/_lib/academiaSettingsData';
+import type { EducatorEmploymentData } from '@/_lib/educatorEmploymentData';
 import { toFormSettingsProfile } from '@/_lib/formSettingsProfile';
 import {
   hasPaidSubscription,
@@ -78,6 +82,8 @@ interface SettingsPanelProps {
   plans: Product[];
   plansFailed: boolean;
   preferences: NotificationPreferences | null;
+  academiaData: AcademiaSettingsData | null;
+  educatorEmploymentData: EducatorEmploymentData | null;
 }
 
 /**
@@ -90,7 +96,40 @@ export function SettingsPanel({
   plans,
   plansFailed,
   preferences,
+  academiaData,
+  educatorEmploymentData,
 }: SettingsPanelProps) {
+  if (tab === 'academia') {
+    if (!profile || profile.productType !== 'ACADEMIA' || !academiaData) {
+      return <div>Esta área não está disponível para o seu tipo de conta.</div>;
+    }
+    return (
+      <>
+        <PanelTitle label="Academia" />
+        <AcademiaSettingsPanel data={academiaData} />
+      </>
+    );
+  }
+
+  if (tab === 'vinculos') {
+    if (
+      !profile ||
+      profile.productType !== 'PHYSICAL_EDUCATOR' ||
+      !educatorEmploymentData
+    ) {
+      return <div>Esta área não está disponível para o seu tipo de conta.</div>;
+    }
+    return (
+      <>
+        <PanelTitle label="Vínculos com academias" />
+        <EducatorEmploymentPanel
+          invitations={educatorEmploymentData.invitations}
+          employments={educatorEmploymentData.employments}
+        />
+      </>
+    );
+  }
+
   if (tab === 'notificacoes') {
     if (!preferences) {
       return (

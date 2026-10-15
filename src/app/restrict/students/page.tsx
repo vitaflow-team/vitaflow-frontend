@@ -1,6 +1,7 @@
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { StudentsView } from '@/_components/students/studentsView';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
+import { loadEducatorEmployments } from '@/_lib/educatorEmploymentData';
 import { redirectUnlessEducator } from '@/_lib/studentsAuthorization';
 import { isLoadFailure, loadStudents } from '@/_lib/studentsData';
 import { parseStudentsParams } from '@/_lib/studentsList';
@@ -24,7 +25,10 @@ export default async function StudentsPage({
 }: StudentsPageProps) {
   await redirectUnlessEducator();
   const params = parseStudentsParams(await searchParams);
-  const list = await loadStudents(params);
+  const [list, employments] = await Promise.all([
+    loadStudents(params),
+    loadEducatorEmployments(),
+  ]);
 
   return (
     <DefaultLayout>
@@ -34,7 +38,12 @@ export default async function StudentsPage({
           instantes.
         </p>
       ) : (
-        <StudentsView list={list} search={params.search} order={params.order} />
+        <StudentsView
+          list={list}
+          search={params.search}
+          order={params.order}
+          employments={employments}
+        />
       )}
     </DefaultLayout>
   );

@@ -9,17 +9,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/_components/ui/dialog';
+import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { AddStudentFlow } from './addStudentFlow';
 
 interface AddStudentPanelProps {
   triggerLabel?: string;
+  employments?: EducatorEmployment[];
 }
 
 /** The "add student" panel; its steps start over every time it opens. */
 export function AddStudentPanel({
   triggerLabel = 'Adicionar aluno',
+  employments = [],
 }: AddStudentPanelProps) {
   const [open, setOpen] = useState(false);
 
@@ -39,7 +42,12 @@ export function AddStudentPanel({
             confirma o vínculo antes de cadastrar.
           </DialogDescription>
         </DialogHeader>
-        {open && <AddStudentFlow onDone={() => setOpen(false)} />}
+        {open && (
+          <AddStudentFlow
+            onDone={() => setOpen(false)}
+            employments={employments}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -11,6 +11,12 @@ export const SELF_REGISTRATION_MESSAGE =
 export const EMAIL_LOCKED_MESSAGE =
   'O e-mail de um aluno com conta não pode ser alterado.';
 export const ASSESSMENT_NOT_FOUND_MESSAGE = 'Avaliação não encontrada.';
+export const NO_ACTIVE_EMPLOYMENT_MESSAGE =
+  'Você precisa estar empregado por uma academia para cadastrar um aluno dela.';
+export const ACADEMIA_AMBIGUOUS_MESSAGE =
+  'Você está empregado por mais de uma academia — especifique para qual este aluno pertence.';
+export const NOT_EMPLOYED_HERE_MESSAGE =
+  'Você não está empregado por esta academia.';
 
 export const STUDENT_VALIDATION: ErrorMapping = {
   status: 400,

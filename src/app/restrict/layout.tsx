@@ -6,6 +6,7 @@ import { NotificationsBell } from '@/_components/layout/notificationsBell';
 import { Topbar } from '@/_components/layout/topbar';
 import { SidebarProvider } from '@/_components/ui/sidebar';
 import { SIDEBAR_COOKIE_NAME } from '@/_constants/sidebar';
+import { effectiveAccountType } from '@/_lib/accountType';
 import { getPlanSummary } from '@/_lib/planSummary';
 import { UserSessionProvider } from '@/_lib/sessionProvider';
 import { getShellData } from '@/_lib/shellData';
@@ -31,6 +32,7 @@ export default async function RestrictLayout({
   // Sem perfil carregado o bloco mostra um rótulo neutro em vez de afirmar que
   // a conta é do plano gratuito.
   const plan = getPlanSummary(shell.profileLoaded ? shell : null);
+  const accountType = effectiveAccountType(session?.user);
 
   return (
     <UserSessionProvider session={session}>
@@ -39,7 +41,7 @@ export default async function RestrictLayout({
       </Suspense>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar
-          productType={session?.user?.productType}
+          productType={accountType}
           firstName={shell.firstName}
           avatar={shell.avatar}
           plan={plan}
@@ -57,7 +59,7 @@ export default async function RestrictLayout({
             {children}
           </main>
         </div>
-        <BottomNav productType={session?.user?.productType} />
+        <BottomNav productType={accountType} />
       </SidebarProvider>
     </UserSessionProvider>
   );

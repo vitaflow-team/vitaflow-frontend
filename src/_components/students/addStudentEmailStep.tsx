@@ -10,17 +10,25 @@ import {
   FormMessage,
 } from '@/_components/ui/form';
 import { Input } from '@/_components/ui/input';
+import type { StudentOwnership } from '@/_lib/addStudentFlow';
 import { lookupInputSchema } from '@/_schema/students';
+import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { FormError } from './formError';
+import { StudentOwnershipField } from './studentOwnershipField';
 
 interface AddStudentEmailStepProps {
   defaultEmail: string;
   isPending: boolean;
   error: string | null;
   onSubmit: (email: string) => void;
+  employments: EducatorEmployment[];
+  ownership: StudentOwnership;
+  academiaId: string | null;
+  onOwnershipChange: (ownership: StudentOwnership) => void;
+  onAcademiaChange: (academiaId: string) => void;
 }
 
 /** Step 1: the e-mail decides whether the student may be linked to an account. */
@@ -29,6 +37,11 @@ export function AddStudentEmailStep({
   isPending,
   error,
   onSubmit,
+  employments,
+  ownership,
+  academiaId,
+  onOwnershipChange,
+  onAcademiaChange,
 }: AddStudentEmailStepProps) {
   const methods = useForm<{ email: string }>({
     resolver: zodResolver(lookupInputSchema),
@@ -63,6 +76,14 @@ export function AddStudentEmailStep({
               <FormMessage role="alert" />
             </FormItem>
           )}
+        />
+        <StudentOwnershipField
+          employments={employments}
+          ownership={ownership}
+          academiaId={academiaId}
+          disabled={isPending}
+          onOwnershipChange={onOwnershipChange}
+          onAcademiaChange={onAcademiaChange}
         />
         <FormError message={error} />
         <Button type="submit" disabled={isPending}>

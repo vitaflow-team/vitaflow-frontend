@@ -3,6 +3,8 @@ export const SETTINGS_TABS = [
   'plano',
   'conta',
   'notificacoes',
+  'academia',
+  'vinculos',
 ] as const;
 
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
@@ -12,7 +14,19 @@ export const SETTINGS_TAB_LABELS: Record<SettingsTab, string> = {
   plano: 'Plano',
   conta: 'Conta',
   notificacoes: 'Notificações',
+  academia: 'Academia',
+  vinculos: 'Vínculos',
 };
+
+export function settingsTabsForType(
+  productType?: string | null
+): readonly SettingsTab[] {
+  return SETTINGS_TABS.filter(tab => {
+    if (tab === 'academia') return productType === 'ACADEMIA';
+    if (tab === 'vinculos') return productType === 'PHYSICAL_EDUCATOR';
+    return true;
+  });
+}
 
 export const SETTINGS_PATH = '/restrict/settings';
 

@@ -183,6 +183,7 @@ describe('educator student actions', () => {
       name: 'Ana',
       email: 'ana@b.com',
       linkExistingAccount: true,
+      ownership: 'PARTICULAR',
     });
   });
 
