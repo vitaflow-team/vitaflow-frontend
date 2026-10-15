@@ -8,7 +8,6 @@ import { redirect, unstable_rethrow } from 'next/navigation';
 
 export const STUDENT_TURMAS_ROUTE = '/restrict/turmas';
 
-/** Page-side: anyone but a USER account lands on the home with the usual notice. */
 export async function redirectUnlessGymStudentAccount(): Promise<void> {
   let allowed: boolean;
   try {
