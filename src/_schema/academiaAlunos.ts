@@ -12,7 +12,6 @@ export type RegisterAcademiaStudentData = z.output<
   typeof registerAcademiaStudentSchema
 >;
 
-/** What the registration form holds while typing: every value is text. */
 export interface RegisterAcademiaStudentFormValues extends StudentFormValues {
   professionalId: string;
 }
