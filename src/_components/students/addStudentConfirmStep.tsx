@@ -8,7 +8,7 @@ interface AddStudentConfirmStepProps {
   error: string | null;
   onLink: () => void;
   onCancel: () => void;
-  onRegisterWithout: () => void;
+  onRegisterWithout?: () => void;
 }
 
 /**
@@ -47,14 +47,16 @@ export function AddStudentConfirmStep({
       >
         Cancelar
       </Button>
-      <Button
-        type="button"
-        variant="link"
-        onClick={onRegisterWithout}
-        disabled={isPending}
-      >
-        Cadastrar sem conta de usuário
-      </Button>
+      {onRegisterWithout && (
+        <Button
+          type="button"
+          variant="link"
+          onClick={onRegisterWithout}
+          disabled={isPending}
+        >
+          Cadastrar sem conta de usuário
+        </Button>
+      )}
     </div>
   );
 }
