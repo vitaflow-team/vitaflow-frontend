@@ -127,6 +127,7 @@ describe('restricted shell navigation — getMenuGroups', () => {
           'Meu educador físico',
           'Mensagens',
           'Agenda',
+          'Minhas turmas',
         ],
       },
       { label: 'Conta', items: ['Configurações'] },
@@ -313,6 +314,7 @@ describe('professional personal use — navigation', () => {
       'Meu educador físico',
       'Mensagens',
       'Agenda',
+      'Minhas turmas',
     ]);
 
     for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
