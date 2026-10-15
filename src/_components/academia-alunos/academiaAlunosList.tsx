@@ -1,6 +1,7 @@
 import type { AcademiaEmployment } from '@/_types/academia';
 import type { AcademiaStudentListItem } from '@/_types/academiaAlunos';
 import { AcademiaAlunoAssignSelect } from './academiaAlunoAssignSelect';
+import { StudentAccessPlanPanel } from './studentAccessPlanPanel';
 
 function formatSession(startAt: string): string {
   return new Date(startAt).toLocaleDateString('pt-BR', {
@@ -46,7 +47,16 @@ export function AcademiaAlunosList({
                 : 'Sem educador'}
             </span>
           </div>
-          <AcademiaAlunoAssignSelect student={item} employments={employments} />
+          <div className="flex flex-col items-end gap-2">
+            <AcademiaAlunoAssignSelect
+              student={item}
+              employments={employments}
+            />
+            <StudentAccessPlanPanel
+              clientId={item.id}
+              studentName={item.name}
+            />
+          </div>
         </li>
       ))}
     </ul>

@@ -1,5 +1,6 @@
 import { BmiCard } from '@/_components/home/bmiCard';
 import { Greeting } from '@/_components/home/greeting';
+import { SelfCheckInCard } from '@/_components/home/selfCheckInCard';
 import {
   ShortcutButton,
   ShortcutLink,
@@ -16,9 +17,16 @@ interface HomeUserProps {
   firstName: string;
   /** `null` quando a carga do painel falhou. */
   dashboard: DashboardResponseDTO | null;
+  /** US-001.EC-1: nenhum vínculo com academia, sem opção de check-in. */
+  canCheckIn: boolean;
 }
 
-export function HomeUser({ nowIso, firstName, dashboard }: HomeUserProps) {
+export function HomeUser({
+  nowIso,
+  firstName,
+  dashboard,
+  canCheckIn,
+}: HomeUserProps) {
   const latest = dashboard?.latest ?? null;
   const status = !dashboard ? 'error' : latest ? 'ready' : 'empty';
   const weightSeries =
@@ -37,6 +45,8 @@ export function HomeUser({ nowIso, firstName, dashboard }: HomeUserProps) {
           }
         />
       </div>
+
+      {canCheckIn && <SelfCheckInCard />}
 
       <section aria-label="Resumo atual" className="grid gap-4 sm:grid-cols-2">
         <WeightCard

@@ -1,8 +1,7 @@
-import { ComingSoon } from '@/_components/layout/comingSoon';
 import DefaultLayout from '@/_components/layout/defaultLayout';
+import { ReceptionistCheckinView } from '@/_components/academia-checkin/receptionistCheckinView';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { redirectUnlessReceptionist } from '@/_lib/academiaAuthorization';
-import { ScanLine } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,11 +13,7 @@ export default async function AcademiaCheckinPage() {
 
   return (
     <DefaultLayout>
-      <ComingSoon
-        title="Check-in ainda não está disponível"
-        message="O registro de check-in chega em uma etapa futura."
-        icon={ScanLine}
-      />
+      <ReceptionistCheckinView />
     </DefaultLayout>
   );
 }

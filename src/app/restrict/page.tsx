@@ -4,6 +4,7 @@ import DefaultLayout from '@/_components/layout/defaultLayout';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { RECEPTIONIST_ACCOUNT_TYPE } from '@/_lib/accountType';
 import { apiClient } from '@/_lib/apiClient';
+import { loadCheckInEligibility } from '@/_lib/checkInEligibility';
 import { getFirstName } from '@/_lib/navigation';
 import type { DashboardResponseDTO } from '@/_types/progress';
 import { auth } from '@/auth';
@@ -57,9 +58,16 @@ export default async function Home() {
     console.error('Falha ao carregar o painel do Início:', error);
   }
 
+  const canCheckIn = await loadCheckInEligibility();
+
   return (
     <DefaultLayout>
-      <HomeUser nowIso={nowIso} firstName={firstName} dashboard={dashboard} />
+      <HomeUser
+        nowIso={nowIso}
+        firstName={firstName}
+        dashboard={dashboard}
+        canCheckIn={canCheckIn}
+      />
     </DefaultLayout>
   );
 }

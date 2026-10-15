@@ -17,6 +17,15 @@ vi.mock('@/_actions/academia/registerAcademiaStudent', () => ({
   registerAcademiaStudent: {},
 }));
 vi.mock('@/_actions/academia/assignEducator', () => ({ assignEducator: {} }));
+vi.mock('@/_actions/academia/getCurrentAccessPlan', () => ({
+  getCurrentAccessPlan: {},
+}));
+vi.mock('@/_actions/academia/assignAccessPlan', () => ({
+  assignAccessPlan: {},
+}));
+vi.mock('@/_actions/academia/listAccessPlansCatalog', () => ({
+  listAccessPlansCatalog: {},
+}));
 vi.mock('@/_components/ui/dialog', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DialogTrigger: ({ children }: { children: React.ReactNode }) => (
