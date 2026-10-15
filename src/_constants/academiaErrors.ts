@@ -67,6 +67,36 @@ export const STUDENT_INVALID: ErrorMapping = {
   message: 'Informe o nome do aluno.',
 };
 
+export const TURMA_NOT_FOUND: ErrorMapping = {
+  status: 404,
+  code: 'turma_not_found',
+  message: 'Turma não encontrada nesta academia.',
+};
+
+export const TURMA_INVALID_SCHEDULE: ErrorMapping = {
+  status: 400,
+  code: 'turma_invalid_schedule',
+  message: 'Verifique o horário e a duração informados.',
+};
+
+export const TURMA_INVALID_CAPACITY: ErrorMapping = {
+  status: 400,
+  code: 'turma_invalid_capacity',
+  message: 'A capacidade deve ser um número inteiro maior que zero.',
+};
+
+export const TURMA_FULL: ErrorMapping = {
+  status: 409,
+  code: 'turma_full',
+  message: 'Turma cheia.',
+};
+
+export const NOT_ELIGIBLE: ErrorMapping = {
+  status: 403,
+  code: 'not_eligible',
+  message: 'Este aluno não pode se inscrever nesta turma.',
+};
+
 export const ACCESS_PLAN_INVALID: ErrorMapping = {
   status: 400,
   code: 'access_plan_invalid',
@@ -106,4 +136,24 @@ export const REGISTER_ACADEMIA_STUDENT_ERRORS: ErrorMapping[] = [
 export const ACCESS_PLAN_WRITE_ERRORS: ErrorMapping[] = [
   ACCESS_PLAN_INVALID,
   ACCESS_PLAN_NOT_FOUND,
+];
+
+export const TURMA_WRITE_ERRORS: ErrorMapping[] = [
+  NOT_EMPLOYED_HERE,
+  TURMA_INVALID_SCHEDULE,
+  TURMA_INVALID_CAPACITY,
+  TURMA_NOT_FOUND,
+];
+
+export const TURMA_ASSIGN_EDUCATOR_ERRORS: ErrorMapping[] = [
+  NOT_EMPLOYED_HERE,
+  TURMA_NOT_FOUND,
+];
+
+export const TURMA_REMOVE_ERRORS: ErrorMapping[] = [TURMA_NOT_FOUND];
+
+export const TURMA_ENROLL_ERRORS: ErrorMapping[] = [
+  TURMA_NOT_FOUND,
+  TURMA_FULL,
+  NOT_ELIGIBLE,
 ];

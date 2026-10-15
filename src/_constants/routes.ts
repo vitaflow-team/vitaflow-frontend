@@ -176,6 +176,13 @@ const PRIVATE: AppRoute[] = [
     ICON: Inbox,
     PRODUCT_TYPE: ['PHYSICAL_EDUCATOR'],
   },
+  {
+    TITLE: 'Minhas turmas',
+    SHORT_TITLE: 'Turmas',
+    URL: '/restrict/turmas',
+    ICON: Users,
+    PRODUCT_TYPE: ['USER'],
+  },
 ];
 
 // Configurações fica fora de PRIVATE de propósito: a governança de acesso
