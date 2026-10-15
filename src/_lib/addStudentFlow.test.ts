@@ -12,6 +12,8 @@ const CONFIRMING: AddStudentState = {
   email: 'diego@exemplo.com',
   accountName: 'Diego Martins',
   error: null,
+  ownership: 'PARTICULAR',
+  academiaId: null,
 };
 
 describe('add student flow', () => {
@@ -37,6 +39,8 @@ describe('add student flow', () => {
       email: 'novo@exemplo.com',
       accountName: null,
       error: null,
+      ownership: 'PARTICULAR',
+      academiaId: null,
     });
   });
 
@@ -46,6 +50,8 @@ describe('add student flow', () => {
       email: 'diego@exemplo.com',
       accountName: null,
       error: null,
+      ownership: 'PARTICULAR',
+      academiaId: null,
     });
   });
 
@@ -64,6 +70,8 @@ describe('add student flow', () => {
       email: 'diego@exemplo.com',
       accountName: null,
       error: null,
+      ownership: 'PARTICULAR',
+      academiaId: null,
     };
     const reaction = reactionToCreate({
       outcome: 'account_exists',

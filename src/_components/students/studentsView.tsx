@@ -1,3 +1,4 @@
+import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import type { StudentList } from '@/_types/students';
 import { AddStudentPanel } from './addStudentPanel';
 import { StudentSearch } from './studentSearch';
@@ -11,6 +12,7 @@ interface StudentsViewProps {
   list: StudentList;
   search?: string;
   order?: 'name';
+  employments?: EducatorEmployment[];
 }
 
 function StudentsContent({ list, search, order }: StudentsViewProps) {
@@ -37,12 +39,17 @@ function StudentsContent({ list, search, order }: StudentsViewProps) {
 }
 
 /** The educator's student list: header, add action, search and the right state. */
-export function StudentsView({ list, search, order }: StudentsViewProps) {
+export function StudentsView({
+  list,
+  search,
+  order,
+  employments = [],
+}: StudentsViewProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Alunos</h1>
-        <AddStudentPanel />
+        <AddStudentPanel employments={employments} />
       </div>
       <StudentSearch initialQuery={search ?? ''} />
       <StudentsOrderControl order={order} search={search} />

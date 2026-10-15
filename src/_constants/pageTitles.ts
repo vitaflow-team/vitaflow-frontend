@@ -18,4 +18,10 @@ export const PAGE_TITLES = {
   messageThread: 'Conversa',
   scheduling: 'Agenda',
   schedulingBook: 'Agendar horário',
+  academiaPainel: 'Painel',
+  academiaProfessores: 'Professores',
+  academiaAlunos: 'Alunos da academia',
+  academiaTurmas: 'Turmas',
+  academiaEngajamento: 'Engajamento',
+  academiaCheckin: 'Check-in',
 } as const;

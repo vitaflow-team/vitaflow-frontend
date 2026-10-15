@@ -19,6 +19,8 @@ interface CreateInput {
   phone?: string;
   birthDate?: string;
   linkExistingAccount: boolean;
+  ownership: 'PARTICULAR' | 'ACADEMIA';
+  academiaId?: string;
 }
 
 /**
@@ -55,16 +57,35 @@ export function useAddStudent(onDone: () => void) {
     onDone();
   }
 
+  const ownershipInput = {
+    ownership: state.ownership,
+    academiaId: state.academiaId ?? undefined,
+  };
+
   return {
     state,
     isPending: lookup.isPending || create.isPending,
     submitEmail,
-    link: () => run({ email: state.email, linkExistingAccount: true }),
+    link: () =>
+      run({
+        email: state.email,
+        linkExistingAccount: true,
+        ...ownershipInput,
+      }),
     register: (values: RegisterStudentData) =>
-      run({ ...values, email: state.email, linkExistingAccount: false }),
+      run({
+        ...values,
+        email: state.email,
+        linkExistingAccount: false,
+        ...ownershipInput,
+      }),
     registerWithoutAccount: () =>
       dispatch({ type: 'register-without-account' }),
     editEmail: () => dispatch({ type: 'email-edited' }),
     cancelConfirm: () => dispatch({ type: 'cancel-confirm' }),
+    setOwnership: (ownership: 'PARTICULAR' | 'ACADEMIA') =>
+      dispatch({ type: 'ownership-changed', ownership }),
+    setAcademia: (academiaId: string) =>
+      dispatch({ type: 'academia-changed', academiaId }),
   };
 }

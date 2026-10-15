@@ -3,6 +3,7 @@ import type { CreateStudentOutcome } from '@/_types/createStudentOutcome';
 import type { AccountLookup } from '@/_types/students';
 
 export type AddStudentStep = 'email' | 'confirm' | 'register';
+export type StudentOwnership = 'PARTICULAR' | 'ACADEMIA';
 
 export interface AddStudentState {
   step: AddStudentStep;
@@ -10,6 +11,8 @@ export interface AddStudentState {
   /** Holder of the account found for the e-mail, shown for confirmation. */
   accountName: string | null;
   error: string | null;
+  ownership: StudentOwnership;
+  academiaId: string | null;
 }
 
 export type AddStudentEvent =
@@ -20,6 +23,8 @@ export type AddStudentEvent =
   | { type: 'email-edited' }
   | { type: 'cancel-confirm' }
   | { type: 'failed'; message: string }
+  | { type: 'ownership-changed'; ownership: StudentOwnership }
+  | { type: 'academia-changed'; academiaId: string }
   | { type: 'reset' };
 
 export const INITIAL_ADD_STUDENT_STATE: AddStudentState = {
@@ -27,6 +32,8 @@ export const INITIAL_ADD_STUDENT_STATE: AddStudentState = {
   email: '',
   accountName: null,
   error: null,
+  ownership: 'PARTICULAR',
+  academiaId: null,
 };
 
 /**
@@ -41,6 +48,7 @@ export function addStudentReducer(
   switch (event.type) {
     case 'lookup-found':
       return {
+        ...state,
         step: 'confirm',
         email: event.email,
         accountName: event.accountName,
@@ -48,6 +56,7 @@ export function addStudentReducer(
       };
     case 'lookup-missing':
       return {
+        ...state,
         step: 'register',
         email: event.email,
         accountName: null,
@@ -68,6 +77,10 @@ export function addStudentReducer(
       return { ...state, step: 'email', accountName: null, error: null };
     case 'failed':
       return { ...state, error: event.message };
+    case 'ownership-changed':
+      return { ...state, ownership: event.ownership, academiaId: null };
+    case 'academia-changed':
+      return { ...state, academiaId: event.academiaId };
     case 'reset':
       return INITIAL_ADD_STUDENT_STATE;
   }

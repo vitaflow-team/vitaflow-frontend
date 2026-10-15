@@ -25,6 +25,16 @@ vi.mock('./form', () => ({
     <pre data-section="profile">{JSON.stringify(props)}</pre>
   ),
 }));
+vi.mock('@/_components/academia/academiaSettingsPanel', () => ({
+  AcademiaSettingsPanel: (props: object) => (
+    <pre data-section="academia">{JSON.stringify(props)}</pre>
+  ),
+}));
+vi.mock('@/_components/educatorEmployment/educatorEmploymentPanel', () => ({
+  EducatorEmploymentPanel: (props: object) => (
+    <pre data-section="educator-employment">{JSON.stringify(props)}</pre>
+  ),
+}));
 
 import { SettingsPanel } from './settingsPanel';
 
@@ -70,6 +80,8 @@ function render(tab: 'perfil' | 'plano' | 'conta', profile = PROFILE) {
       plans={PLANS}
       plansFailed
       preferences={null}
+      academiaData={null}
+      educatorEmploymentData={null}
     />
   );
 }
@@ -143,6 +155,8 @@ describe('refactor — settings plan panel and load failure', () => {
         plans={[]}
         plansFailed={false}
         preferences={null}
+        academiaData={null}
+        educatorEmploymentData={null}
       />
     );
 

@@ -1,7 +1,10 @@
 'use server';
 
 import {
+  ACADEMIA_AMBIGUOUS_MESSAGE,
   ACCOUNT_NOT_FOUND_MESSAGE,
+  NOT_EMPLOYED_HERE_MESSAGE,
+  NO_ACTIVE_EMPLOYMENT_MESSAGE,
   SELF_REGISTRATION_MESSAGE,
   STUDENT_VALIDATION,
 } from '@/_constants/studentErrors';
@@ -21,6 +24,21 @@ const CREATE_ERRORS: ErrorMapping[] = [
     status: 400,
     code: 'self_registration',
     message: SELF_REGISTRATION_MESSAGE,
+  },
+  {
+    status: 400,
+    code: 'no_active_employment',
+    message: NO_ACTIVE_EMPLOYMENT_MESSAGE,
+  },
+  {
+    status: 400,
+    code: 'academia_ambiguous',
+    message: ACADEMIA_AMBIGUOUS_MESSAGE,
+  },
+  {
+    status: 400,
+    code: 'not_employed_here',
+    message: NOT_EMPLOYED_HERE_MESSAGE,
   },
   STUDENT_VALIDATION,
   {

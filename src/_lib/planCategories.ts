@@ -6,6 +6,7 @@ export const PLAN_CATEGORY_KEYS = [
   'usuario',
   'nutricionista',
   'educador-fisico',
+  'academia',
 ] as const;
 
 export type PlanCategoryKey = (typeof PLAN_CATEGORY_KEYS)[number];
@@ -14,6 +15,7 @@ export const PLAN_CATEGORY_LABELS: Record<PlanCategoryKey, string> = {
   usuario: 'Usuário',
   nutricionista: 'Nutricionista',
   'educador-fisico': 'Educador físico',
+  academia: 'Academia',
 };
 
 /** Conta sem produto (ou com um produto fora do catálogo) vale como comum. */
@@ -28,6 +30,7 @@ const CATEGORY_OF_TYPE: Record<PlanType, PlanCategoryKey> = {
   USER: 'usuario',
   NUTRITIONIST: 'nutricionista',
   PHYSICAL_EDUCATOR: 'educador-fisico',
+  ACADEMIA: 'academia',
 };
 
 export function categoryOfType(type: PlanType): PlanCategoryKey {

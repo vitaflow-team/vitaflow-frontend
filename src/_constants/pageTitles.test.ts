@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { PAGE_TITLES } from './pageTitles';
 
 describe('restricted page titles', () => {
-  it('UT-031 contains exactly the nineteen contracted title values', () => {
+  it('UT-031 contains exactly the contracted title values', () => {
     expect(Object.values(PAGE_TITLES)).toEqual([
       'Início',
       'Minha evolução',
@@ -23,15 +23,21 @@ describe('restricted page titles', () => {
       'Conversa',
       'Agenda',
       'Agendar horário',
+      'Painel',
+      'Professores',
+      'Alunos da academia',
+      'Turmas',
+      'Engajamento',
+      'Check-in',
     ]);
   });
 
-  it('UT-032 contains nineteen non-empty, pairwise distinct values', () => {
+  it('UT-032 contains non-empty, pairwise distinct values', () => {
     const titles = Object.values(PAGE_TITLES);
 
-    expect(titles).toHaveLength(19);
+    expect(titles).toHaveLength(25);
     expect(titles.every(title => title.length > 0)).toBe(true);
-    expect(new Set(titles).size).toBe(19);
+    expect(new Set(titles).size).toBe(25);
   });
 
   it('UT-158 includes the students list, the record and the not-found titles', () => {

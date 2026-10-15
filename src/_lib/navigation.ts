@@ -44,13 +44,18 @@ export function isRouteActive(pathname: string, url: string): boolean {
 
 /**
  * Rotas em EXCLUDED_ROUTES são liberadas para qualquer conta autenticada, então
- * aparecem no menu mesmo para quem ainda não tem tipo de produto.
+ * aparecem no menu mesmo para quem ainda não tem tipo de produto. Uma vez que o
+ * tipo é conhecido, porém, essa liberação deixa de valer e quem decide volta a
+ * ser a lista PRODUCT_TYPE de cada rota — senão "Início" e "Configurações"
+ * apareceriam até para quem não deveria vê-los (Academia vê Painel no lugar de
+ * Início, e a recepcionista não vê Configurações de jeito nenhum — US-002,
+ * US-005, gym-foundation ADR-002).
  */
 function isRouteVisible(route: AppRoute, productType?: string | null): boolean {
-  return (
-    APP_ROUTES.EXCLUDED_ROUTES.includes(route.URL) ||
-    route.PRODUCT_TYPE.includes(productType ?? '')
-  );
+  if (!productType) {
+    return APP_ROUTES.EXCLUDED_ROUTES.includes(route.URL);
+  }
+  return route.PRODUCT_TYPE.includes(productType);
 }
 
 /**
@@ -155,6 +160,12 @@ const SECTIONS: Record<string, SectionDescriptor> = {
   // getTopbarContext's 2-level trail support — it shows nothing there,
   // same as any other path beyond that depth (never a trail that lies).
   scheduling: { label: PAGE_TITLES.scheduling },
+  'academia-painel': { label: PAGE_TITLES.academiaPainel },
+  'academia-professores': { label: PAGE_TITLES.academiaProfessores },
+  'academia-alunos': { label: PAGE_TITLES.academiaAlunos },
+  'academia-turmas': { label: PAGE_TITLES.academiaTurmas },
+  'academia-engajamento': { label: PAGE_TITLES.academiaEngajamento },
+  'academia-checkin': { label: PAGE_TITLES.academiaCheckin },
 };
 
 /**

@@ -2,11 +2,13 @@ import { HomeProfessional } from '@/_components/home/homeProfessional';
 import { HomeUser } from '@/_components/home/homeUser';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
+import { RECEPTIONIST_ACCOUNT_TYPE } from '@/_lib/accountType';
 import { apiClient } from '@/_lib/apiClient';
 import { getFirstName } from '@/_lib/navigation';
 import type { DashboardResponseDTO } from '@/_types/progress';
 import { auth } from '@/auth';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: PAGE_TITLES.home,
@@ -17,6 +19,13 @@ const PROFESSIONAL_TYPES = ['NUTRITIONIST', 'PHYSICAL_EDUCATOR'];
 export default async function Home() {
   const session = await auth();
   if (!session?.user?.id) return null;
+
+  if (session.user.role === RECEPTIONIST_ACCOUNT_TYPE) {
+    redirect('/restrict/academia-checkin');
+  }
+  if (session.user.productType === 'ACADEMIA') {
+    redirect('/restrict/academia-painel');
+  }
 
   const firstName = getFirstName(session.user.name);
   // O instante vem do servidor para a saudação não divergir na hidratação; o

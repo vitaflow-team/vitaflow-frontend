@@ -12,12 +12,15 @@ const AUDIENCE_COPY: Record<PlanType, string> = {
     'Para nutricionistas que atendem pacientes. Cria uma conta profissional, inclui o uso pessoal do Premium e mantém seus dados pessoais.',
   PHYSICAL_EDUCATOR:
     'Para educadores físicos que atendem alunos. Cria uma conta profissional, inclui o uso pessoal do Premium e mantém seus dados pessoais.',
+  ACADEMIA:
+    'Para academias que empregam educadores físicos e gerenciam seus próprios alunos.',
 };
 
 /** Profissão que o plano atende; planos pessoais não levam sufixo no título. */
 const PROFESSION_LABEL: Partial<Record<PlanType, string>> = {
   NUTRITIONIST: 'Nutricionista',
   PHYSICAL_EDUCATOR: 'Educador físico',
+  ACADEMIA: 'Academia',
 };
 
 /**

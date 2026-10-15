@@ -10,6 +10,7 @@ const PANELS = {
   usuario: <p>Planos de usuário</p>,
   nutricionista: <p>Planos de nutricionista</p>,
   'educador-fisico': <p>Planos de educador físico</p>,
+  academia: <p>Planos de academia</p>,
 };
 
 function render(initial: PlanCategoryKey): string {
@@ -23,7 +24,7 @@ describe('test coverage — plan category tabs', () => {
   it('selects only the initial category and shows its panel alone', () => {
     const html = render('nutricionista');
 
-    expect(html.match(/role="tab"/g)).toHaveLength(3);
+    expect(html.match(/role="tab"/g)).toHaveLength(4);
     expect(html.match(/aria-selected="true"/g)).toHaveLength(1);
     expect(html).toContain(
       'id="plan-category-tab-nutricionista" aria-selected="true" aria-controls="plan-category-panel" tabindex="0"'
@@ -59,7 +60,7 @@ describe('test coverage — plan category tabs', () => {
     const html = render('educador-fisico');
 
     expect(html).toContain('<label for="plan-category-select"');
-    expect(html.match(/<option /g)).toHaveLength(3);
+    expect(html.match(/<option /g)).toHaveLength(4);
     expect(html).toContain('value="educador-fisico" selected=""');
   });
 });

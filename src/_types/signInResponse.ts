@@ -6,5 +6,6 @@ export interface SignInResponse {
   productId: string | null;
   productType?: string;
   productGroupId?: string;
+  role?: string;
   accessToken: string;
 }

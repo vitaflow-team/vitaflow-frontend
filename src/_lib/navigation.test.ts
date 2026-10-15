@@ -333,6 +333,38 @@ describe('professional personal use — navigation', () => {
   });
 });
 
+describe('gym-foundation — Academia and receptionist navigation (US-002, US-005)', () => {
+  it('shows Painel instead of Início, plus every Academia-only section and Configurações', () => {
+    const menu = getMenuGroups('ACADEMIA');
+
+    expect(menu[0].items.map(item => item.title)).toEqual([
+      'Painel',
+      'Professores',
+      'Alunos',
+      'Turmas',
+      'Engajamento',
+    ]);
+    expect(menu[0].items.map(item => item.title)).not.toContain('Início');
+    expect(menu[1].items.map(item => item.title)).toEqual(['Configurações']);
+  });
+
+  it('shows the receptionist only Check-in, never Início or Configurações', () => {
+    const menu = getMenuGroups('RECEPTIONIST');
+
+    expect(menu[0].items.map(item => item.title)).toEqual(['Check-in']);
+    expect(menu[1].items).toEqual([]);
+  });
+
+  it('keeps every other account type unaffected by the Académia/receptionist carve-out', () => {
+    expect(getMenuGroups('USER')[0].items.map(item => item.title)).toContain(
+      'Início'
+    );
+    expect(
+      getMenuGroups('NUTRITIONIST')[1].items.map(item => item.title)
+    ).toEqual(['Configurações']);
+  });
+});
+
 describe('educator student area — navigation (UT-155, UT-156)', () => {
   it('UT-155 shows Alunos, pointing to /restrict/students, and not Pessoas to a physical educator', () => {
     const menu = getMenuGroups('PHYSICAL_EDUCATOR')[0].items;

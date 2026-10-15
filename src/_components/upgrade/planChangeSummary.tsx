@@ -6,6 +6,7 @@ const AUDIENCE_LABEL: Record<PlanType, string> = {
   USER: 'uso pessoal',
   NUTRITIONIST: 'nutricionista',
   PHYSICAL_EDUCATOR: 'educador físico',
+  ACADEMIA: 'academia',
 };
 
 export function audienceLabel(type: PlanType): string {

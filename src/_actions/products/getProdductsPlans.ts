@@ -13,7 +13,11 @@ interface ProductInfo {
 }
 
 /** Account type the plan serves, as the backend returns it from `/products`. */
-export type ProductTypeName = 'USER' | 'NUTRITIONIST' | 'PHYSICAL_EDUCATOR';
+export type ProductTypeName =
+  | 'USER'
+  | 'NUTRITIONIST'
+  | 'PHYSICAL_EDUCATOR'
+  | 'ACADEMIA';
 
 export interface Product {
   id: string;
