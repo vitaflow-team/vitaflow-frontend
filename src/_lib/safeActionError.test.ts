@@ -87,4 +87,17 @@ describe('auth input hardening — safe action errors', () => {
 
     expect(toSafeActionError('someAction', own)).toBe(own);
   });
+
+  it('platform-admin-access: shows the "ver como" read-only message for view_as_write_blocked, regardless of the action\'s own table', () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const error = Object.assign(new AppError('ignored', 403), {
+      code: 'view_as_write_blocked',
+    });
+
+    const result = toSafeActionError('anyUnrelatedAction', error, TABLE);
+
+    expect(result.message).toContain('ver como');
+    expect(result.message).toContain('somente leitura');
+    log.mockRestore();
+  });
 });

@@ -10,6 +10,7 @@ import {
   createNonce,
 } from '@/_lib/contentSecurityPolicy';
 import { canAccess, resolveRedirect } from '@/_lib/routeAccess';
+import { VIEW_AS_COOKIE_NAME } from '@/_constants/viewAsCookie';
 import type { SecurityContext } from '@/_types/securityContext';
 import { auth } from '@/auth';
 import { NextResponse, type NextRequest } from 'next/server';
@@ -147,7 +148,14 @@ const authMiddleware = auth(async (req: any) => {
     );
   }
 
-  if (isLogged && !APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
+  // A "ver como" session shows the target account's real screens, which
+  // the staff member's own product type (frequently none at all) would
+  // otherwise never pass this gate for — the backend's own per-request
+  // re-authorization against the view-as token is the real boundary here,
+  // not this frontend route table (platform-admin-access ADR-004).
+  const isViewingAs = Boolean(req.cookies.get(VIEW_AS_COOKIE_NAME)?.value);
+
+  if (isLogged && !isViewingAs && !APP_ROUTES.EXCLUDED_ROUTES.includes(path)) {
     const productType = effectiveAccountType(req.auth?.user);
     if (!canAccess(path, productType)) {
       return NextResponse.redirect(
