@@ -5,6 +5,13 @@ import { AppError } from './AppError';
 export const SAFE_ACTION_FALLBACK =
   'Não foi possível concluir a ação. Tente novamente.';
 
+// Any mutating action, anywhere in the app, can receive this one backend
+// code while a "ver como" session is active (platform-admin-access ADR-004)
+// — checked ahead of every action's own table so the specific message
+// always wins, without every existing action needing to list it itself.
+const VIEW_AS_WRITE_BLOCKED_MESSAGE =
+  'Esta é uma sessão "ver como" — somente leitura. Encerre-a para fazer alterações.';
+
 export const TOO_MANY_REQUESTS: ErrorMapping = {
   status: 429,
   message: 'Muitas tentativas. Aguarde alguns instantes e tente novamente.',
@@ -66,5 +73,8 @@ export function toSafeActionError(
 ): ZSAError {
   if (error instanceof ZSAError) return error;
   logActionError(action, error);
+  if (errorCode(error) === 'view_as_write_blocked') {
+    return new ZSAError('ERROR', VIEW_AS_WRITE_BLOCKED_MESSAGE);
+  }
   return new ZSAError('ERROR', mapKnownError(error, table));
 }

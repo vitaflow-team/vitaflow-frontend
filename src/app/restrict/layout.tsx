@@ -4,6 +4,8 @@ import { BottomNav } from '@/_components/layout/bottomNav';
 import { MobileHeader } from '@/_components/layout/mobileHeader';
 import { NotificationsBell } from '@/_components/layout/notificationsBell';
 import { Topbar } from '@/_components/layout/topbar';
+import { RestrictMain } from '@/_components/layout/restrictMain';
+import { ViewAsBanner } from '@/_components/backoffice/viewAsBanner';
 import { SidebarProvider } from '@/_components/ui/sidebar';
 import { SIDEBAR_COOKIE_NAME } from '@/_constants/sidebar';
 import { effectiveAccountType } from '@/_lib/accountType';
@@ -47,17 +49,12 @@ export default async function RestrictLayout({
           plan={plan}
         />
         <div className="flex min-h-svh w-full min-w-0 flex-col">
+          <Suspense fallback={null}>
+            <ViewAsBanner />
+          </Suspense>
           <MobileHeader />
           <Topbar notificationsBell={<NotificationsBell />} />
-          {/* Alvo do link "Pular para o conteúdo" do layout raiz. O espaço
-              embaixo reserva a altura da barra inferior mais a área segura do
-              aparelho, e some a partir de md, onde a barra não existe. */}
-          <main
-            id="main-content"
-            className="flex min-w-0 flex-1 flex-col px-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:px-6 md:pb-6"
-          >
-            {children}
-          </main>
+          <RestrictMain>{children}</RestrictMain>
         </div>
         <BottomNav productType={accountType} />
       </SidebarProvider>

@@ -4,6 +4,30 @@ import { cookies } from 'next/headers';
 import { ACCESS_TOKEN_COOKIE_NAME } from './accessTokenCookie';
 import { AppError } from './AppError';
 import { env } from './env';
+import { getViewAsState } from './viewAsCookie';
+
+export interface ApiClientOptions {
+  /**
+   * Forces the caller's own access-token cookie even when a "ver como"
+   * session is active — every backoffice-management call (directory,
+   * start/end session, staff, audit log) must always act as the staff
+   * member themselves, never as whoever they're currently viewing as
+   * (platform-admin-access ADR-004).
+   */
+  ownToken?: boolean;
+}
+
+// A "ver como" session's token stands in for the caller's own, for every
+// request made while browsing the target's screens — the existing app is
+// reused as-is, and the backend's own global write-block guard is what
+// actually enforces read-only, not anything on this side (ADR-004).
+async function resolveAccessToken(
+  options: ApiClientOptions | undefined
+): Promise<string | undefined> {
+  const viewAs = options?.ownToken ? null : await getViewAsState();
+  if (viewAs) return viewAs.token;
+  return (await cookies()).get(ACCESS_TOKEN_COOKIE_NAME)?.value;
+}
 
 /** The backend's `{ message, code, details }` answer as an AppError. */
 async function backendError(response: Response): Promise<AppError> {
@@ -24,7 +48,8 @@ async function backendError(response: Response): Promise<AppError> {
 
 export async function apiClient<T = unknown>(
   path: string,
-  init?: RequestInit
+  init?: RequestInit,
+  options?: ApiClientOptions
 ): Promise<T> {
   const baseUrl = env.BACKEND_URL;
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
@@ -32,7 +57,7 @@ export async function apiClient<T = unknown>(
 
   const headers = new Headers(init?.headers);
 
-  const accessToken = (await cookies()).get(ACCESS_TOKEN_COOKIE_NAME)?.value;
+  const accessToken = await resolveAccessToken(options);
   if (accessToken) {
     headers.set('Authorization', `Bearer ${accessToken}`);
   }

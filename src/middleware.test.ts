@@ -307,6 +307,27 @@ describe('middleware restricted route access', () => {
   });
 });
 
+describe('platform-admin-access — "ver como" bypasses the product-type gate', () => {
+  it('lets a staff account with no product type reach any route while viewing as', async () => {
+    const request = authenticatedRequest('/restrict/clients', undefined, {
+      cookie: 'vf_view_as=anything',
+    });
+
+    expectPassThrough(
+      await middleware(request, { params: Promise.resolve({}) })
+    );
+  });
+
+  it('still gates normally once the "ver como" cookie is absent', async () => {
+    const request = authenticatedRequest('/restrict/clients', 'USER');
+    const response = await middleware(request, {
+      params: Promise.resolve({}),
+    });
+
+    expect(response?.status).toBe(307);
+  });
+});
+
 describe('professional personal use — middleware access', () => {
   it('IT-007 lets a professional open Minha evolução and blocks a USER on Pessoas', async () => {
     for (const productType of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
