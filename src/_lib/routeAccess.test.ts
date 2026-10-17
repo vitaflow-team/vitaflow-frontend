@@ -2,20 +2,20 @@ import { describe, expect, it } from 'vitest';
 import { canAccess, resolveRedirect } from './routeAccess';
 
 describe('restricted route access', () => {
-  it('UT-001 denies a USER on the clients route', () => {
-    expect(canAccess('/restrict/clients', 'USER')).toBe(false);
+  it('UT-001 denies a USER on the patients route', () => {
+    expect(canAccess('/restrict/patients', 'USER')).toBe(false);
   });
 
-  it('UT-002 denies a USER on a nested client route', () => {
-    expect(canAccess('/restrict/clients/123', 'USER')).toBe(false);
+  it('UT-002 denies a USER on a nested patient route', () => {
+    expect(canAccess('/restrict/patients/123', 'USER')).toBe(false);
   });
 
-  it('UT-003 allows a nutritionist on a nested client route', () => {
-    expect(canAccess('/restrict/clients/123', 'NUTRITIONIST')).toBe(true);
+  it('UT-003 allows a nutritionist on a nested patient route', () => {
+    expect(canAccess('/restrict/patients/123', 'NUTRITIONIST')).toBe(true);
   });
 
   it('UT-004 does not match a route at a partial segment boundary', () => {
-    expect(canAccess('/restrict/clients-archive', 'USER')).toBe(true);
+    expect(canAccess('/restrict/patients-archive', 'USER')).toBe(true);
   });
 
   it('UT-005 keeps home open without a product type', () => {
@@ -40,7 +40,7 @@ describe('restricted route access', () => {
     expect(canAccess('/restrict/unknown', null)).toBe(true);
   });
 
-  const blockedRequest = 'https://vitaflow.test/restrict/clients';
+  const blockedRequest = 'https://vitaflow.test/restrict/patients';
 
   it('UT-010 returns to an allowed same-origin restricted referer', () => {
     expect(
@@ -88,7 +88,7 @@ describe('restricted route access', () => {
     expect(
       resolveRedirect({
         requestUrl: blockedRequest,
-        referer: 'https://vitaflow.test/restrict/clients/5',
+        referer: 'https://vitaflow.test/restrict/patients/5',
         productType: 'USER',
       }).toString()
     ).toBe('https://vitaflow.test/restrict?aviso=sem-permissao');
@@ -124,12 +124,12 @@ describe('professional personal use — route access', () => {
   });
 
   it('UT-012 keeps Pessoas professional-only and a typeless account denied', () => {
-    expect(canAccess('/restrict/clients', 'USER')).toBe(false);
+    expect(canAccess('/restrict/patients', 'USER')).toBe(false);
 
-    expect(canAccess('/restrict/clients', 'NUTRITIONIST')).toBe(true);
-    expect(canAccess('/restrict/clients', 'PHYSICAL_EDUCATOR')).toBe(false);
+    expect(canAccess('/restrict/patients', 'NUTRITIONIST')).toBe(true);
+    expect(canAccess('/restrict/patients', 'PHYSICAL_EDUCATOR')).toBe(false);
 
-    expect(canAccess('/restrict/clients', '')).toBe(false);
+    expect(canAccess('/restrict/patients', '')).toBe(false);
     expect(canAccess('/restrict/progress', '')).toBe(false);
     expect(canAccess('/restrict/workouts', '')).toBe(false);
     expect(canAccess('/restrict', '')).toBe(true);
@@ -138,7 +138,7 @@ describe('professional personal use — route access', () => {
 });
 
 describe('educator student area — route access (UT-157)', () => {
-  it('UT-157 denies a nutritionist the students area and an educator the clients area', () => {
+  it('UT-157 denies a nutritionist the students area and an educator the patients area', () => {
     for (const path of [
       '/restrict/students',
       '/restrict/students/abc',
@@ -149,6 +149,8 @@ describe('educator student area — route access (UT-157)', () => {
       expect(canAccess(path, 'USER')).toBe(false);
       expect(canAccess(path, '')).toBe(false);
     }
-    expect(canAccess('/restrict/clients/abc', 'PHYSICAL_EDUCATOR')).toBe(false);
+    expect(canAccess('/restrict/patients/abc', 'PHYSICAL_EDUCATOR')).toBe(
+      false
+    );
   });
 });

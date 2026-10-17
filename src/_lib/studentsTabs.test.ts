@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
   activeStudentTab,
-  newAssessmentHref,
   STUDENT_TAB_LABELS,
   STUDENT_TABS,
   studentTabHref,
@@ -10,9 +9,10 @@ import {
 const ID = '01890a5d-ac96-774b-bcce-b302099a8057';
 
 describe('student record tabs', () => {
-  it('UT-122 has exactly the tabs Visão geral, Avaliação física, Treinos and Horários', () => {
+  it('UT-122 has exactly the tabs Visão geral, Anamnese, Avaliação física, Treinos and Horários', () => {
     expect(STUDENT_TABS.map(tab => STUDENT_TAB_LABELS[tab])).toEqual([
       'Visão geral',
+      'Anamnese',
       'Avaliação física',
       'Treinos',
       'Horários',
@@ -30,14 +30,14 @@ describe('student record tabs', () => {
 
   it('gives each tab its own address', () => {
     expect(studentTabHref(ID, 'overview')).toBe(`/restrict/students/${ID}`);
+    expect(studentTabHref(ID, 'anamnese')).toBe(
+      `/restrict/students/${ID}/anamnese`
+    );
     expect(studentTabHref(ID, 'assessment')).toBe(
       `/restrict/students/${ID}/assessment`
     );
     expect(studentTabHref(ID, 'workouts')).toBe(
       `/restrict/students/${ID}/workouts`
-    );
-    expect(newAssessmentHref(ID)).toBe(
-      `/restrict/students/${ID}/assessment?nova=1`
     );
   });
 

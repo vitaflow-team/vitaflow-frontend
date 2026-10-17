@@ -4,6 +4,7 @@ import {
   CalendarDays,
   CalendarRange,
   ChartNoAxesCombined,
+  ClipboardList,
   Dumbbell,
   Home,
   Inbox,
@@ -38,8 +39,12 @@ const PRIVATE: AppRoute[] = [
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
   {
+    // Rota nova (nutritionist-module task_06): a antiga /restrict/clients
+    // seguia o caminho legado flagueado no TechSpec (ownership mais fraco,
+    // sem integração com anamnese/avaliação); o cadastro/lista/ficha reais da
+    // nutricionista agora vivem aqui.
     TITLE: 'Pessoas',
-    URL: '/restrict/clients',
+    URL: '/restrict/patients',
     ICON: User2,
     // Só a nutricionista: o educador físico tem a própria área de alunos.
     PRODUCT_TYPE: ['NUTRITIONIST'],
@@ -74,6 +79,12 @@ const PRIVATE: AppRoute[] = [
     TITLE: 'Turmas',
     URL: '/restrict/academia-turmas',
     ICON: CalendarRange,
+    PRODUCT_TYPE: ['ACADEMIA'],
+  },
+  {
+    TITLE: 'Modelos',
+    URL: '/restrict/academia-modelos',
+    ICON: ClipboardList,
     PRODUCT_TYPE: ['ACADEMIA'],
   },
   {

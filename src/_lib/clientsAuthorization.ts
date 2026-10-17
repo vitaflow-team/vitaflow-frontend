@@ -8,7 +8,12 @@ import { toSafeActionError } from '@/_lib/safeActionError';
 import { redirect, unstable_rethrow } from 'next/navigation';
 import { ZSAError } from 'zsa';
 
-const CLIENTS_ROUTE = '/restrict/clients';
+// The governing PRIVATE entry for this allowed-types set is now registered
+// under /restrict/patients (nutritionist-module task_06 repointed "Pessoas"
+// there); /restrict/clients itself still exists as a legacy, unlinked path
+// (TechSpec Impact Analysis) and keeps calling this same check, so the
+// constant follows the entry rather than the page's own URL.
+const CLIENTS_ROUTE = '/restrict/patients';
 export const CLIENTS_ACCESS_DENIED =
   'Esta área não está disponível para o seu tipo de conta.';
 

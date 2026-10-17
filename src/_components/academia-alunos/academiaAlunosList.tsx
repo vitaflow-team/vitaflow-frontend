@@ -1,5 +1,7 @@
+import { buttonVariants } from '@/_components/ui/button';
 import type { AcademiaEmployment } from '@/_types/academia';
 import type { AcademiaStudentListItem } from '@/_types/academiaAlunos';
+import Link from 'next/link';
 import { AcademiaAlunoAssignSelect } from './academiaAlunoAssignSelect';
 import { StudentAccessPlanPanel } from './studentAccessPlanPanel';
 
@@ -52,10 +54,18 @@ export function AcademiaAlunosList({
               student={item}
               employments={employments}
             />
-            <StudentAccessPlanPanel
-              clientId={item.id}
-              studentName={item.name}
-            />
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/restrict/academia-alunos/${item.id}`}
+                className={buttonVariants({ variant: 'outline', size: 'sm' })}
+              >
+                Avaliar
+              </Link>
+              <StudentAccessPlanPanel
+                clientId={item.id}
+                studentName={item.name}
+              />
+            </div>
           </div>
         </li>
       ))}

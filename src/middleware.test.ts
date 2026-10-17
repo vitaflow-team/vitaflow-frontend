@@ -243,7 +243,7 @@ function authenticatedRequest(
 
 describe('middleware restricted route access', () => {
   it('IT-001 redirects a blocked user to an allowed same-origin referer with a notice', async () => {
-    const request = authenticatedRequest('/restrict/clients', 'USER', {
+    const request = authenticatedRequest('/restrict/patients', 'USER', {
       referer: 'https://vitaflow.test/restrict/progress',
     });
     const response = await middleware(request, { params: Promise.resolve({}) });
@@ -255,7 +255,7 @@ describe('middleware restricted route access', () => {
   });
 
   it('IT-002 redirects a blocked nested route to restricted home', async () => {
-    const request = authenticatedRequest('/restrict/clients/123', 'USER');
+    const request = authenticatedRequest('/restrict/patients/123', 'USER');
     const response = await middleware(request, { params: Promise.resolve({}) });
 
     expect(response?.status).toBe(307);
@@ -264,9 +264,9 @@ describe('middleware restricted route access', () => {
     );
   });
 
-  it('IT-003 allows a professional on a nested client route', async () => {
+  it('IT-003 allows a professional on a nested patient route', async () => {
     const request = authenticatedRequest(
-      '/restrict/clients/123',
+      '/restrict/patients/123',
       'NUTRITIONIST'
     );
 
@@ -287,7 +287,7 @@ describe('middleware restricted route access', () => {
   });
 
   it('IT-005 preserves the signed-out rewrite without a permission notice', async () => {
-    const request = new NextRequest('https://vitaflow.test/restrict/clients');
+    const request = new NextRequest('https://vitaflow.test/restrict/patients');
     const response = await middleware(request, { params: Promise.resolve({}) });
 
     expect(response?.headers.get('x-middleware-rewrite')).toBeTruthy();
@@ -296,7 +296,7 @@ describe('middleware restricted route access', () => {
   });
 
   it('IT-006 rejects an external referer and stays on the request origin', async () => {
-    const request = authenticatedRequest('/restrict/clients', 'USER', {
+    const request = authenticatedRequest('/restrict/patients', 'USER', {
       referer: 'https://evil.example/x',
     });
     const response = await middleware(request, { params: Promise.resolve({}) });
@@ -309,7 +309,7 @@ describe('middleware restricted route access', () => {
 
 describe('platform-admin-access — "ver como" bypasses the product-type gate', () => {
   it('lets a staff account with no product type reach any route while viewing as', async () => {
-    const request = authenticatedRequest('/restrict/clients', undefined, {
+    const request = authenticatedRequest('/restrict/patients', undefined, {
       cookie: 'vf_view_as=anything',
     });
 
@@ -319,7 +319,7 @@ describe('platform-admin-access — "ver como" bypasses the product-type gate', 
   });
 
   it('still gates normally once the "ver como" cookie is absent', async () => {
-    const request = authenticatedRequest('/restrict/clients', 'USER');
+    const request = authenticatedRequest('/restrict/patients', 'USER');
     const response = await middleware(request, {
       params: Promise.resolve({}),
     });
@@ -338,7 +338,7 @@ describe('professional personal use — middleware access', () => {
       );
     }
 
-    const blocked = authenticatedRequest('/restrict/clients', 'USER');
+    const blocked = authenticatedRequest('/restrict/patients', 'USER');
     const response = await middleware(blocked, {
       params: Promise.resolve({}),
     });
@@ -422,7 +422,7 @@ describe('platform hardening — CSP nonce', () => {
     vi.stubEnv('NODE_ENV', 'production');
 
     const response = await middleware(
-      new NextRequest('https://vitaflow.test/restrict/clients'),
+      new NextRequest('https://vitaflow.test/restrict/patients'),
       { params: Promise.resolve({}) }
     );
 

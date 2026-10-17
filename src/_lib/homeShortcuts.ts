@@ -1,6 +1,6 @@
 import { APP_ROUTES, type AppRoute } from '@/_constants/routes';
 
-const PEOPLE_URLS = ['/restrict/clients', '/restrict/students'];
+const PEOPLE_URLS = ['/restrict/patients', '/restrict/students'];
 
 /**
  * The professional's way to the people they follow: "Pessoas" for a

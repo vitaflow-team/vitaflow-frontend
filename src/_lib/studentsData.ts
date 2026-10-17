@@ -3,7 +3,7 @@ import 'server-only';
 import { apiClient } from '@/_lib/apiClient';
 import { AppError } from '@/_lib/AppError';
 import type { LoadFailure } from '@/_types/loadFailure';
-import type { AssessmentList, Student, StudentList } from '@/_types/students';
+import type { Student, StudentList } from '@/_types/students';
 import { unstable_rethrow } from 'next/navigation';
 import { cache } from 'react';
 import { z } from 'zod';
@@ -78,30 +78,3 @@ export const loadStudent = cache(
     );
   }
 );
-
-export async function loadAssessments(
-  studentId: string,
-  page: number
-): Promise<AssessmentList | LoadFailure> {
-  if (!uuidSchema.safeParse(studentId).success) return 'not-found';
-
-  return await guarded('assessments', () =>
-    apiClient<AssessmentList>(
-      `/educator/students/${studentId}/assessments?page=${page}`,
-      { method: 'GET', cache: 'no-store' }
-    )
-  );
-}
-
-export async function loadDeclarationAccepted(): Promise<
-  boolean | LoadFailure
-> {
-  const result = await guarded('declaration', () =>
-    apiClient<{ accepted: boolean }>('/educator/assessment-declaration', {
-      method: 'GET',
-      cache: 'no-store',
-    })
-  );
-
-  return isLoadFailure(result) ? result : result.accepted;
-}

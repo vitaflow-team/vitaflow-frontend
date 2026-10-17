@@ -1,26 +1,59 @@
+import type { Bmi } from '@/_types/clinicalRecords';
+import type { MealPlanMeal, MealPlanVersion, Weekday } from '@/_types/mealPlan';
+
 export interface MirrorProfessional {
   id: string;
   name: string;
   specialty: string | null;
+  /** Omitted entirely when never set — never sent as null (PRD ADR-009). */
+  registrationNumber?: string;
+  /** Present only alongside registrationNumber. */
+  registrationLabel?: 'CRN' | 'CREF';
 }
 
-// The binding read contract (backend TechSpec § Core Interfaces): every
-// field below besides `professional` is always null today — no feature yet
-// writes it. Typed as the literal `null`, not `T | null`, because nothing in
-// this codebase's scope ever produces another value for it.
-export interface NutritionistMirror {
-  professional: MirrorProfessional;
-  mealPlan: null;
-  nextConsultation: null;
-  billingStatus: null;
+export interface MirrorAssessmentValue {
+  fieldLabel: string;
+  value: string | number | boolean | null;
 }
 
+/** One filled clinical-records FormRecord (anamnese or assessment) as the patient/student sees it. */
 export interface MirrorAssessment {
   id: string;
-  /** Calendar date, `YYYY-MM-DD`. */
-  assessedOn: string;
-  weightKg: number;
-  bodyFatPercent: number | null;
+  recordedAt: string;
+  values: MirrorAssessmentValue[];
+  bmi: Bmi | null;
+}
+
+export interface MirrorMealPlanDay {
+  weekday: Weekday;
+  meals: MealPlanMeal[];
+}
+
+/** The current published meal plan, with access to its full version history (ADR-008). */
+export interface MirrorMealPlan {
+  currentVersion: number;
+  publishedAt: string;
+  days: MirrorMealPlanDay[];
+  versions: MealPlanVersion[];
+}
+
+/** One past published version's full content, fetched on demand. */
+export interface MirrorMealPlanVersionContent {
+  version: number;
+  publishedAt: string;
+  days: MirrorMealPlanDay[];
+}
+
+export interface NutritionistMirror {
+  professional: MirrorProfessional;
+  /** The patient's current anamnese answers, or null when none exist yet. */
+  anamnese: MirrorAssessment | null;
+  /** The patient's full assessment history, newest first; empty (never null) when none exist yet. */
+  assessmentHistory: MirrorAssessment[];
+  /** The current published meal plan, or null when none exists yet. */
+  mealPlan: MirrorMealPlan | null;
+  nextConsultation: null;
+  billingStatus: null;
 }
 
 export interface MirrorWorkoutSession {

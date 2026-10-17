@@ -22,6 +22,11 @@ export function ProfessionalProfileDetail({
           {profile.attendsOnline && <span>Atende online</span>}
         </p>
         <p className="font-semibold">{formatPrice(profile.priceFrom)}</p>
+        {profile.registrationNumber && (
+          <p className="text-sm text-muted-foreground">
+            {profile.registrationLabel}: {profile.registrationNumber}
+          </p>
+        )}
       </div>
       <p className="text-sm whitespace-pre-wrap">
         {profile.bio ?? 'Este profissional ainda não preencheu uma bio.'}

@@ -38,6 +38,10 @@ export const updateProfileSchema = z.object({
       .optional()
   ),
   attendsOnline: z.boolean().optional(),
+  registrationNumber: z
+    .string()
+    .max(40, 'O número de registro pode ter no máximo 40 caracteres.')
+    .optional(),
 });
 
 export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
