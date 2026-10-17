@@ -133,6 +133,22 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
     expect(html).toContain('Sem horário');
   });
 
+  // US-025: the owner can open any student, assigned or not, to record a
+  // baseline assessment directly.
+  it('links each student to their detail page for a direct assessment', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaAlunosView
+        list={POPULATED}
+        employments={EMPLOYMENTS}
+        horario={undefined}
+      />
+    );
+
+    expect(html).toContain('href="/restrict/academia-alunos/s1"');
+    expect(html).toContain('href="/restrict/academia-alunos/s2"');
+    expect(html.match(/Avaliar/g)).toHaveLength(2);
+  });
+
   it('renders the horário filter tabs with the selected one marked', () => {
     const html = renderToStaticMarkup(
       <AcademiaAlunosView

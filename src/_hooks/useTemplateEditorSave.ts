@@ -1,9 +1,8 @@
 'use client';
 
-import { createTemplate } from '@/_actions/clinicalRecords/createTemplate';
-import { updateTemplate } from '@/_actions/clinicalRecords/updateTemplate';
 import { toFieldInput } from '@/_lib/templateFieldDrafts';
 import type { Template, TemplatePurpose } from '@/_types/clinicalRecords';
+import type { TemplateActions } from '@/_types/clinicalRecordsActions';
 import type { TemplateFieldDraft } from '@/_types/templateFieldDraft';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -12,6 +11,7 @@ import { useServerAction } from 'zsa-react';
 interface UseTemplateEditorSaveInput {
   purpose: TemplatePurpose;
   existing?: Template;
+  actions: TemplateActions;
   onSaved: () => void;
 }
 
@@ -19,12 +19,13 @@ interface UseTemplateEditorSaveInput {
 export function useTemplateEditorSave({
   purpose,
   existing,
+  actions,
   onSaved,
 }: UseTemplateEditorSaveInput) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const create = useServerAction(createTemplate);
-  const update = useServerAction(updateTemplate);
+  const create = useServerAction(actions.create);
+  const update = useServerAction(actions.update);
   const isPending = create.isPending || update.isPending;
 
   async function save(name: string, fields: TemplateFieldDraft[]) {

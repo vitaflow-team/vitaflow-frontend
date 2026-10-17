@@ -37,21 +37,32 @@ const STUDENT: Student = {
 
 const LATEST = {
   id: 'a1',
-  studentId: 's1',
-  assessedOn: '2026-09-15',
-  weightKg: 78.2,
-  heightCm: 179,
-  bodyFatPercent: 18.4,
-  restingHeartRate: null,
-  flexibilityCm: null,
-  armCm: null,
-  chestCm: null,
-  waistCm: null,
-  abdomenCm: null,
-  hipCm: null,
-  thighCm: null,
-  calfCm: null,
-  createdAt: '2026-09-15T15:00:00.000Z',
+  recordedAt: '2026-09-15T15:00:00.000Z',
+  recordedByUserId: 'educator-1',
+  values: [
+    {
+      fieldLabel: 'Peso (kg)',
+      value: 78.2,
+      fieldType: 'NUMBER' as const,
+      weightRole: true,
+      heightRole: false,
+    },
+    {
+      fieldLabel: 'Altura (cm)',
+      value: 179,
+      fieldType: 'NUMBER' as const,
+      weightRole: false,
+      heightRole: true,
+    },
+    {
+      fieldLabel: 'Gordura corporal (%)',
+      value: 18.4,
+      fieldType: 'NUMBER' as const,
+      weightRole: false,
+      heightRole: false,
+    },
+  ],
+  bmi: { value: 24.4, classification: 'PESO_NORMAL' as const },
 };
 
 describe('student record header', () => {
@@ -130,13 +141,14 @@ describe('student record header', () => {
 });
 
 describe('student record tabs', () => {
-  it('UT-122 lists exactly Visão geral, Avaliação física, Treinos and Horários', () => {
+  it('UT-122 lists exactly Visão geral, Anamnese, Avaliação física, Treinos and Horários', () => {
     const html = renderToStaticMarkup(
       <StudentTabList studentId="s1" selected="overview" />
     );
 
-    expect(html.match(/role="tab"/g)).toHaveLength(4);
+    expect(html.match(/role="tab"/g)).toHaveLength(5);
     expect(html).toContain('Visão geral');
+    expect(html).toContain('Anamnese');
     expect(html).toContain('Avaliação física');
     expect(html).toContain('Treinos');
     expect(html).toContain('Horários');
@@ -156,13 +168,13 @@ describe('student record tabs', () => {
 });
 
 describe('student overview', () => {
-  it('UT-128 shows the latest date, body fat, weight, height and the change since the first', () => {
+  it('UT-128 shows the latest date, field values, BMI and the change since the first', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
         overview={{
           latest: LATEST,
-          variation: { weightKg: -2.1, bodyFatPoints: -1.5 },
+          variation: { weightKg: -2.1 },
           currentWorkout: null,
           nextSession: null,
         }}
@@ -170,11 +182,11 @@ describe('student overview', () => {
     );
 
     expect(html).toContain('15/09/2026');
-    expect(html).toContain('18,4%');
-    expect(html).toContain('78,2 kg');
-    expect(html).toContain('179 cm');
+    expect(html).toContain('18.4');
+    expect(html).toContain('78.2');
+    expect(html).toContain('179');
+    expect(html).toContain('IMC 24,4 · Peso normal');
     expect(html).toContain('Peso: −2,1 kg');
-    expect(html).toContain('Gordura corporal: −1,5 pp');
   });
 
   it('UT-129 says there is no assessment and offers "Nova avaliação", with no placeholder numbers', () => {
@@ -192,7 +204,7 @@ describe('student overview', () => {
 
     expect(html).toContain('Nenhuma avaliação registrada ainda.');
     expect(html).toContain('Nova avaliação');
-    expect(html).toContain('href="/restrict/students/s1/assessment?nova=1"');
+    expect(html).toContain('href="/restrict/students/s1/assessment"');
     expect(html).not.toMatch(/\d+,\d kg/);
   });
 
@@ -213,12 +225,18 @@ describe('student overview', () => {
     expect(html).not.toContain('sem variação');
   });
 
-  it('UT-131 states that body fat was not recorded', () => {
+  it('UT-131 shows a missing field value as an em dash', () => {
     const html = renderToStaticMarkup(
       <StudentOverviewCard
         studentId="s1"
         overview={{
-          latest: { ...LATEST, bodyFatPercent: null },
+          latest: {
+            ...LATEST,
+            values: [
+              ...LATEST.values.slice(0, 2),
+              { ...LATEST.values[2], value: null },
+            ],
+          },
           variation: null,
           currentWorkout: null,
           nextSession: null,
@@ -226,7 +244,7 @@ describe('student overview', () => {
       />
     );
 
-    expect(html).toContain('Gordura corporal não registrada nesta avaliação.');
+    expect(html).toContain('—');
   });
 });
 

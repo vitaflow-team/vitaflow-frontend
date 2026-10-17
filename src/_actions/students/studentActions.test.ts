@@ -17,21 +17,12 @@ vi.mock('next/navigation', () => ({
   unstable_rethrow: vi.fn(),
 }));
 
-import { createAssessment } from './createAssessment';
 import { createStudent } from './createStudent';
-import { deleteAssessment } from './deleteAssessment';
 import { deleteStudent } from './deleteStudent';
 import { lookupStudentAccount } from './lookupStudentAccount';
-import { updateAssessment } from './updateAssessment';
 import { updateStudent } from './updateStudent';
 
 const ID = '01890a5d-ac96-774b-bcce-b302099a8057';
-const OTHER = '01890a5d-ac96-774b-bcce-b302099a8099';
-const ASSESSMENT = {
-  assessedOn: '2026-09-15',
-  weightKg: '78,2',
-  heightCm: '179',
-};
 
 const ACTIONS = [
   ['lookupStudentAccount', () => lookupStudentAccount({ email: 'a@b.com' })],
@@ -46,19 +37,6 @@ const ACTIONS = [
   ],
   ['updateStudent', () => updateStudent({ id: ID, name: 'Ana' })],
   ['deleteStudent', () => deleteStudent({ id: ID })],
-  [
-    'createAssessment',
-    () => createAssessment({ studentId: ID, ...ASSESSMENT }),
-  ],
-  [
-    'updateAssessment',
-    () =>
-      updateAssessment({ studentId: ID, assessmentId: OTHER, ...ASSESSMENT }),
-  ],
-  [
-    'deleteAssessment',
-    () => deleteAssessment({ studentId: ID, assessmentId: OTHER }),
-  ],
 ] as const;
 
 describe('educator student actions', () => {
@@ -207,66 +185,12 @@ describe('educator student actions', () => {
     expect(missing?.message).toContain('Não encontramos uma conta ativa');
   });
 
-  it('UT-140 reports declaration_required as an outcome, not an error', async () => {
-    apiClientMock.mockRejectedValue(
-      new AppError('x', 403, 'declaration_required')
-    );
-
-    const [data, error] = await createAssessment({
-      studentId: ID,
-      ...ASSESSMENT,
-    });
-
-    expect(error).toBeNull();
-    expect(data).toEqual({ outcome: 'declaration_required' });
-  });
-
-  it('UT-134 sends parsed numbers and acceptDeclaration only when asked', async () => {
-    apiClientMock.mockResolvedValue({ id: 'a1' });
-
-    await createAssessment({
-      studentId: ID,
-      ...ASSESSMENT,
-      acceptDeclaration: true,
-    });
-
-    const [path, init] = apiClientMock.mock.calls[0];
-    expect(path).toBe(`/educator/students/${ID}/assessments`);
-    expect(JSON.parse(init.body)).toEqual({
-      assessedOn: '2026-09-15',
-      weightKg: 78.2,
-      heightCm: 179,
-      acceptDeclaration: true,
-    });
-  });
-
-  it('UT-137 answers a validation failure with a message to fix the data', async () => {
-    apiClientMock.mockRejectedValue(new AppError('x', 400));
-
-    const [, error] = await createAssessment({ studentId: ID, ...ASSESSMENT });
-
-    expect(error?.message).toContain('Verifique os dados');
-  });
-
   it('UT-151 treats a 404 on removing a student as already removed', async () => {
     apiClientMock.mockRejectedValue(
       new AppError('x', 404, 'student_not_found')
     );
 
     const [, error] = await deleteStudent({ id: ID });
-
-    expect(error).toBeNull();
-  });
-
-  it('treats a 404 on deleting an assessment as already deleted', async () => {
-    apiClientMock.mockRejectedValue(
-      new AppError('x', 404, 'assessment_not_found')
-    );
-
-    const [, error] = await deleteAssessment({
-      studentId: ID,
-      assessmentId: OTHER,
-    });
 
     expect(error).toBeNull();
   });
@@ -289,29 +213,8 @@ describe('educator student actions', () => {
 
   it('refuses an id that is not a UUID before building a path', async () => {
     const [, student] = await deleteStudent({ id: '../profile' });
-    const [, assessment] = await deleteAssessment({
-      studentId: ID,
-      assessmentId: 'x?y=1',
-    });
 
     expect(student?.message).toBe('Identificador inválido.');
-    expect(assessment?.message).toBe('Identificador inválido.');
     expect(apiClientMock).not.toHaveBeenCalled();
-  });
-
-  it('UT-137 sends an edit as a full replace without the studentId field in the body', async () => {
-    apiClientMock.mockResolvedValue({});
-
-    await updateAssessment({
-      studentId: ID,
-      assessmentId: OTHER,
-      ...ASSESSMENT,
-    });
-
-    const [path, init] = apiClientMock.mock.calls[0];
-    expect(path).toBe(`/educator/students/${ID}/assessments/${OTHER}`);
-    expect(init.method).toBe('PATCH');
-    expect(JSON.parse(init.body)).not.toHaveProperty('studentId');
-    expect(JSON.parse(init.body)).not.toHaveProperty('assessmentId');
   });
 });

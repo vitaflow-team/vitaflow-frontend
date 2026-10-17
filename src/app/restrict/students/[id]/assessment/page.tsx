@@ -1,12 +1,15 @@
-import { AssessmentTab } from '@/_components/students/assessmentTab';
+import { AssessmentSection } from '@/_components/clinicalRecords/assessmentSection';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import {
   isLoadFailure,
-  loadAssessments,
-  loadDeclarationAccepted,
+  loadFormRecordHistory,
+  loadTemplates,
+} from '@/_lib/clinicalRecordsData';
+import { EDUCATOR_CLINICAL_RECORDS_ACTIONS } from '@/_lib/educatorClinicalRecordsActions';
+import {
+  isLoadFailure as isStudentLoadFailure,
   loadStudent,
 } from '@/_lib/studentsData';
-import { parseStudentsParams } from '@/_lib/studentsList';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -15,25 +18,22 @@ export const metadata: Metadata = {
 
 interface StudentAssessmentPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ page?: string | string[]; nova?: string | string[] }>;
 }
 
-/** "Avaliação física": the history, the variation and the new-assessment form. */
+/** "Avaliação física": the same shared template/form-filling UI as the nutritionist (US-022/US-023). */
 export default async function StudentAssessmentPage({
   params,
-  searchParams,
 }: StudentAssessmentPageProps) {
   const { id } = await params;
-  const { page, nova } = await searchParams;
   const student = await loadStudent(id);
-  if (isLoadFailure(student)) return null;
+  if (isStudentLoadFailure(student)) return null;
 
-  const [list, accepted] = await Promise.all([
-    loadAssessments(student.id, parseStudentsParams({ page }).page),
-    loadDeclarationAccepted(),
+  const [templates, history] = await Promise.all([
+    loadTemplates('ASSESSMENT'),
+    loadFormRecordHistory(student.id, 'ASSESSMENT'),
   ]);
 
-  if (isLoadFailure(list)) {
+  if (isLoadFailure(templates) || isLoadFailure(history)) {
     return (
       <p className="text-sm text-muted-foreground">
         Não foi possível carregar as avaliações. Tente novamente em alguns
@@ -43,12 +43,11 @@ export default async function StudentAssessmentPage({
   }
 
   return (
-    <AssessmentTab
-      studentId={student.id}
-      list={list}
-      latest={student.overview.latest}
-      declarationAccepted={accepted === true}
-      openNewForm={nova === '1'}
+    <AssessmentSection
+      clientId={student.id}
+      templates={templates}
+      history={history}
+      actions={EDUCATOR_CLINICAL_RECORDS_ACTIONS}
     />
   );
 }

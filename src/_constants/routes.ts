@@ -4,6 +4,7 @@ import {
   CalendarDays,
   CalendarRange,
   ChartNoAxesCombined,
+  ClipboardList,
   Dumbbell,
   Home,
   Inbox,
@@ -78,6 +79,12 @@ const PRIVATE: AppRoute[] = [
     TITLE: 'Turmas',
     URL: '/restrict/academia-turmas',
     ICON: CalendarRange,
+    PRODUCT_TYPE: ['ACADEMIA'],
+  },
+  {
+    TITLE: 'Modelos',
+    URL: '/restrict/academia-modelos',
+    ICON: ClipboardList,
     PRODUCT_TYPE: ['ACADEMIA'],
   },
   {

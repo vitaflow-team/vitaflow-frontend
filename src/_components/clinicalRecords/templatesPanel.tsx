@@ -1,6 +1,5 @@
 'use client';
 
-import { discontinueTemplate } from '@/_actions/clinicalRecords/discontinueTemplate';
 import { Button } from '@/_components/ui/button';
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   DialogTrigger,
 } from '@/_components/ui/dialog';
 import type { Template, TemplatePurpose } from '@/_types/clinicalRecords';
+import type { TemplateActions } from '@/_types/clinicalRecordsActions';
 import { Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -19,11 +19,18 @@ import { TemplateEditor } from './templateEditor';
 interface TemplatesPanelProps {
   purpose: TemplatePurpose;
   templates: Template[];
+  actions: TemplateActions;
 }
 
-function TemplateRow({ template }: { template: Template }) {
+function TemplateRow({
+  template,
+  actions,
+}: {
+  template: Template;
+  actions: TemplateActions;
+}) {
   const router = useRouter();
-  const { execute, isPending } = useServerAction(discontinueTemplate);
+  const { execute, isPending } = useServerAction(actions.discontinue);
   const [editing, setEditing] = useState(false);
 
   return (
@@ -64,6 +71,7 @@ function TemplateRow({ template }: { template: Template }) {
         <TemplateEditor
           purpose={template.purpose}
           existing={template}
+          actions={actions}
           onSaved={() => setEditing(false)}
         />
       )}
@@ -72,7 +80,11 @@ function TemplateRow({ template }: { template: Template }) {
 }
 
 /** Create, edit and discontinue templates for one purpose (US-003/US-004). */
-export function TemplatesPanel({ purpose, templates }: TemplatesPanelProps) {
+export function TemplatesPanel({
+  purpose,
+  templates,
+  actions,
+}: TemplatesPanelProps) {
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
@@ -97,13 +109,18 @@ export function TemplatesPanel({ purpose, templates }: TemplatesPanelProps) {
         {creating ? (
           <TemplateEditor
             purpose={purpose}
+            actions={actions}
             onSaved={() => setCreating(false)}
           />
         ) : (
           <>
             <ul aria-label="Modelos" className="flex flex-col">
               {templates.map(template => (
-                <TemplateRow key={template.id} template={template} />
+                <TemplateRow
+                  key={template.id}
+                  template={template}
+                  actions={actions}
+                />
               ))}
             </ul>
             <Button

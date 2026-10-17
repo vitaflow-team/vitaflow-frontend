@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from '@/_components/ui/dialog';
 import type { FormRecord, Template } from '@/_types/clinicalRecords';
+import type { ClinicalRecordsActions } from '@/_types/clinicalRecordsActions';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { FormFillingForm } from './formFillingForm';
@@ -19,6 +20,7 @@ interface AssessmentSectionProps {
   clientId: string;
   templates: Template[];
   history: FormRecord[];
+  actions: ClinicalRecordsActions;
 }
 
 /**
@@ -29,6 +31,7 @@ export function AssessmentSection({
   clientId,
   templates,
   history,
+  actions,
 }: AssessmentSectionProps) {
   const [open, setOpen] = useState(false);
 
@@ -37,7 +40,11 @@ export function AssessmentSection({
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Avaliação</h2>
         <div className="flex items-center gap-2">
-          <TemplatesPanel purpose="ASSESSMENT" templates={templates} />
+          <TemplatesPanel
+            purpose="ASSESSMENT"
+            templates={templates}
+            actions={actions.template}
+          />
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button type="button" size="sm">
@@ -53,6 +60,7 @@ export function AssessmentSection({
                 clientId={clientId}
                 templates={templates}
                 existing={null}
+                actions={actions.formRecord}
                 onSaved={() => setOpen(false)}
               />
             </DialogContent>

@@ -7,6 +7,7 @@ import { Label } from '@/_components/ui/label';
 import { useTemplateEditorSave } from '@/_hooks/useTemplateEditorSave';
 import { blankField, draftsFromTemplate } from '@/_lib/templateFieldDrafts';
 import type { Template, TemplatePurpose } from '@/_types/clinicalRecords';
+import type { TemplateActions } from '@/_types/clinicalRecordsActions';
 import type { TemplateFieldDraft } from '@/_types/templateFieldDraft';
 import { useState } from 'react';
 import { TemplateFieldRow } from './templateFieldRow';
@@ -58,6 +59,7 @@ function TemplateFieldsEditor({
 interface TemplateEditorProps {
   purpose: TemplatePurpose;
   existing?: Template;
+  actions: TemplateActions;
   onSaved: () => void;
 }
 
@@ -69,6 +71,7 @@ interface TemplateEditorProps {
 export function TemplateEditor({
   purpose,
   existing,
+  actions,
   onSaved,
 }: TemplateEditorProps) {
   const [name, setName] = useState(existing?.name ?? '');
@@ -78,6 +81,7 @@ export function TemplateEditor({
   const { save, isPending, error } = useTemplateEditorSave({
     purpose,
     existing,
+    actions,
     onSaved,
   });
 

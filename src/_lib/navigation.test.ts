@@ -347,6 +347,7 @@ describe('gym-foundation — Academia and receptionist navigation (US-002, US-00
       'Professores',
       'Alunos',
       'Turmas',
+      'Modelos',
       'Engajamento',
     ]);
     expect(menu[0].items.map(item => item.title)).not.toContain('Início');

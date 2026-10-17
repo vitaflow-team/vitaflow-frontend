@@ -29,6 +29,7 @@ export const PAGE_TITLES = {
   academiaProfessores: 'Professores',
   academiaAlunos: 'Alunos da academia',
   academiaTurmas: 'Turmas',
+  academiaModelos: 'Modelos',
   academiaEngajamento: 'Engajamento',
   academiaCheckin: 'Check-in',
   employmentInvitations: 'Convites recebidos',

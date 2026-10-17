@@ -1,38 +1,9 @@
+import type { FormRecord } from '@/_types/clinicalRecords';
 import type { NextSessionSummary } from '@/_types/educatorSchedule';
 
+/** Latest minus first weight-tagged value on record, in kg (1 decimal). */
 export interface AssessmentVariation {
-  /** Latest minus first weight, in kg (1 decimal). */
   weightKg: number;
-  /** Change in percentage points, or null when fewer than two have body fat. */
-  bodyFatPoints: number | null;
-}
-
-export interface Assessment {
-  id: string;
-  studentId: string;
-  /** Calendar date, `YYYY-MM-DD`. */
-  assessedOn: string;
-  weightKg: number;
-  heightCm: number;
-  bodyFatPercent: number | null;
-  restingHeartRate: number | null;
-  flexibilityCm: number | null;
-  armCm: number | null;
-  chestCm: number | null;
-  waistCm: number | null;
-  abdomenCm: number | null;
-  hipCm: number | null;
-  thighCm: number | null;
-  calfCm: number | null;
-  createdAt: string;
-}
-
-export interface AssessmentList {
-  items: Assessment[];
-  total: number;
-  page: number;
-  pageSize: number;
-  variation: AssessmentVariation | null;
 }
 
 export interface StudentListItem {
@@ -62,7 +33,7 @@ export interface CurrentWorkoutSummary {
 export interface StudentOverview {
   /** The next fixed session or booking with this educator, or null. */
   nextSession: NextSessionSummary | null;
-  latest: Assessment | null;
+  latest: FormRecord | null;
   variation: AssessmentVariation | null;
   /** The educator's active workout for this student, or null. */
   currentWorkout: CurrentWorkoutSummary | null;

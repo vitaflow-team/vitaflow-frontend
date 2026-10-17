@@ -1,13 +1,14 @@
 'use client';
 
-import { createFormRecord } from '@/_actions/clinicalRecords/createFormRecord';
-import { updateFormRecord } from '@/_actions/clinicalRecords/updateFormRecord';
+import type { createFormRecord } from '@/_actions/clinicalRecords/createFormRecord';
+import type { updateFormRecord } from '@/_actions/clinicalRecords/updateFormRecord';
 import {
   buildValueInputs,
   missingRequiredField,
   type AnswersByFieldId,
   type FieldAnswer,
 } from '@/_lib/formRecordValues';
+import type { FormRecordActions } from '@/_types/clinicalRecordsActions';
 import type { FormRecord, Template } from '@/_types/clinicalRecords';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ interface UseFormFillingSaveInput {
   template: Template | undefined;
   existing: FormRecord | null;
   answers: AnswersByFieldId;
+  actions: FormRecordActions;
   onSaved: () => void;
 }
 
@@ -75,14 +77,19 @@ export function useFormFillingSave({
   template,
   existing,
   answers,
+  actions,
   onSaved,
 }: UseFormFillingSaveInput) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [awaitingDeclaration, setAwaitingDeclaration] = useState(false);
-  const create = useServerAction(createFormRecord);
-  const update = useServerAction(updateFormRecord);
-  const isPending = create.isPending || update.isPending;
+  const create = useServerAction(actions.create);
+  // Hooks run unconditionally: when a context has no update action (e.g.
+  // academia's assessment-only flow), this falls back to `create` as an
+  // inert placeholder — `update.execute` is never actually called, guarded
+  // by the `existing && !actions.update` check in save() below.
+  const update = useServerAction(actions.update ?? actions.create);
+  const isPending = create.isPending || (!!actions.update && update.isPending);
 
   async function save(acceptDeclaration = false) {
     if (!template) return;
@@ -91,6 +98,11 @@ export function useFormFillingSave({
     const missing = missingRequiredField(template.fields, answers);
     if (missing) {
       setError(`Preencha o campo obrigatório "${missing}".`);
+      return;
+    }
+
+    if (existing && !actions.update) {
+      setError('Este tipo de registro não pode ser revisado aqui.');
       return;
     }
 

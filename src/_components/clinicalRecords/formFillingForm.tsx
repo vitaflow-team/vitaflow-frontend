@@ -10,6 +10,7 @@ import type {
   Template,
   TemplateField,
 } from '@/_types/clinicalRecords';
+import type { FormRecordActions } from '@/_types/clinicalRecordsActions';
 import { useState } from 'react';
 import { DynamicFieldInput } from './dynamicFieldInput';
 import { TemplatePicker } from './templatePicker';
@@ -46,6 +47,7 @@ interface FormFillingFormProps {
   clientId: string;
   templates: Template[];
   existing: FormRecord | null;
+  actions: FormRecordActions;
   onSaved: () => void;
 }
 
@@ -58,6 +60,7 @@ export function FormFillingForm({
   clientId,
   templates,
   existing,
+  actions,
   onSaved,
 }: FormFillingFormProps) {
   const active = templates.filter(template => template.active);
@@ -74,7 +77,14 @@ export function FormFillingForm({
     awaitingDeclaration,
     acceptDeclaration,
     declineDeclaration,
-  } = useFormFillingSave({ clientId, template, existing, answers, onSaved });
+  } = useFormFillingSave({
+    clientId,
+    template,
+    existing,
+    answers,
+    actions,
+    onSaved,
+  });
 
   if (!template) {
     return (

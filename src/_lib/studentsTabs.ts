@@ -6,6 +6,7 @@ import { STUDENTS_PATH } from '@/_lib/studentsList';
  */
 export const STUDENT_TABS = [
   'overview',
+  'anamnese',
   'assessment',
   'workouts',
   'schedule',
@@ -15,6 +16,7 @@ export type StudentTab = (typeof STUDENT_TABS)[number];
 
 export const STUDENT_TAB_LABELS: Record<StudentTab, string> = {
   overview: 'Visão geral',
+  anamnese: 'Anamnese',
   assessment: 'Avaliação física',
   workouts: 'Treinos',
   schedule: 'Horários',
@@ -35,6 +37,7 @@ export function activeStudentTab(
     return pathname === path || pathname.startsWith(`${path}/`);
   };
 
+  if (under('anamnese')) return 'anamnese';
   if (under('assessment')) return 'assessment';
   if (under('workouts')) return 'workouts';
   return under('schedule') ? 'schedule' : 'overview';
@@ -46,9 +49,4 @@ export function studentTabId(tab: StudentTab): string {
 
 export function studentPanelId(tab: StudentTab): string {
   return `student-panel-${tab}`;
-}
-
-/** The assessment tab with the new-assessment form already open. */
-export function newAssessmentHref(studentId: string): string {
-  return `${studentTabHref(studentId, 'assessment')}?nova=1`;
 }

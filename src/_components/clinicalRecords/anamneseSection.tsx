@@ -3,6 +3,7 @@
 import { Button } from '@/_components/ui/button';
 import { formatFieldValue, formatRecordedAt } from '@/_lib/formRecordDisplay';
 import type { FormRecord, Template } from '@/_types/clinicalRecords';
+import type { ClinicalRecordsActions } from '@/_types/clinicalRecordsActions';
 import { useState } from 'react';
 import { FormFillingForm } from './formFillingForm';
 import { TemplatesPanel } from './templatesPanel';
@@ -11,6 +12,7 @@ interface AnamneseSectionProps {
   clientId: string;
   templates: Template[];
   latest: FormRecord | null;
+  actions: ClinicalRecordsActions;
 }
 
 /**
@@ -22,6 +24,7 @@ export function AnamneseSection({
   clientId,
   templates,
   latest,
+  actions,
 }: AnamneseSectionProps) {
   const [editing, setEditing] = useState(false);
 
@@ -29,7 +32,11 @@ export function AnamneseSection({
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Anamnese</h2>
-        <TemplatesPanel purpose="ANAMNESE" templates={templates} />
+        <TemplatesPanel
+          purpose="ANAMNESE"
+          templates={templates}
+          actions={actions.template}
+        />
       </div>
 
       {!latest || editing ? (
@@ -37,6 +44,7 @@ export function AnamneseSection({
           clientId={clientId}
           templates={templates}
           existing={editing ? latest : null}
+          actions={actions.formRecord}
           onSaved={() => setEditing(false)}
         />
       ) : (

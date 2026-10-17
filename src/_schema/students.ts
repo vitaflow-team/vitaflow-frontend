@@ -2,7 +2,7 @@ import {
   STUDENT_MAX_AGE_YEARS,
   STUDENT_MIN_AGE_YEARS,
   STUDENT_NAME_MAX_LENGTH,
-} from '@/_constants/assessmentFields';
+} from '@/_constants/studentLimits';
 import { ageInYears, todayInBrazil } from '@/_lib/studentsDates';
 import { z } from 'zod';
 

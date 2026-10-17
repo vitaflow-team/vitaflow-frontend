@@ -5,6 +5,7 @@ import {
   loadFormRecordHistory,
   loadTemplates,
 } from '@/_lib/clinicalRecordsData';
+import { NUTRITIONIST_CLINICAL_RECORDS_ACTIONS } from '@/_lib/nutritionistClinicalRecordsActions';
 import { loadPatient } from '@/_lib/patientsData';
 import type { Metadata } from 'next';
 
@@ -42,6 +43,7 @@ export default async function PatientAssessmentPage({
       clientId={patient.id}
       templates={templates}
       history={history}
+      actions={NUTRITIONIST_CLINICAL_RECORDS_ACTIONS}
     />
   );
 }

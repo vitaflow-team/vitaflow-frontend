@@ -1,3 +1,4 @@
+import { BmiBadge } from '@/_components/clinicalRecords/bmiBadge';
 import { buttonVariants } from '@/_components/ui/button';
 import {
   Card,
@@ -5,24 +6,16 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import { describeVariation, formatMeasure } from '@/_lib/assessmentDisplay';
-import { formatIsoDay } from '@/_lib/studentsDates';
-import { newAssessmentHref } from '@/_lib/studentsTabs';
-import type { Assessment, StudentOverview } from '@/_types/students';
+import { formatChange } from '@/_lib/assessmentDisplay';
+import { formatFieldValue, formatRecordedAt } from '@/_lib/formRecordDisplay';
+import { studentTabHref } from '@/_lib/studentsTabs';
+import type { AssessmentVariation, StudentOverview } from '@/_types/students';
+import type { FormRecord } from '@/_types/clinicalRecords';
 import Link from 'next/link';
 
 interface StudentOverviewCardProps {
   studentId: string;
   overview: StudentOverview;
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-lg font-semibold">{value}</dd>
-    </div>
-  );
 }
 
 function NoAssessmentYet({ studentId }: { studentId: string }) {
@@ -32,7 +25,10 @@ function NoAssessmentYet({ studentId }: { studentId: string }) {
         <p className="text-sm text-muted-foreground">
           Nenhuma avaliação registrada ainda.
         </p>
-        <Link href={newAssessmentHref(studentId)} className={buttonVariants()}>
+        <Link
+          href={studentTabHref(studentId, 'assessment')}
+          className={buttonVariants()}
+        >
           Nova avaliação
         </Link>
       </CardContent>
@@ -40,23 +36,16 @@ function NoAssessmentYet({ studentId }: { studentId: string }) {
   );
 }
 
-function LatestMetrics({ latest }: { latest: Assessment }) {
+function LatestValues({ latest }: { latest: FormRecord }) {
   return (
-    <>
-      <dl className="grid grid-cols-3 gap-3">
-        <Metric
-          label="Gordura corporal"
-          value={formatMeasure(latest.bodyFatPercent, '%')}
-        />
-        <Metric label="Peso" value={formatMeasure(latest.weightKg, 'kg')} />
-        <Metric label="Altura" value={formatMeasure(latest.heightCm, 'cm')} />
-      </dl>
-      {latest.bodyFatPercent === null && (
-        <p className="text-sm text-muted-foreground">
-          Gordura corporal não registrada nesta avaliação.
-        </p>
-      )}
-    </>
+    <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3">
+      {latest.values.map(value => (
+        <div key={value.fieldLabel}>
+          <dt className="text-muted-foreground">{value.fieldLabel}</dt>
+          <dd>{formatFieldValue(value.value)}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -70,20 +59,24 @@ export function StudentOverviewCard({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="grid-cols-[1fr_auto]">
         <CardTitle>
-          Última avaliação · {formatIsoDay(latest.assessedOn)}
+          Última avaliação · {formatRecordedAt(latest.recordedAt)}
         </CardTitle>
+        <BmiBadge bmi={latest.bmi} />
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <LatestMetrics latest={latest} />
+        <LatestValues latest={latest} />
         {variation && (
           <p className="text-sm text-muted-foreground">
-            Desde a primeira avaliação —{' '}
-            {describeVariation(variation).join(' · ')}
+            Desde a primeira avaliação — {describeWeightVariation(variation)}
           </p>
         )}
       </CardContent>
     </Card>
   );
+}
+
+function describeWeightVariation(variation: AssessmentVariation): string {
+  return `Peso: ${formatChange(variation.weightKg, 'kg')}`;
 }
