@@ -5,7 +5,7 @@ describe('professional home shortcut', () => {
   it('points a nutritionist to Pessoas', () => {
     expect(peopleShortcut('NUTRITIONIST')).toMatchObject({
       TITLE: 'Pessoas',
-      URL: '/restrict/clients',
+      URL: '/restrict/patients',
     });
   });
 

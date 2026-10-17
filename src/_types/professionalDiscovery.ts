@@ -13,6 +13,9 @@ export interface ProfessionalSummary {
 
 export interface ProfessionalProfile extends ProfessionalSummary {
   bio: string | null;
+  /** Omitted entirely when never set — never sent as null (PRD ADR-009). */
+  registrationNumber?: string;
+  registrationLabel?: 'CRN' | 'CREF';
 }
 
 export interface ConnectionRequest {

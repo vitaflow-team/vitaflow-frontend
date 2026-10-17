@@ -57,12 +57,12 @@ describe('test coverage — app sidebar', () => {
 
   // UT-011
   it('marks only the section of the current path as the current page', () => {
-    const html = render('NUTRITIONIST', '/restrict/clients/0199a1b2');
+    const html = render('NUTRITIONIST', '/restrict/patients/0199a1b2');
     // Whole opening tags, so the check does not depend on attribute order.
     const currentLinks = html.match(/<a [^>]*aria-current="page"[^>]*>/g);
 
     expect(currentLinks).toHaveLength(1);
-    expect(currentLinks?.[0]).toContain('href="/restrict/clients"');
+    expect(currentLinks?.[0]).toContain('href="/restrict/patients"');
   });
 
   // UT-011

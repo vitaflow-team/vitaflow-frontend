@@ -393,7 +393,7 @@ describe('educator student area — navigation (UT-155, UT-156)', () => {
     const user = getMenuGroups('USER')[0].items.map(item => item.title);
 
     expect(nutritionist.find(item => item.title === 'Pessoas')?.url).toBe(
-      '/restrict/clients'
+      '/restrict/patients'
     );
     expect(nutritionist.map(item => item.title)).not.toContain('Alunos');
     expect(user).not.toContain('Pessoas');

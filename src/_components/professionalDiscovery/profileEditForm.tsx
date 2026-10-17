@@ -7,6 +7,7 @@ import { Input } from '@/_components/ui/input';
 import { Label } from '@/_components/ui/label';
 import { Textarea } from '@/_components/ui/textarea';
 import { useProfessionalDiscoveryMutation } from '@/_hooks/useProfessionalDiscoveryMutation';
+import { registrationLabelFor } from '@/_lib/professionalDisplay';
 import type { ProfessionalProfile } from '@/_types/professionalDiscovery';
 import { type FormEvent, useState } from 'react';
 
@@ -29,6 +30,10 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
     profile.priceFrom !== null ? String(profile.priceFrom) : ''
   );
   const [attendsOnline, setAttendsOnline] = useState(profile.attendsOnline);
+  const [registrationNumber, setRegistrationNumber] = useState(
+    profile.registrationNumber ?? ''
+  );
+  const registrationLabel = registrationLabelFor(profile.type);
 
   const contentHint = CONTENT_RULE_HINT_PATTERN.test(`${bio} ${specialty}`)
     ? 'Evite fotos de antes/depois ou garantias de resultado: o perfil não pode incluir esse tipo de conteúdo.'
@@ -43,6 +48,7 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
           specialty: specialty.trim() || undefined,
           priceFrom: priceFrom.trim() || undefined,
           attendsOnline,
+          registrationNumber: registrationNumber.trim() || undefined,
         }),
       'Perfil atualizado.'
     );
@@ -79,6 +85,18 @@ export function ProfileEditForm({ profile }: ProfileEditFormProps) {
         />
         <Label htmlFor="profile-online">Atendo online</Label>
       </div>
+
+      {registrationLabel && (
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="profile-registration">{registrationLabel}</Label>
+          <Input
+            id="profile-registration"
+            value={registrationNumber}
+            maxLength={40}
+            onChange={event => setRegistrationNumber(event.target.value)}
+          />
+        </div>
+      )}
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="profile-bio">Bio</Label>
