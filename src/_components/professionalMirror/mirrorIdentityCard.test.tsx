@@ -32,4 +32,34 @@ describe('MirrorIdentityCard', () => {
     expect(html).toContain('Especialidade não informada');
     expect(html).toContain('Educador físico');
   });
+
+  // US-021: the patient sees the CRN/CREF on the professional's identity card.
+  it('shows the registration number and label when set', () => {
+    const html = renderToStaticMarkup(
+      <MirrorIdentityCard
+        professional={{
+          id: 'p1',
+          name: 'Dra. Ana',
+          specialty: 'Nutrição esportiva',
+          registrationNumber: '12345/P',
+          registrationLabel: 'CRN',
+        }}
+        type="NUTRITIONIST"
+      />
+    );
+
+    expect(html).toContain('CRN: 12345/P');
+  });
+
+  it('omits the registration line entirely when never set', () => {
+    const html = renderToStaticMarkup(
+      <MirrorIdentityCard
+        professional={{ id: 'p1', name: 'Dra. Ana', specialty: null }}
+        type="NUTRITIONIST"
+      />
+    );
+
+    expect(html).not.toContain('CRN');
+    expect(html).not.toContain('CREF');
+  });
 });

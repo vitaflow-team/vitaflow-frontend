@@ -1,15 +1,15 @@
 import { WEEKDAY_LABELS, fullWeek, hasContent } from '@/_lib/mealPlanWeekdays';
-import type { MealPlanDraft } from '@/_types/mealPlan';
+import type { MealPlanMeal, Weekday } from '@/_types/mealPlan';
 
 interface ReadOnlyWeekdayListProps {
-  draft: MealPlanDraft;
+  days: Array<{ weekday: Weekday; meals: MealPlanMeal[] }>;
 }
 
 /** A published version's content, read-only — never offered for direct editing (ADR-013). */
-export function ReadOnlyWeekdayList({ draft }: ReadOnlyWeekdayListProps) {
+export function ReadOnlyWeekdayList({ days }: ReadOnlyWeekdayListProps) {
   return (
     <ul className="flex flex-col gap-3">
-      {fullWeek(draft.days).map(({ weekday, day }) => (
+      {fullWeek(days).map(({ weekday, day }) => (
         <li key={weekday} className="border-b border-line pb-3 last:border-b-0">
           <p className="font-medium">{WEEKDAY_LABELS[weekday]}</p>
           {hasContent(day) ? (

@@ -20,6 +20,9 @@ describe('patientTabHref', () => {
     expect(patientTabHref(PATIENT_ID, 'plano-alimentar')).toBe(
       `/restrict/patients/${PATIENT_ID}/plano-alimentar`
     );
+    expect(patientTabHref(PATIENT_ID, 'diario-alimentar')).toBe(
+      `/restrict/patients/${PATIENT_ID}/diario-alimentar`
+    );
   });
 });
 
@@ -49,5 +52,11 @@ describe('activePatientTab', () => {
         PATIENT_ID
       )
     ).toBe('plano-alimentar');
+    expect(
+      activePatientTab(
+        `/restrict/patients/${PATIENT_ID}/diario-alimentar`,
+        PATIENT_ID
+      )
+    ).toBe('diario-alimentar');
   });
 });

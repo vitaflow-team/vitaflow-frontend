@@ -4,44 +4,35 @@ import {
   CardHeader,
   CardTitle,
 } from '@/_components/ui/card';
-import { formatMeasure } from '@/_lib/assessmentDisplay';
-import { formatIsoDay } from '@/_lib/studentsDates';
+import { FormRecordRow } from '@/_components/clinicalRecords/formRecordRow';
 import type { MirrorAssessment } from '@/_types/professionalMirror';
 import { ClipboardList } from 'lucide-react';
 
 interface MirrorAssessmentCardProps {
   assessments: MirrorAssessment[];
+  title?: string;
 }
 
 /**
- * The educator's latest assessments, read only: this is the student's view of
- * the educator's record, so there is no control to add, edit or delete.
+ * A professional's recorded assessments, read only: this is the
+ * student/patient's view of their own record, so there is no control to add,
+ * edit or delete. Reads the generic clinical-records engine (PhysicalAssessment
+ * is gone) — each entry carries its own frozen field values and derived BMI.
  */
 export function MirrorAssessmentCard({
   assessments,
+  title = 'Avaliação física',
 }: MirrorAssessmentCardProps) {
   return (
     <Card className="gap-3 border-line">
       <CardHeader className="grid-cols-[1fr_auto]">
-        <CardTitle>Avaliação física</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <ClipboardList className="size-5 text-icon-accent" aria-hidden="true" />
       </CardHeader>
       <CardContent>
-        <ul aria-label="Últimas avaliações físicas" className="flex flex-col">
+        <ul aria-label="Avaliações" className="flex flex-col">
           {assessments.map(assessment => (
-            <li
-              key={assessment.id}
-              className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-line py-2 text-sm last:border-b-0"
-            >
-              <time dateTime={assessment.assessedOn} className="font-medium">
-                {formatIsoDay(assessment.assessedOn)}
-              </time>
-              <span>{formatMeasure(assessment.weightKg, 'kg')}</span>
-              <span className="text-muted-foreground">
-                Gordura corporal:{' '}
-                {formatMeasure(assessment.bodyFatPercent, '%')}
-              </span>
-            </li>
+            <FormRecordRow key={assessment.id} record={assessment} />
           ))}
         </ul>
       </CardContent>

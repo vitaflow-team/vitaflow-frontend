@@ -12,9 +12,33 @@ const MIRROR: EducatorMirror = {
 };
 
 const ASSESSMENTS = [
-  { id: 'a3', assessedOn: '2026-09-15', weightKg: 78.2, bodyFatPercent: 18.4 },
-  { id: 'a2', assessedOn: '2026-08-18', weightKg: 79, bodyFatPercent: null },
-  { id: 'a1', assessedOn: '2026-07-21', weightKg: 80.3, bodyFatPercent: 19.9 },
+  {
+    id: 'a3',
+    recordedAt: '2026-09-15T12:00:00.000Z',
+    values: [
+      { fieldLabel: 'Peso (kg)', value: 78.2 },
+      { fieldLabel: 'Gordura corporal (%)', value: 18.4 },
+    ],
+    bmi: { value: 24.1, classification: 'PESO_NORMAL' as const },
+  },
+  {
+    id: 'a2',
+    recordedAt: '2026-08-18T12:00:00.000Z',
+    values: [
+      { fieldLabel: 'Peso (kg)', value: 79 },
+      { fieldLabel: 'Gordura corporal (%)', value: null },
+    ],
+    bmi: null,
+  },
+  {
+    id: 'a1',
+    recordedAt: '2026-07-21T12:00:00.000Z',
+    values: [
+      { fieldLabel: 'Peso (kg)', value: 80.3 },
+      { fieldLabel: 'Gordura corporal (%)', value: 19.9 },
+    ],
+    bmi: null,
+  },
 ];
 
 function text(html: string): string {
@@ -34,7 +58,7 @@ describe('EducatorMirrorView', () => {
     expect(html).toContain('ainda não configurou o treino de hoje');
   });
 
-  it('UT-164 lists up to three assessments with date, weight and body fat, "—" when missing', () => {
+  it('UT-164 lists up to three assessments with date and field values, "—" when missing', () => {
     const html = renderToStaticMarkup(
       <EducatorMirrorView
         mirror={{ ...MIRROR, physicalAssessment: ASSESSMENTS }}
@@ -42,11 +66,13 @@ describe('EducatorMirrorView', () => {
     );
     const body = text(html);
 
-    expect(html.match(/dateTime="20\d\d-\d\d-\d\d"/g)).toHaveLength(3);
     expect(body).toContain('15/09/2026');
-    expect(body).toContain('78,2 kg');
-    expect(body).toContain('Gordura corporal: 18,4%');
-    expect(body).toContain('Gordura corporal: —');
+    expect(body).toContain('Peso (kg)');
+    expect(body).toContain('78.2');
+    expect(body).toContain('Gordura corporal (%)');
+    expect(body).toContain('18.4');
+    expect(body).toContain('—');
+    expect(body).toContain('IMC 24,1 · Peso normal');
     expect(body).not.toContain('Nenhuma avaliação física registrada ainda.');
   });
 

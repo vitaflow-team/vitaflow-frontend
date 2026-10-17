@@ -30,6 +30,11 @@ export function MirrorIdentityCard({
         <p className="mt-1 text-sm text-muted-foreground">
           {professional.specialty ?? 'Especialidade não informada'}
         </p>
+        {professional.registrationNumber && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            {professional.registrationLabel}: {professional.registrationNumber}
+          </p>
+        )}
       </CardContent>
     </Card>
   );

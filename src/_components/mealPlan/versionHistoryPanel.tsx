@@ -68,7 +68,7 @@ export function VersionHistoryPanel({
             >
               ← Voltar
             </Button>
-            <ReadOnlyWeekdayList draft={selected} />
+            <ReadOnlyWeekdayList days={selected.days} />
           </div>
         ) : versions.length === 0 ? (
           <p className="text-sm text-muted-foreground">

@@ -1,9 +1,18 @@
 import { formatFieldValue, formatRecordedAt } from '@/_lib/formRecordDisplay';
-import type { FormRecord } from '@/_types/clinicalRecords';
+import type { Bmi } from '@/_types/clinicalRecords';
 import { BmiBadge } from './bmiBadge';
 
+// Only the fields this row actually renders — any richer record shape
+// (FormRecord, the mirror's own narrower MirrorAssessment) satisfies this
+// structurally, so both the professional's and the patient's views share it.
+interface DisplayableRecord {
+  recordedAt: string;
+  bmi: Bmi | null;
+  values: { fieldLabel: string; value: string | number | boolean | null }[];
+}
+
 interface FormRecordRowProps {
-  record: FormRecord;
+  record: DisplayableRecord;
   onEdit?: () => void;
 }
 
