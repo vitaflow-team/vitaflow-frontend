@@ -11,6 +11,7 @@ export const PAGE_TITLES = {
   patientNotFound: 'Paciente não encontrado',
   patientAnamnese: 'Anamnese',
   patientAssessment: 'Avaliação',
+  patientMealPlan: 'Plano alimentar',
   students: 'Alunos',
   student: 'Aluno',
   studentNotFound: 'Aluno não encontrado',

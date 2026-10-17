@@ -6,15 +6,17 @@ import {
   CardTitle,
 } from '@/_components/ui/card';
 import { formatRecordedAt } from '@/_lib/formRecordDisplay';
-import { patientTabHref } from '@/_lib/patientsTabs';
-import type { FormRecord } from '@/_types/clinicalRecords';
+import { patientTabHref, type PatientTab } from '@/_lib/patientsTabs';
 import Link from 'next/link';
 
 interface PatientOverviewCardProps {
   patientId: string;
   title: string;
-  tab: 'anamnese' | 'avaliacao';
-  latest: FormRecord | null;
+  tab: PatientTab;
+  /** ISO date of the latest activity for this section, or null when empty. */
+  latestDate: string | null;
+  emptyMessage?: string;
+  fillLabel?: string;
 }
 
 /** The status of one record purpose at a glance, with a link to its tab. */
@@ -22,7 +24,9 @@ export function PatientOverviewCard({
   patientId,
   title,
   tab,
-  latest,
+  latestDate,
+  emptyMessage = 'Nenhum registro ainda.',
+  fillLabel = 'Preencher',
 }: PatientOverviewCardProps) {
   return (
     <Card>
@@ -31,15 +35,15 @@ export function PatientOverviewCard({
       </CardHeader>
       <CardContent className="flex flex-col items-start gap-2">
         <p className="text-sm text-muted-foreground">
-          {latest
-            ? `Última em ${formatRecordedAt(latest.recordedAt)}.`
-            : 'Nenhum registro ainda.'}
+          {latestDate
+            ? `Última em ${formatRecordedAt(latestDate)}.`
+            : emptyMessage}
         </p>
         <Link
           href={patientTabHref(patientId, tab)}
           className={buttonVariants({ variant: 'outline', size: 'sm' })}
         >
-          {latest ? 'Ver' : 'Preencher'}
+          {latestDate ? 'Ver' : fillLabel}
         </Link>
       </CardContent>
     </Card>

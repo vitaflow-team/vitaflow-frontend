@@ -1,6 +1,11 @@
 import { PATIENTS_PATH } from '@/_lib/patientsList';
 
-export const PATIENT_TABS = ['overview', 'anamnese', 'avaliacao'] as const;
+export const PATIENT_TABS = [
+  'overview',
+  'anamnese',
+  'avaliacao',
+  'plano-alimentar',
+] as const;
 
 export type PatientTab = (typeof PATIENT_TABS)[number];
 
@@ -8,6 +13,7 @@ export const PATIENT_TAB_LABELS: Record<PatientTab, string> = {
   overview: 'Visão geral',
   anamnese: 'Anamnese',
   avaliacao: 'Avaliação',
+  'plano-alimentar': 'Plano alimentar',
 };
 
 export function patientTabHref(patientId: string, tab: PatientTab): string {
@@ -26,7 +32,8 @@ export function activePatientTab(
   };
 
   if (under('anamnese')) return 'anamnese';
-  return under('avaliacao') ? 'avaliacao' : 'overview';
+  if (under('avaliacao')) return 'avaliacao';
+  return under('plano-alimentar') ? 'plano-alimentar' : 'overview';
 }
 
 export function patientTabId(tab: PatientTab): string {

@@ -4,6 +4,10 @@ import {
   isLoadFailure,
   loadFormRecordHistory,
 } from '@/_lib/clinicalRecordsData';
+import {
+  isLoadFailure as isMealPlanLoadFailure,
+  loadVersions,
+} from '@/_lib/mealPlanData';
 import { loadPatient } from '@/_lib/patientsData';
 import type { Metadata } from 'next';
 
@@ -22,24 +26,44 @@ export default async function PatientOverviewPage({
   const patient = await loadPatient(id);
   if (isLoadFailure(patient)) return null;
 
-  const [anamnese, assessments] = await Promise.all([
+  const [anamnese, assessments, versions] = await Promise.all([
     loadFormRecordHistory(patient.id, 'ANAMNESE'),
     loadFormRecordHistory(patient.id, 'ASSESSMENT'),
+    loadVersions(patient.id),
   ]);
 
+  const latestVersion =
+    !isMealPlanLoadFailure(versions) && versions.length > 0
+      ? versions[0]
+      : null;
+
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <PatientOverviewCard
         patientId={patient.id}
         title="Anamnese"
         tab="anamnese"
-        latest={isLoadFailure(anamnese) ? null : (anamnese[0] ?? null)}
+        latestDate={
+          isLoadFailure(anamnese) ? null : (anamnese[0]?.recordedAt ?? null)
+        }
       />
       <PatientOverviewCard
         patientId={patient.id}
         title="Avaliação"
         tab="avaliacao"
-        latest={isLoadFailure(assessments) ? null : (assessments[0] ?? null)}
+        latestDate={
+          isLoadFailure(assessments)
+            ? null
+            : (assessments[0]?.recordedAt ?? null)
+        }
+      />
+      <PatientOverviewCard
+        patientId={patient.id}
+        title="Plano alimentar"
+        tab="plano-alimentar"
+        latestDate={latestVersion?.publishedAt ?? null}
+        emptyMessage="Nenhuma versão publicada ainda."
+        fillLabel="Montar plano"
       />
     </div>
   );

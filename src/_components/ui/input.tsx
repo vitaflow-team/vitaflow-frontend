@@ -47,6 +47,7 @@ function Input({
         type={type}
         data-slot="input"
         className="w-full h-full border-0 outline-none bg-transparent border-hidden"
+        disabled={disabled}
         {...props}
       />
       {Icon && onClickIcon ? (
