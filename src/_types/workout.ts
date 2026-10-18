@@ -37,6 +37,9 @@ export interface ConversationTurn {
   question: string;
   done: boolean;
   reprompt: boolean;
+  /** True only for the restrictionDetail turn — the UI offers a "Pular"
+   * affordance only then; every other field stays mandatory. */
+  optional: boolean;
 }
 
 /** `POST /workouts/conversation` returns the next question, or, on the
