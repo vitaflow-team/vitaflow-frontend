@@ -18,7 +18,7 @@ import { AnswerForm } from './conversationChat';
 // `ConversationChat` itself mounts via a `useEffect` that never runs under
 // `renderToStaticMarkup`, so its state-transition behavior (the
 // stale-reprompt fix, the llm_call_failed message, UT-054/UT-056/E2E-006)
-// is covered directly by `_lib/conversationAdvance.test.ts`'s pure-function
+// is covered directly by `_lib/conversationFlow.test.ts`'s pure-function
 // tests instead (frontend-next.md §11). `AnswerForm` below is the one piece
 // of `ConversationChat` that's prop-driven, so it's the one piece whose
 // markup this file can assert on.

@@ -5,15 +5,14 @@ import { Button } from '@/_components/ui/button';
 import { Card, CardContent } from '@/_components/ui/card';
 import { Input } from '@/_components/ui/input';
 import { Title } from '@/_components/ui/title';
-import { deriveAdvanceOutcome } from '@/_lib/conversationAdvance';
+import {
+  conversationReducer,
+  eventForAdvance,
+  INITIAL_CONVERSATION_STATE,
+} from '@/_lib/conversationFlow';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { useServerAction } from 'zsa-react';
-
-interface Turn {
-  question: string;
-  answer?: string;
-}
 
 interface ConversationChatProps {
   hasExistingWorkout: boolean;
@@ -72,19 +71,16 @@ export function AnswerForm({
  * Premium-gate error surfaces on the turn that completes the intake for a
  * user who already has a workout (the backend enforces the gate there —
  * see WorkoutsService.regenerate). State-transition decisions live in
- * `deriveAdvanceOutcome` (`_lib/conversationAdvance.ts`), a pure function,
- * so they're unit tested directly (frontend-next.md §11). */
+ * `conversationReducer`/`eventForAdvance` (`_lib/conversationFlow.ts`), pure
+ * functions, so they're unit tested directly (frontend-next.md §11),
+ * following the same reducer shape as `_lib/addStudentFlow.ts`. */
 export function ConversationChat({
   hasExistingWorkout,
 }: ConversationChatProps) {
-  const [history, setHistory] = useState<Turn[]>([]);
-  const [conversationId, setConversationId] = useState<string>();
-  const [currentQuestion, setCurrentQuestion] = useState<string>();
-  const [reprompt, setReprompt] = useState(false);
-  const [optional, setOptional] = useState(false);
-  const [answer, setAnswer] = useState('');
-  const [premiumRequired, setPremiumRequired] = useState(false);
-  const [loadError, setLoadError] = useState<string>();
+  const [state, dispatch] = useReducer(
+    conversationReducer,
+    INITIAL_CONVERSATION_STATE
+  );
   const { isPending, execute } = useServerAction(actionPostConversation);
   const router = useRouter();
   const started = useRef(false);
@@ -96,53 +92,36 @@ export function ConversationChat({
   }, []);
 
   async function advance(input: { conversationId?: string; answer?: string }) {
-    setLoadError(undefined);
+    dispatch({ type: 'advance-started' });
     const [result, error] = await execute(input);
-    const outcome = deriveAdvanceOutcome(
+    const event = eventForAdvance(
       result ?? undefined,
-      error ?? undefined
+      error ?? undefined,
+      input.answer
     );
 
-    setReprompt(outcome.reprompt);
-    setOptional(outcome.optional);
-
-    if (outcome.premiumRequired) {
-      setPremiumRequired(true);
-      return;
-    }
-    if (outcome.loadError) {
-      setLoadError(outcome.loadError);
-      return;
-    }
-    if (outcome.generatedWorkout) {
+    if (event.type === 'workout-ready') {
       router.push('/restrict/workouts');
       router.refresh();
       return;
     }
-    if (!result) return;
-
-    setConversationId(outcome.conversationId);
-    if (!outcome.reprompt && currentQuestion) {
-      setHistory(prev => [
-        ...prev,
-        { question: currentQuestion, answer: input.answer },
-      ]);
-    }
-    setCurrentQuestion(outcome.currentQuestion);
-    setAnswer('');
+    dispatch(event);
   }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (!answer.trim()) return;
-    await advance({ conversationId, answer });
+    if (!state.answer.trim()) return;
+    await advance({
+      conversationId: state.conversationId,
+      answer: state.answer,
+    });
   }
 
   async function skip() {
-    await advance({ conversationId, answer: '' });
+    await advance({ conversationId: state.conversationId, answer: '' });
   }
 
-  if (premiumRequired) {
+  if (state.premiumRequired) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
@@ -170,37 +149,43 @@ export function ConversationChat({
       />
 
       <div className="flex flex-col gap-2">
-        {history.map((turn, index) => (
+        {state.history.map((turn, index) => (
           <div key={index} className="flex flex-col gap-1">
             <p className="rounded-lg bg-secondary px-4 py-2 w-fit max-w-[80%]">
               {turn.question}
             </p>
-            {turn.answer && (
-              <p className="rounded-lg bg-primary text-primary-foreground px-4 py-2 w-fit max-w-[80%] self-end">
-                {turn.answer}
-              </p>
-            )}
+            <p className="rounded-lg bg-primary text-primary-foreground px-4 py-2 w-fit max-w-[80%] self-end">
+              {turn.answer ? (
+                turn.answer
+              ) : (
+                <span className="italic text-primary-foreground/70">
+                  Pulado
+                </span>
+              )}
+            </p>
           </div>
         ))}
-        {currentQuestion && (
+        {state.currentQuestion && (
           <p className="rounded-lg bg-secondary px-4 py-2 w-fit max-w-[80%]">
-            {currentQuestion}
+            {state.currentQuestion}
           </p>
         )}
-        {reprompt && (
+        {state.reprompt && (
           <p className="text-sm text-destructive">
             Não entendi, pode responder de outra forma?
           </p>
         )}
-        {loadError && <p className="text-sm text-destructive">{loadError}</p>}
+        {state.loadError && (
+          <p className="text-sm text-destructive">{state.loadError}</p>
+        )}
       </div>
 
-      {currentQuestion && (
+      {state.currentQuestion && (
         <AnswerForm
-          answer={answer}
+          answer={state.answer}
           isPending={isPending}
-          optional={optional}
-          onAnswerChange={setAnswer}
+          optional={state.optional}
+          onAnswerChange={value => dispatch({ type: 'answer-changed', value })}
           onSubmit={submit}
           onSkip={() => void skip()}
         />
