@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 import { createServerAction, ZSAError } from 'zsa';
 import {
   INVALID_ANSWER,
+  LLM_CALL_FAILED,
   NOT_ENOUGH_EXERCISES,
   PREMIUM_REQUIRED,
 } from './workoutErrors';
@@ -34,6 +35,7 @@ export const actionPostConversation = createServerAction()
         INVALID_ANSWER,
         PREMIUM_REQUIRED,
         NOT_ENOUGH_EXERCISES,
+        LLM_CALL_FAILED,
       ]);
     }
   });

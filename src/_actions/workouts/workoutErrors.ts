@@ -19,3 +19,9 @@ export const WORKOUT_NOT_FOUND: ErrorMapping = {
   status: 404,
   message: 'Treino não encontrado. Atualize a página.',
 };
+
+export const LLM_CALL_FAILED: ErrorMapping = {
+  status: 502,
+  code: 'llm_call_failed',
+  message: 'A IA está indisponível no momento. Tente novamente em instantes.',
+};

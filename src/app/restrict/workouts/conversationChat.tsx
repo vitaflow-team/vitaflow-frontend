@@ -5,35 +5,82 @@ import { Button } from '@/_components/ui/button';
 import { Card, CardContent } from '@/_components/ui/card';
 import { Input } from '@/_components/ui/input';
 import { Title } from '@/_components/ui/title';
-import { isGeneratedWorkout } from '@/_types/workout';
+import {
+  conversationReducer,
+  eventForAdvance,
+  INITIAL_CONVERSATION_STATE,
+} from '@/_lib/conversationFlow';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef } from 'react';
 import { useServerAction } from 'zsa-react';
-
-interface Turn {
-  question: string;
-  answer?: string;
-}
 
 interface ConversationChatProps {
   hasExistingWorkout: boolean;
+}
+
+export interface AnswerFormProps {
+  answer: string;
+  isPending: boolean;
+  optional: boolean;
+  onAnswerChange: (value: string) => void;
+  onSubmit: (event: React.FormEvent) => void;
+  onSkip: () => void;
+}
+
+/** Presentational and prop-driven (no internal state) so the "Pular"
+ * affordance's conditional rendering is directly unit-testable with
+ * `renderToStaticMarkup` (frontend-next.md §11) — `ConversationChat`
+ * itself can't be, since its state only changes via the effect-driven
+ * `advance()` call, which never runs under static server rendering. */
+export function AnswerForm({
+  answer,
+  isPending,
+  optional,
+  onAnswerChange,
+  onSubmit,
+  onSkip,
+}: AnswerFormProps) {
+  return (
+    <form onSubmit={onSubmit} className="flex gap-2">
+      <Input
+        aria-label="Sua resposta"
+        value={answer}
+        onChange={event => onAnswerChange(event.target.value)}
+        disabled={isPending}
+        autoFocus
+      />
+      <Button type="submit" disabled={isPending || !answer.trim()}>
+        Enviar
+      </Button>
+      {optional && (
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isPending}
+          onClick={onSkip}
+        >
+          Pular
+        </Button>
+      )}
+    </form>
+  );
 }
 
 /** The conversational intake (US-001/US-002): one question at a time,
  * matching the validated `TreinoIA.dc.html` chat-style prototype. A
  * Premium-gate error surfaces on the turn that completes the intake for a
  * user who already has a workout (the backend enforces the gate there —
- * see WorkoutsService.regenerate). */
+ * see WorkoutsService.regenerate). State-transition decisions live in
+ * `conversationReducer`/`eventForAdvance` (`_lib/conversationFlow.ts`), pure
+ * functions, so they're unit tested directly (frontend-next.md §11),
+ * following the same reducer shape as `_lib/addStudentFlow.ts`. */
 export function ConversationChat({
   hasExistingWorkout,
 }: ConversationChatProps) {
-  const [history, setHistory] = useState<Turn[]>([]);
-  const [conversationId, setConversationId] = useState<string>();
-  const [currentQuestion, setCurrentQuestion] = useState<string>();
-  const [reprompt, setReprompt] = useState(false);
-  const [answer, setAnswer] = useState('');
-  const [premiumRequired, setPremiumRequired] = useState(false);
-  const [loadError, setLoadError] = useState<string>();
+  const [state, dispatch] = useReducer(
+    conversationReducer,
+    INITIAL_CONVERSATION_STATE
+  );
   const { isPending, execute } = useServerAction(actionPostConversation);
   const router = useRouter();
   const started = useRef(false);
@@ -45,43 +92,36 @@ export function ConversationChat({
   }, []);
 
   async function advance(input: { conversationId?: string; answer?: string }) {
-    setLoadError(undefined);
+    dispatch({ type: 'advance-started' });
     const [result, error] = await execute(input);
-    if (error) {
-      if (error.message.includes('Premium')) {
-        setPremiumRequired(true);
-        return;
-      }
-      setLoadError(error.message);
-      return;
-    }
-    if (!result) return;
+    const event = eventForAdvance(
+      result ?? undefined,
+      error ?? undefined,
+      input.answer
+    );
 
-    if (isGeneratedWorkout(result)) {
+    if (event.type === 'workout-ready') {
       router.push('/restrict/workouts');
       router.refresh();
       return;
     }
-
-    setConversationId(result.conversationId);
-    setReprompt(result.reprompt);
-    if (!result.reprompt && currentQuestion) {
-      setHistory(prev => [
-        ...prev,
-        { question: currentQuestion, answer: input.answer },
-      ]);
-    }
-    setCurrentQuestion(result.question);
-    setAnswer('');
+    dispatch(event);
   }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (!answer.trim()) return;
-    await advance({ conversationId, answer });
+    if (!state.answer.trim()) return;
+    await advance({
+      conversationId: state.conversationId,
+      answer: state.answer,
+    });
   }
 
-  if (premiumRequired) {
+  async function skip() {
+    await advance({ conversationId: state.conversationId, answer: '' });
+  }
+
+  if (state.premiumRequired) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
@@ -109,44 +149,46 @@ export function ConversationChat({
       />
 
       <div className="flex flex-col gap-2">
-        {history.map((turn, index) => (
+        {state.history.map((turn, index) => (
           <div key={index} className="flex flex-col gap-1">
             <p className="rounded-lg bg-secondary px-4 py-2 w-fit max-w-[80%]">
               {turn.question}
             </p>
-            {turn.answer && (
-              <p className="rounded-lg bg-primary text-primary-foreground px-4 py-2 w-fit max-w-[80%] self-end">
-                {turn.answer}
-              </p>
-            )}
+            <p className="rounded-lg bg-primary text-primary-foreground px-4 py-2 w-fit max-w-[80%] self-end">
+              {turn.answer ? (
+                turn.answer
+              ) : (
+                <span className="italic text-primary-foreground/70">
+                  Pulado
+                </span>
+              )}
+            </p>
           </div>
         ))}
-        {currentQuestion && (
+        {state.currentQuestion && (
           <p className="rounded-lg bg-secondary px-4 py-2 w-fit max-w-[80%]">
-            {currentQuestion}
+            {state.currentQuestion}
           </p>
         )}
-        {reprompt && (
+        {state.reprompt && (
           <p className="text-sm text-destructive">
             Não entendi, pode responder de outra forma?
           </p>
         )}
-        {loadError && <p className="text-sm text-destructive">{loadError}</p>}
+        {state.loadError && (
+          <p className="text-sm text-destructive">{state.loadError}</p>
+        )}
       </div>
 
-      {currentQuestion && (
-        <form onSubmit={submit} className="flex gap-2">
-          <Input
-            aria-label="Sua resposta"
-            value={answer}
-            onChange={event => setAnswer(event.target.value)}
-            disabled={isPending}
-            autoFocus
-          />
-          <Button type="submit" disabled={isPending || !answer.trim()}>
-            Enviar
-          </Button>
-        </form>
+      {state.currentQuestion && (
+        <AnswerForm
+          answer={state.answer}
+          isPending={isPending}
+          optional={state.optional}
+          onAnswerChange={value => dispatch({ type: 'answer-changed', value })}
+          onSubmit={submit}
+          onSkip={() => void skip()}
+        />
       )}
     </div>
   );
