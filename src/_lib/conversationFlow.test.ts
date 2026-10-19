@@ -207,15 +207,23 @@ describe('conversationReducer', () => {
       undefined
     );
     expect(repromptedSameQuestion.turn).toBe(2);
+  });
 
-    const afterTransientFailure = advanceState(
-      repromptedSameQuestion,
-      undefined,
-      {
-        message:
-          'A IA está indisponível no momento. Tente novamente em instantes.',
-      }
+  it('bumps turn on load-failed too, so the input reclaims focus after a failed retry', () => {
+    const onQuestion = advanceState(
+      INITIAL_CONVERSATION_STATE,
+      makeTurn({ question: 'Quantos minutos você tem disponível?' }),
+      undefined
     );
+    expect(onQuestion.turn).toBe(1);
+
+    const afterTransientFailure = advanceState(onQuestion, undefined, {
+      message:
+        'A IA está indisponível no momento. Tente novamente em instantes.',
+    });
     expect(afterTransientFailure.turn).toBe(2);
+    expect(afterTransientFailure.currentQuestion).toBe(
+      'Quantos minutos você tem disponível?'
+    );
   });
 });
