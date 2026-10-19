@@ -182,6 +182,7 @@ export function ConversationChat({
 
       {state.currentQuestion && (
         <AnswerForm
+          key={state.turn}
           answer={state.answer}
           isPending={isPending}
           optional={state.optional}
