@@ -18,9 +18,11 @@ export interface ConversationState {
   answer: string;
   premiumRequired: boolean;
   loadError?: string;
-  /** Bumped on every `question-received` (reprompts included), even when
-   * the question text repeats — the UI keys the answer input on it so a
-   * repeated question still remounts the input and reclaims focus. */
+  /** Bumped on every `question-received` (reprompts included, even when
+   * the question text repeats) and on `load-failed` — every transition
+   * that leaves the answer input editable again after `isPending` disabled
+   * it (browsers auto-blur a disabled input). The UI keys the input on
+   * this so it remounts and reclaims focus each time. */
   turn: number;
 }
 
@@ -91,7 +93,12 @@ export function conversationReducer(
     case 'premium-blocked':
       return { ...state, premiumRequired: true };
     case 'load-failed':
-      return { ...state, loadError: event.message, reprompt: false };
+      return {
+        ...state,
+        loadError: event.message,
+        reprompt: false,
+        turn: state.turn + 1,
+      };
     default:
       return state;
   }
