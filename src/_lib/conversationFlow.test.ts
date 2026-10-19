@@ -190,4 +190,32 @@ describe('conversationReducer', () => {
       { question: 'Qual é a sua idade?', answer: '30' },
     ]);
   });
+
+  it('bumps turn on every question-received, even a reprompt repeating the same question', () => {
+    expect(INITIAL_CONVERSATION_STATE.turn).toBe(0);
+
+    const first = advanceState(
+      INITIAL_CONVERSATION_STATE,
+      makeTurn({ question: 'Qual é a sua idade?' }),
+      undefined
+    );
+    expect(first.turn).toBe(1);
+
+    const repromptedSameQuestion = advanceState(
+      first,
+      makeTurn({ question: 'Qual é a sua idade?', reprompt: true }),
+      undefined
+    );
+    expect(repromptedSameQuestion.turn).toBe(2);
+
+    const afterTransientFailure = advanceState(
+      repromptedSameQuestion,
+      undefined,
+      {
+        message:
+          'A IA está indisponível no momento. Tente novamente em instantes.',
+      }
+    );
+    expect(afterTransientFailure.turn).toBe(2);
+  });
 });

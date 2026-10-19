@@ -18,6 +18,10 @@ export interface ConversationState {
   answer: string;
   premiumRequired: boolean;
   loadError?: string;
+  /** Bumped on every `question-received` (reprompts included), even when
+   * the question text repeats — the UI keys the answer input on it so a
+   * repeated question still remounts the input and reclaims focus. */
+  turn: number;
 }
 
 export const INITIAL_CONVERSATION_STATE: ConversationState = {
@@ -26,6 +30,7 @@ export const INITIAL_CONVERSATION_STATE: ConversationState = {
   optional: false,
   answer: '',
   premiumRequired: false,
+  turn: 0,
 };
 
 export type ConversationEvent =
@@ -80,6 +85,7 @@ export function conversationReducer(
         reprompt: event.reprompt,
         optional: event.optional,
         answer: '',
+        turn: state.turn + 1,
       };
     }
     case 'premium-blocked':
