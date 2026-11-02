@@ -1,10 +1,13 @@
-# Frontend Next.js Standards
+---
+name: vitaflow-frontend-conventions
+description: Apply vitaflow-frontend's Next.js App Router conventions (Server Components by default, route/feature structure, Server Actions, caching, images/fonts, env vars, component size, Vitest patterns) whenever writing or reviewing frontend code in vitaflow-frontend. Builds on vitaflow-code-standards, which still applies.
+---
 
-Rules specific to `vitaflow-frontend` (Next.js 16 App Router, React, TypeScript, Auth.js, ZSA, Zod, Tailwind + shadcn/ui, Vitest). They build on the language-agnostic rules in [`../code-standards.md`](../code-standards.md) (English-only code, function length, nesting, parameter count, one type per file), which still apply. For starting work on a new PRD (worktree, branch, registration), see [`../git-workflow.md`](../git-workflow.md).
+# Vitaflow Frontend Conventions
+
+Rules specific to `vitaflow-frontend` (Next.js 16 App Router, React, TypeScript, Auth.js, ZSA, Zod, Tailwind + shadcn/ui, Vitest). They build on the `vitaflow-code-standards` skill (English-only code, function length, nesting, parameter count, one type per file), which still apply. For starting work on a new PRD (worktree, branch, registration), use the `vitaflow-git-workflow` skill.
 
 The rules describe the project's real conventions, refined where the codebase is inconsistent (marked **Refinement**). New code follows this document; existing code is brought in line opportunistically, not through mass rewrites.
-
----
 
 ## 1. Server Components by default; `'use client'` only for interactivity
 
@@ -12,51 +15,35 @@ Every component is a React Server Component unless it needs interactivity. Add `
 
 Push the `'use client'` boundary **down** to the smallest interactive leaf. A page or section stays on the server and imports a small client component for the one interactive part, instead of marking the whole tree as client.
 
-**Bad** — the whole card becomes client code because of one button
-
 ```tsx
+// Bad — the whole card becomes client code because of one button
 'use client';
-
 export function PlanCard({ plan }: { plan: Plan }) {
   const [open, setOpen] = useState(false);
   return (
     <section>
       <h2>{plan.name}</h2>
-      <p>{plan.description}</p>
       <button onClick={() => setOpen(true)}>Choose</button>
     </section>
   );
 }
-```
 
-**Good** — the card stays on the server, only the button is client
-
-```tsx
+// Good — the card stays on the server, only the button is client
 // planCard.tsx (Server Component, no directive)
 export function PlanCard({ plan }: PlanCardProps) {
   return (
     <section>
       <h2>{plan.name}</h2>
-      <p>{plan.description}</p>
       <ChoosePlanButton planId={plan.id} />
     </section>
   );
 }
-```
-
-```tsx
 // choosePlanButton.tsx
 'use client';
-
-export function ChoosePlanButton({ planId }: ChoosePlanButtonProps) {
-  const [open, setOpen] = useState(false);
-  // ...
-}
+export function ChoosePlanButton({ planId }: ChoosePlanButtonProps) { ... }
 ```
 
-**Refinement**: a component is client only because a **child** is interactive is a smell — split it so the parent stays a Server Component. Context providers (`auth-provider`, `unsavedChangesProvider`) are the legitimate exception, since they must wrap their children.
-
----
+**Refinement**: a component that is client only because a **child** is interactive is a smell — split it so the parent stays a Server Component. Context providers (`auth-provider`, `unsavedChangesProvider`) are the legitimate exception, since they must wrap their children.
 
 ## 2. Use the App Router, organized by feature
 
@@ -71,7 +58,7 @@ Code shared across routes lives in underscore-prefixed folders under `src/`, whi
 | `src/_actions/<domain>/`     | Server Actions                                                                        |
 | `src/_lib/`                  | pure logic and server-only helpers (`apiClient`, formatters, reducers)                |
 | `src/_hooks/`                | client hooks                                                                          |
-| `src/_types/`                | one type per file (see `code-standards.md` rule 6)                                    |
+| `src/_types/`                | one type per file (see `vitaflow-code-standards` rule 6)                              |
 | `src/_schema/`               | Zod schemas                                                                           |
 | `src/_constants/`            | constants and route tables                                                            |
 
@@ -83,8 +70,6 @@ src/_components/settings/
   planPanel.tsx       # reusable section, imported by the page
   deleteAccountDialog.tsx
 ```
-
----
 
 ## 3. `page.tsx` orchestrates data; it does not implement UI
 
@@ -112,32 +97,23 @@ export default async function ProgressPage({
 
 `searchParams` and `params` are promises in Next 16: always `await` them, and validate any value taken from the URL before using it.
 
----
-
 ## 4. Fetch on the server, keep secrets on the server
 
 Read data directly in Server Components and Server Actions through `apiClient` (`src/_lib/apiClient.ts`), which runs only on the server, attaches the user's bearer token from the httpOnly cookie, and adds the `x-application-secret` header. Never call the backend from the browser and never pass tokens, secrets, or Stripe identifiers to a Client Component as props.
 
 Mark server-only modules so they cannot be imported into client code by mistake, and pass only the data a client component needs (a serializable subset, not the raw backend response).
 
-**Bad**
-
 ```tsx
+// Bad
 'use client';
 useEffect(() => {
   fetch(`${process.env.NEXT_PUBLIC_API}/profile`).then(/* ... */);
 }, []);
-```
 
-**Good**
-
-```tsx
-// Server Component
+// Good — Server Component
 const profile = await apiClient<Profile>('/profile', { method: 'GET' });
 return <ProfileForm initialName={profile.name} />;
 ```
-
----
 
 ## 5. Configure caching per request
 
@@ -154,7 +130,6 @@ const plans = await apiClient<Plan[]>('/plans', {
   cache: 'force-cache',
   next: { revalidate: 3600, tags: ['plans'] },
 });
-
 // Per-user data: never cached (the apiClient default, stated explicitly when it matters).
 const profile = await apiClient<Profile>('/profile', {
   method: 'GET',
@@ -164,8 +139,6 @@ const profile = await apiClient<Profile>('/profile', {
 
 Never cache a response that contains user data across users.
 
----
-
 ## 6. Server Actions for forms and mutations, not separate API endpoints
 
 Submit forms and perform mutations with Server Actions in `src/_actions/<domain>/`, defined with ZSA (`createServerAction().input(schema).handler(...)`) and marked `'use server'`. Do not create a `route.ts` API endpoint just to receive a form post.
@@ -174,14 +147,12 @@ Every action: checks the session first, validates input with a Zod schema, calls
 
 ```ts
 'use server';
-
 export const deleteMeasurementRecord = createServerAction()
   .input(deleteRecordSchema)
   .handler(async ({ input }) => {
     const session = await auth();
-    if (!session?.user?.id) {
+    if (!session?.user?.id)
       throw new ZSAError('NOT_AUTHORIZED', 'User is not authenticated.');
-    }
     try {
       await apiClient(`/progress-records/${input.id}`, { method: 'DELETE' });
     } catch (error) {
@@ -192,11 +163,9 @@ export const deleteMeasurementRecord = createServerAction()
 
 **Exception**: Route Handlers stay only where an external system must call the app — the Stripe webhook (`app/api/stripe/webhook/route.ts`) and the Auth.js handlers.
 
----
-
 ## 7. Images and fonts
 
-**Images**: always use `next/image` (`<Image />`) for automatic resizing, modern formats, and lazy loading; never a raw `<img>`. Give every image explicit `width`/`height` (or `fill` with a sized parent), a meaningful `alt` (empty `alt=""` only for decorative images), `sizes` for responsive images, and `priority` only for the above-the-fold image. Allow remote hosts (for example Google avatars) in `images.remotePatterns` in `next.config.ts`.
+**Images**: always use `next/image` (`<Image />`) for automatic resizing, modern formats, and lazy loading; never a raw `<img>`. Give every image explicit `width`/`height` (or `fill` with a sized parent), a meaningful `alt` (empty `alt=""` only for decorative images), `sizes` for responsive images, and `priority` only for the above-the-fold image. Allow remote hosts (e.g. Google avatars) in `images.remotePatterns` in `next.config.ts`.
 
 ```tsx
 <Image src="/logo.png" alt="Vitaflow" width={160} height={48} priority />
@@ -215,8 +184,6 @@ const manrope = Manrope({
 
 **Refinement**: `publicFooter.tsx` loads `Great_Vibes` inside a component. Move new decorative fonts to the root layout (or the route layout that needs them) so font loading stays in one place.
 
----
-
 ## 8. TypeScript everywhere, and validated environment variables
 
 All code is TypeScript in strict mode; no `any` without a `// code-standards:` justification. Type props, action inputs (Zod-inferred), and API responses (`src/_types`).
@@ -224,7 +191,7 @@ All code is TypeScript in strict mode; no `any` without a `// code-standards:` j
 Environment variables are read in one place and validated. Read them through a central helper (`src/_lib/getenv.ts`) that throws a clear error when a required variable is missing, and validate the full set with a Zod schema at startup.
 
 - Secrets (`STRIPE_API_KEY`, `APP_SECRET_KEY`, `AUTH_SECRET`, `BACKEND_URL`) have **no** `NEXT_PUBLIC_` prefix and are read only in server code.
-- A variable prefixed `NEXT_PUBLIC_` is inlined into the browser bundle: use it only for values that are safe to be public, never for a key, secret, or token.
+- A variable prefixed `NEXT_PUBLIC_` is inlined into the browser bundle: use it only for values safe to be public, never for a key, secret, or token.
 
 ```ts
 // src/_lib/env.ts (server-only)
@@ -238,31 +205,24 @@ export const env = serverEnvSchema.parse(process.env);
 
 **Refinement**: `apiClient` currently reads `process.env.APP_SECRET_KEY` directly. New code goes through the validated helper instead of touching `process.env`.
 
----
-
 ## 9. Components: functional, at most 50 lines, explicit props
 
 - **Functional components only** — function declarations with hooks; no class components.
-- **At most 50 lines per component** (the function body, JSX included). When a component grows past that, extract sub-components and pure helpers. This is the `code-standards.md` function-length rule applied to components.
+- **At most 50 lines per component** (the function body, JSX included) — this is `vitaflow-code-standards`'s function-length rule applied to components. When a component grows past that, extract sub-components and pure helpers.
 - **Explicit props**: declare a props interface and pass each prop by name. Do not spread `{...props}` into a component or element you own.
 
-**Bad**
-
 ```tsx
+// Bad
 function PlanList(props: any) {
   return <PlanCard {...props} />;
 }
-```
 
-**Good**
-
-```tsx
+// Good
 interface PlanCardProps {
   name: string;
   price: number;
   isCurrent: boolean;
 }
-
 function PlanList({ plans, currentId }: PlanListProps) {
   return plans.map(plan => (
     <PlanCard
@@ -277,8 +237,6 @@ function PlanList({ plans, currentId }: PlanListProps) {
 
 **Refinement**: the shadcn/ui primitives in `src/_components/ui/` intentionally forward `...props` to the underlying Radix element and may exceed 50 lines (`sidebar.tsx` is the largest). They are vendored library code: leave their shape alone, and do not copy the spread pattern into feature components.
 
----
-
 ## 10. Memoize heavy values with `useMemo`; do not memoize everything
 
 Use `useMemo` to pre-compute a value that is expensive to derive from props or state (large list filtering, sorting, or aggregation) so it is not recomputed on every render, and to keep a context value referentially stable.
@@ -288,13 +246,10 @@ const visibleRows = useMemo(
   () => rows.filter(matchesFilter).sort(byDate),
   [rows, matchesFilter]
 );
-
 const value = useMemo(() => ({ setDirty }), []); // stable context value
 ```
 
 **Refinement**: `useMemo` is for costly work, not a default. A cheap expression (string concatenation, a single comparison) is clearer without it. Prefer moving pure computation into a `_lib` function that can be unit tested, and memoize its call only when profiling or the list size justifies it.
-
----
 
 ## 11. Unit tests for components and logic
 
@@ -317,8 +272,6 @@ it('shows "Seu plano atual" only on the current plan card', () => {
 
 Test files sit next to the file they test (`planPanel.tsx` / `planPanel.test.tsx`).
 
----
-
 ## Enforcement
 
-Follow this document together with [`../code-standards.md`](../code-standards.md). Both are checked in code review; a deliberate exception is marked with `// code-standards: <rule> — <reason>` at the point of deviation.
+Follow this skill together with `vitaflow-code-standards`. Both are checked in code review; a deliberate exception is marked with `// code-standards: <rule> — <reason>` at the point of deviation.
