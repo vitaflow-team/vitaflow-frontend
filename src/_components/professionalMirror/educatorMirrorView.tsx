@@ -1,6 +1,7 @@
 import type { EducatorMirror } from '@/_types/professionalMirror';
-import { CalendarClock, ClipboardList, Dumbbell, Receipt } from 'lucide-react';
+import { CalendarClock, ClipboardList, Dumbbell } from 'lucide-react';
 import { MirrorAssessmentCard } from './mirrorAssessmentCard';
+import { BillingSection } from './mirrorBillingCard';
 import { MirrorIdentityCard } from './mirrorIdentityCard';
 import { MirrorSectionCard } from './mirrorSectionCard';
 import { NextScheduleCard } from './mirrorScheduleCards';
@@ -48,11 +49,7 @@ export function EducatorMirrorView({ mirror }: EducatorMirrorViewProps) {
             emptyMessage="Nenhuma avaliação física registrada ainda."
           />
         )}
-        <MirrorSectionCard
-          title="Cobrança"
-          icon={Receipt}
-          emptyMessage="Nenhuma cobrança configurada ainda."
-        />
+        <BillingSection billingStatus={mirror.billingStatus} />
       </section>
     </div>
   );

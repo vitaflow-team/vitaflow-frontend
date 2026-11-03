@@ -1,5 +1,29 @@
+import type { InvoiceStatus } from '@/_types/billing';
 import type { Bmi } from '@/_types/clinicalRecords';
 import type { MealPlanMeal, MealPlanVersion, Weekday } from '@/_types/mealPlan';
+
+export interface StudentOpenInvoice {
+  competenceYear: number;
+  competenceMonth: number;
+  amountCents: number;
+  dueDate: string;
+  status: InvoiceStatus;
+  paymentUrl: string | null;
+}
+
+export interface StudentLatestPaidInvoice {
+  competenceYear: number;
+  competenceMonth: number;
+  amountCents: number;
+  paidAt: string | null;
+}
+
+/** `null` when the student has no invoice that isn't canceled (ADR-004, US-011). */
+export interface StudentBillingStatus {
+  openInvoice: StudentOpenInvoice | null;
+  otherOpenCount: number;
+  latestPaid: StudentLatestPaidInvoice | null;
+}
 
 export interface MirrorProfessional {
   id: string;
@@ -53,7 +77,7 @@ export interface NutritionistMirror {
   /** The current published meal plan, or null when none exists yet. */
   mealPlan: MirrorMealPlan | null;
   nextConsultation: null;
-  billingStatus: null;
+  billingStatus: StudentBillingStatus | null;
 }
 
 export interface MirrorWorkoutSession {
@@ -95,7 +119,7 @@ export interface EducatorMirror {
   nextSchedule: MirrorNextSchedule | null;
   /** The educator's latest assessments (up to three, newest first), or null when there are none. */
   physicalAssessment: MirrorAssessment[] | null;
-  billingStatus: null;
+  billingStatus: StudentBillingStatus | null;
 }
 
 export interface NoProfessionalMirror {

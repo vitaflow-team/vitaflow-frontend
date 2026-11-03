@@ -128,4 +128,82 @@ describe('EducatorMirrorView', () => {
     expect(html).not.toMatch(/<button/);
     expect(html).not.toMatch(/Nova avaliação|Editar|Excluir|Remover/);
   });
+
+  it('UT-130 shows the open invoice, its status, and "Pagar agora" opening in an isolated new tab', () => {
+    const html = renderToStaticMarkup(
+      <EducatorMirrorView
+        mirror={{
+          ...MIRROR,
+          billingStatus: {
+            openInvoice: {
+              competenceYear: 2026,
+              competenceMonth: 11,
+              amountCents: 19990,
+              dueDate: '2026-11-20',
+              status: 'OVERDUE',
+              paymentUrl: 'https://asaas.test/pay/abc',
+            },
+            otherOpenCount: 2,
+            latestPaid: null,
+          },
+        }}
+      />
+    );
+
+    expect(html).toContain('Novembro de 2026');
+    expect(html).toMatch(/R\$\s?199,90/);
+    expect(html).toContain('Em atraso');
+    expect(html).toContain('2 outras cobranças em aberto');
+    expect(html).toContain('href="https://asaas.test/pay/abc"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
+  });
+
+  it('UT-130 shows the latest paid invoice when nothing is open', () => {
+    const html = renderToStaticMarkup(
+      <EducatorMirrorView
+        mirror={{
+          ...MIRROR,
+          billingStatus: {
+            openInvoice: null,
+            otherOpenCount: 0,
+            latestPaid: {
+              competenceYear: 2026,
+              competenceMonth: 10,
+              amountCents: 19990,
+              paidAt: '2026-10-05',
+            },
+          },
+        }}
+      />
+    );
+
+    expect(html).toContain('Outubro de 2026');
+    expect(html).toContain('Pago em 05/10/2026');
+    expect(html).not.toContain('Pagar agora');
+  });
+
+  it('UT-130 never shows the tax number or the gateway account', () => {
+    const html = renderToStaticMarkup(
+      <EducatorMirrorView
+        mirror={{
+          ...MIRROR,
+          billingStatus: {
+            openInvoice: {
+              competenceYear: 2026,
+              competenceMonth: 11,
+              amountCents: 19990,
+              dueDate: '2026-11-20',
+              status: 'PENDING',
+              paymentUrl: 'https://pay.example.test/abc',
+            },
+            otherOpenCount: 0,
+            latestPaid: null,
+          },
+        }}
+      />
+    );
+
+    expect(html).not.toMatch(/CPF|CNPJ|Asaas|chave de API/i);
+  });
 });
