@@ -5,6 +5,7 @@ export const SETTINGS_TABS = [
   'notificacoes',
   'academia',
   'vinculos',
+  'cobranca',
 ] as const;
 
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
@@ -16,7 +17,13 @@ export const SETTINGS_TAB_LABELS: Record<SettingsTab, string> = {
   notificacoes: 'Notificações',
   academia: 'Academia',
   vinculos: 'Vínculos',
+  cobranca: 'Cobrança',
 };
+
+const BILLING_PROFESSIONAL_TYPES = new Set([
+  'NUTRITIONIST',
+  'PHYSICAL_EDUCATOR',
+]);
 
 export function settingsTabsForType(
   productType?: string | null
@@ -24,6 +31,9 @@ export function settingsTabsForType(
   return SETTINGS_TABS.filter(tab => {
     if (tab === 'academia') return productType === 'ACADEMIA';
     if (tab === 'vinculos') return productType === 'PHYSICAL_EDUCATOR';
+    if (tab === 'cobranca') {
+      return BILLING_PROFESSIONAL_TYPES.has(productType ?? '');
+    }
     return true;
   });
 }

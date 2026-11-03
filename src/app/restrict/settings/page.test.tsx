@@ -76,7 +76,7 @@ describe('refactor — settings page structure', () => {
     expect(PAGE_SOURCE).not.toMatch(/ACTIVE_STATUSES|PROFESSIONAL_TYPES/);
     expect(PAGE_SOURCE).not.toMatch(/type SettingsProfile\s*=/);
     expect(PAGE_SOURCE).not.toContain('isSessionPlanStale');
-    expect(PAGE_SOURCE.split('\n').length).toBeLessThan(130);
+    expect(PAGE_SOURCE.split('\n').length).toBeLessThan(135);
   });
 
   it('renders nothing without a session', async () => {

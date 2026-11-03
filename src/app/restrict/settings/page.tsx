@@ -10,6 +10,7 @@ import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { redirectIfReceptionist } from '@/_lib/academiaAuthorization';
 import { loadAcademiaDataForTab } from '@/_lib/academiaSettingsData';
 import { apiClient } from '@/_lib/apiClient';
+import { loadBillingAccountForTab } from '@/_lib/billingData';
 import { loadEducatorEmploymentTab } from '@/_lib/educatorEmploymentData';
 import { isLoadFailure, loadPreferences } from '@/_lib/notificationsData';
 import {
@@ -72,6 +73,24 @@ async function loadPlans(
   return { plans: catalog ?? [], plansFailed: Boolean(plansError) };
 }
 
+async function loadTabData(tab: SettingsTab, profile: SettingsProfile | null) {
+  const { plans, plansFailed } = await loadPlans(tab);
+  const academiaData = await loadAcademiaDataForTab(tab, profile);
+  const educatorEmployments = await loadEducatorEmploymentTab(tab, profile);
+  const billingAccount = await loadBillingAccountForTab(tab, profile);
+  const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
+  const preferences =
+    prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
+  return {
+    plans,
+    plansFailed,
+    academiaData,
+    educatorEmployments,
+    billingAccount,
+    preferences,
+  };
+}
+
 export default async function Settings({ searchParams }: SettingsProps) {
   const session = await auth();
   if (!session) return null;
@@ -84,12 +103,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
   if (checkoutSessionId) await syncCheckout(checkoutSessionId);
 
   const profile = await loadProfile();
-  const { plans, plansFailed } = await loadPlans(tab);
-  const academiaData = await loadAcademiaDataForTab(tab, profile);
-  const educatorEmployments = await loadEducatorEmploymentTab(tab, profile);
-  const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
-  const preferences =
-    prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
+  const tabData = await loadTabData(tab, profile);
   const planStale = isSettingsPlanStale({
     sessionProductId: session.user?.productId,
     profile,
@@ -110,15 +124,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
           tabIndex={0}
           className="flex flex-col gap-2 pt-4 focus-visible:outline-hidden"
         >
-          <SettingsPanel
-            tab={tab}
-            profile={profile}
-            plans={plans}
-            plansFailed={plansFailed}
-            preferences={preferences}
-            academiaData={academiaData}
-            educatorEmployments={educatorEmployments}
-          />
+          <SettingsPanel tab={tab} profile={profile} {...tabData} />
         </div>
       </UnsavedChangesProvider>
     </DefaultLayout>

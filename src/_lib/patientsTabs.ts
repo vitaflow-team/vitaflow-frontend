@@ -6,6 +6,8 @@ export const PATIENT_TABS = [
   'avaliacao',
   'plano-alimentar',
   'diario-alimentar',
+  'cadastro',
+  'cobranca',
 ] as const;
 
 export type PatientTab = (typeof PATIENT_TABS)[number];
@@ -16,6 +18,8 @@ export const PATIENT_TAB_LABELS: Record<PatientTab, string> = {
   avaliacao: 'Avaliação',
   'plano-alimentar': 'Plano alimentar',
   'diario-alimentar': 'Diário alimentar',
+  cadastro: 'Cadastro',
+  cobranca: 'Cobranças',
 };
 
 export function patientTabHref(patientId: string, tab: PatientTab): string {
@@ -36,7 +40,10 @@ export function activePatientTab(
   if (under('anamnese')) return 'anamnese';
   if (under('avaliacao')) return 'avaliacao';
   if (under('plano-alimentar')) return 'plano-alimentar';
-  return under('diario-alimentar') ? 'diario-alimentar' : 'overview';
+  if (under('diario-alimentar')) return 'diario-alimentar';
+  if (under('cadastro')) return 'cadastro';
+  if (under('cobranca')) return 'cobranca';
+  return 'overview';
 }
 
 export function patientTabId(tab: PatientTab): string {

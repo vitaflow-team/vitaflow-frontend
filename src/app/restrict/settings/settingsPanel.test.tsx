@@ -35,6 +35,11 @@ vi.mock('@/_components/educatorEmployment/educatorEmploymentPanel', () => ({
     <pre data-section="educator-employment">{JSON.stringify(props)}</pre>
   ),
 }));
+vi.mock('@/_components/billing/billingSettingsPanel', () => ({
+  BillingSettingsPanel: (props: object) => (
+    <pre data-section="billing">{JSON.stringify(props)}</pre>
+  ),
+}));
 
 import { SettingsPanel } from './settingsPanel';
 
@@ -82,6 +87,7 @@ function render(tab: 'perfil' | 'plano' | 'conta', profile = PROFILE) {
       preferences={null}
       academiaData={null}
       educatorEmployments={null}
+      billingAccount={null}
     />
   );
 }
@@ -157,6 +163,7 @@ describe('refactor — settings plan panel and load failure', () => {
         preferences={null}
         academiaData={null}
         educatorEmployments={null}
+        billingAccount={null}
       />
     );
 

@@ -7,6 +7,8 @@ export interface StudentsParams {
   page: number;
   /** 'name' sorts alphabetically; absent means the soonest next session first. */
   order?: 'name';
+  /** Only pending or overdue students (US-012, ignored by the backend outside Premium). */
+  pending?: boolean;
 }
 
 function firstValue(value: string | string[] | undefined): string | undefined {
@@ -21,6 +23,7 @@ export function parseStudentsParams(input: {
   q?: string | string[];
   page?: string | string[];
   ordem?: string | string[];
+  pendentes?: string | string[];
 }): StudentsParams {
   const search = firstValue(input.q)?.trim().slice(0, MAX_SEARCH_LENGTH);
   const page = Number(firstValue(input.page));
@@ -29,14 +32,21 @@ export function parseStudentsParams(input: {
     search: search ? search : undefined,
     page: Number.isInteger(page) && page >= 1 ? page : 1,
     order: firstValue(input.ordem) === 'nome' ? 'name' : undefined,
+    pending: firstValue(input.pendentes) === '1' ? true : undefined,
   };
 }
 
-/** The list address for a search and page; page 1 and no search stay implicit. */
-export function studentsHref({ search, page, order }: StudentsParams): string {
+/** The list address for a search, page and filter; defaults stay implicit. */
+export function studentsHref({
+  search,
+  page,
+  order,
+  pending,
+}: StudentsParams): string {
   const params = new URLSearchParams();
   if (search) params.set('q', search);
   if (order === 'name') params.set('ordem', 'nome');
+  if (pending) params.set('pendentes', '1');
   if (page > 1) params.set('page', String(page));
 
   const query = params.toString();

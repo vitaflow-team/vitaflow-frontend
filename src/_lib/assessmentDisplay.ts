@@ -25,7 +25,8 @@ export function formatChange(value: number, unit: string): string {
 
 /** What removing a student costs, stated in the confirmation. */
 export function removalWarning(hasAssessments: boolean): string {
-  return hasAssessments
+  const loss = hasAssessments
     ? 'O histórico de avaliações físicas e os treinos serão perdidos permanentemente.'
     : 'Este aluno não tem avaliações registradas; os treinos que ele tiver serão perdidos permanentemente.';
+  return `${loss} Cobranças em aberto serão canceladas.`;
 }
