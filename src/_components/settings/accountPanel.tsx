@@ -16,8 +16,9 @@ interface AccountPanelProps {
  * e-mail é texto, não campo, para não sugerir uma troca que a tela não faz
  * (US-008.EC-1).
  *
- * Nenhum identificador do Stripe chega até aqui: a ação de exclusão lê os ids
- * do backend no servidor, e o cliente só sabe se existe um plano pago ativo.
+ * Nenhum identificador do gateway de pagamento chega até aqui: a ação de
+ * exclusão lê os ids do backend no servidor, e o cliente só sabe se existe
+ * um plano pago ativo.
  */
 export function AccountPanel({
   email,

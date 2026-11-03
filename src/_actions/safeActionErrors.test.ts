@@ -1,20 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { apiClientMock, authMock, fetchPlanClaimsMock, stripeFailure } =
-  vi.hoisted(() => ({
-    apiClientMock: vi.fn(),
-    authMock: vi.fn(),
-    fetchPlanClaimsMock: vi.fn(),
-    stripeFailure: vi.fn(),
-  }));
+const { apiClientMock, authMock, fetchPlanClaimsMock } = vi.hoisted(() => ({
+  apiClientMock: vi.fn(),
+  authMock: vi.fn(),
+  fetchPlanClaimsMock: vi.fn(),
+}));
 
 vi.mock('@/_lib/apiClient', () => ({ apiClient: apiClientMock }));
 vi.mock('@/_lib/env', () => ({
   env: {
     BACKEND_URL: 'https://backend.example.test',
     APP_SECRET_KEY: 'application-secret',
-    STRIPE_API_KEY: 'sk_test_123',
-    STRIPE_WEBHOOK_SECRET: 'whsec_test',
   },
 }));
 vi.mock('@/auth', () => ({
@@ -25,14 +21,6 @@ vi.mock('@/_lib/fetchPlanClaims', () => ({
   fetchPlanClaims: fetchPlanClaimsMock,
 }));
 vi.mock('next/cache', () => ({ revalidateTag: vi.fn() }));
-vi.mock('@/_lib/stripe', () => ({
-  stripe: {
-    subscriptions: { retrieve: stripeFailure, update: stripeFailure },
-    checkout: {
-      sessions: { create: stripeFailure, retrieve: stripeFailure },
-    },
-  },
-}));
 
 import { AppError } from '@/_lib/AppError';
 import { actionDeleteClientsByUser } from './clients/deleteClientsByUser';
@@ -43,15 +31,14 @@ import { actionGetProductsPlans } from './products/getProdductsPlans';
 import { createMeasurementRecord } from './progress/createMeasurementRecord';
 import { deleteMeasurementRecord } from './progress/deleteMeasurementRecord';
 import { updateMeasurementRecord } from './progress/updateMeasurementRecord';
-import { actionCancelSubscription } from './stripe/cancelSubscription';
-import { actionChangeSubscriptionPlan } from './stripe/changeSubscriptionPlan';
-import { actionCreateCheckoutSession } from './stripe/createCheckoutSession';
-import { actionReactivateSubscription } from './stripe/reactivateSubscription';
+import { actionCancelSubscription } from './subscription/cancelSubscription';
+import { actionChangeSubscriptionPlan } from './subscription/changeSubscriptionPlan';
+import { actionCreateCheckoutSession } from './subscription/createCheckoutSession';
+import { actionReactivateSubscription } from './subscription/reactivateSubscription';
 import { actionChangeProfile } from './users/postChangeProfile';
 import { actionNewPassword } from './users/postNewPassword';
 import { actionResetPassword } from './users/postResetPassword';
 import { actionSignUp } from './users/postSignup';
-import { actionUpdateSubscription } from './users/postUpdateSubscription';
 
 const RAW = 'raw-internal: sk_live_leak relation users_email_key';
 const ID = '0199a1b2-7c3d-7e4f-8a9b-0c1d2e3f4a5d';
@@ -124,17 +111,13 @@ const ACTIONS: [string, ActionCall][] = [
         healthDataConsent: true,
       }),
   ],
-  [
-    'postUpdateSubscription',
-    () => actionUpdateSubscription({ sessionId: 'cs_test' }),
-  ],
 ];
 
 const FAILURES: [string, () => unknown][] = [
   ['an unmapped backend AppError', () => new AppError(RAW, 500)],
   ['a plain Error', () => new Error(RAW)],
   [
-    'a Stripe-shaped error',
+    'a third-party-shaped error with extra fields',
     () => Object.assign(new Error(RAW), { code: 'x', statusCode: 400 }),
   ],
 ];
@@ -148,14 +131,13 @@ describe('auth input hardening — no Server Action relays a raw error', () => {
     fetchPlanClaimsMock.mockResolvedValue({ productType: 'NUTRITIONIST' });
   });
 
-  it('covers all 17 audited actions', () => {
-    expect(ACTIONS).toHaveLength(17);
+  it('covers all 16 audited actions', () => {
+    expect(ACTIONS).toHaveLength(16);
   });
 
   describe.each(FAILURES)('UT-010 given %s', (_, makeError) => {
     it.each(ACTIONS)('%s returns a safe message', async (_, run) => {
       apiClientMock.mockReset().mockRejectedValue(makeError());
-      stripeFailure.mockReset().mockRejectedValue(makeError());
 
       const [, error] = await run();
 

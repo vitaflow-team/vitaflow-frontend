@@ -4,7 +4,7 @@ import {
   hasPaidSubscription,
   isProfessionalProfile,
   isSettingsPlanStale,
-  parseCheckoutSessionId,
+  parseCheckoutStatus,
   profileClientsCount,
 } from './settingsProfile';
 
@@ -63,11 +63,13 @@ describe('refactor — settingsProfile status checks', () => {
     expect(profileClientsCount(profile({ clientsCount: null }))).toBeNull();
   });
 
-  // UT-007
-  it('accepts only a single checkout session id', () => {
-    expect(parseCheckoutSessionId('cs_123')).toBe('cs_123');
-    expect(parseCheckoutSessionId(['cs_1', 'cs_2'])).toBeUndefined();
-    expect(parseCheckoutSessionId(undefined)).toBeUndefined();
+  // UT-160 (ADR-010): the checkout query param is now a plain status marker,
+  // not a retrievable session id — only the literal "success" counts.
+  it('reads only the literal "success" checkout status', () => {
+    expect(parseCheckoutStatus('success')).toBe(true);
+    expect(parseCheckoutStatus('canceled')).toBe(false);
+    expect(parseCheckoutStatus(['success', 'success'])).toBe(false);
+    expect(parseCheckoutStatus(undefined)).toBe(false);
   });
 });
 
@@ -75,7 +77,7 @@ describe('refactor — settingsProfile plan staleness', () => {
   // UT-007: staleness computation
   it('marks the session plan stale when the product differs', () => {
     const current = profile({ productId: 'premium' });
-    const noCheckout = { checkoutSessionId: undefined };
+    const noCheckout = { justCheckedOut: false };
 
     expect(
       isSettingsPlanStale({
@@ -100,20 +102,20 @@ describe('refactor — settingsProfile plan staleness', () => {
     ).toBe(false);
   });
 
-  // UT-007 / UT-005
+  // UT-007 / UT-005 / UT-160
   it('refreshes after checkout, but never without a profile', () => {
     expect(
       isSettingsPlanStale({
         sessionProductId: 'premium',
         profile: profile({ productId: 'premium' }),
-        checkoutSessionId: 'cs_123',
+        justCheckedOut: true,
       })
     ).toBe(true);
     expect(
       isSettingsPlanStale({
         sessionProductId: 'free',
         profile: null,
-        checkoutSessionId: 'cs_123',
+        justCheckedOut: true,
       })
     ).toBe(false);
   });

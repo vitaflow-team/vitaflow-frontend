@@ -3,18 +3,18 @@ import { PlanPanel } from '@/_components/settings/planPanel';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-// As ações de assinatura tocam Stripe e cookies na importação; o painel não
-// depende do que elas fazem, só de que os botões certos apareçam.
-vi.mock('@/_actions/stripe/createCheckoutSession', () => ({
+// As ações de assinatura tocam o backend e cookies na importação; o painel
+// não depende do que elas fazem, só de que os botões certos apareçam.
+vi.mock('@/_actions/subscription/createCheckoutSession', () => ({
   actionCreateCheckoutSession: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/changeSubscriptionPlan', () => ({
+vi.mock('@/_actions/subscription/changeSubscriptionPlan', () => ({
   actionChangeSubscriptionPlan: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/cancelSubscription', () => ({
+vi.mock('@/_actions/subscription/cancelSubscription', () => ({
   actionCancelSubscription: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/reactivateSubscription', () => ({
+vi.mock('@/_actions/subscription/reactivateSubscription', () => ({
   actionReactivateSubscription: vi.fn(),
 }));
 
@@ -31,8 +31,7 @@ function product(
   id: string,
   name: string,
   price: number,
-  type: Product['type'],
-  stripeId: string | null
+  type: Product['type']
 ): Product {
   return {
     id,
@@ -40,7 +39,6 @@ function product(
     price,
     groupId: 'g',
     type,
-    stripeId,
     createdAt: '',
     updatedAt: '',
     productInfos: [],
@@ -49,10 +47,10 @@ function product(
 
 /** Lista plana como `/plans` devolve: preço crescente, empate por nome. */
 const CATALOG: Product[] = [
-  product('free', 'Gratuito', 0, 'USER', null),
-  product('premium', 'Premium', 19.9, 'USER', 'price_premium'),
-  product('pe-pro', 'Profissional', 59.9, 'PHYSICAL_EDUCATOR', 'price_pe'),
-  product('nutri-pro', 'Profissional', 79.9, 'NUTRITIONIST', 'price_nu'),
+  product('free', 'Gratuito', 0, 'USER'),
+  product('premium', 'Premium', 19.9, 'USER'),
+  product('pe-pro', 'Profissional', 59.9, 'PHYSICAL_EDUCATOR'),
+  product('nutri-pro', 'Profissional', 79.9, 'NUTRITIONIST'),
 ];
 
 interface RenderOptions {
@@ -187,7 +185,7 @@ describe('plan category tabs and expiry — plan panel', () => {
   // UT-029
   it('Should announce an empty category instead of leaving a blank area', () => {
     const html = render({
-      plans: [product('free', 'Gratuito', 0, 'USER', null)],
+      plans: [product('free', 'Gratuito', 0, 'USER')],
       profileType: 'NUTRITIONIST',
     });
 

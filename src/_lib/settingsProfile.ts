@@ -1,7 +1,7 @@
 import { isSessionPlanStale } from '@/_lib/sessionPlan';
 import type { SettingsProfile } from '@/_types/settingsProfile';
 
-/** Stripe statuses that still count as a paid subscription. */
+/** Subscription statuses that still count as a paid subscription. */
 const ACTIVE_STATUSES = ['active', 'trialing', 'past_due'];
 
 const PROFESSIONAL_TYPES = ['NUTRITIONIST', 'PHYSICAL_EDUCATOR'];
@@ -26,28 +26,29 @@ export function profileClientsCount(profile: SettingsProfile): number | null {
   return typeof profile.clientsCount === 'number' ? profile.clientsCount : null;
 }
 
-/** `?checkout_session_id=` only counts when it is a single string. */
-export function parseCheckoutSessionId(
+/** `?checkout=success` marks a return from the Asaas checkout page (ADR-010). */
+export function parseCheckoutStatus(
   value: string | string[] | undefined
-): string | undefined {
-  return typeof value === 'string' ? value : undefined;
+): boolean {
+  return value === 'success';
 }
 
 interface SettingsPlanStaleInput {
   sessionProductId: string | null | undefined;
   profile: SettingsProfile | null;
-  checkoutSessionId: string | undefined;
+  justCheckedOut: boolean;
 }
 
 /**
  * The session freezes the plan at sign-in; the profile is the server's truth.
- * Returning from checkout counts too, because the optimistic sync may have
- * just changed the product (ADR-008). Without a profile nothing is refreshed.
+ * Returning from checkout counts too: the webhook may have just landed, or be
+ * about to (ADR-010 — there is no client-side optimistic sync to run first,
+ * unlike the Stripe-era flow). Without a profile nothing is refreshed.
  */
 export function isSettingsPlanStale({
   sessionProductId,
   profile,
-  checkoutSessionId,
+  justCheckedOut,
 }: SettingsPlanStaleInput): boolean {
   if (!profile) return false;
 
@@ -55,6 +56,6 @@ export function isSettingsPlanStale({
     isSessionPlanStale(
       { productId: sessionProductId },
       { productId: profile.productId }
-    ) || Boolean(checkoutSessionId)
+    ) || justCheckedOut
   );
 }

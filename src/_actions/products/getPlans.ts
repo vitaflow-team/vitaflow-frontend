@@ -24,7 +24,6 @@ export interface Product {
   price: number;
   groupId: string;
   type: ProductTypeName;
-  stripeId: string | null;
   createdAt: string;
   updatedAt: string;
   productInfos: ProductInfo[];

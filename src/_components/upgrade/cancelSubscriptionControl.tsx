@@ -1,7 +1,7 @@
 'use client';
 
-import { actionCancelSubscription } from '@/_actions/stripe/cancelSubscription';
-import { actionReactivateSubscription } from '@/_actions/stripe/reactivateSubscription';
+import { actionCancelSubscription } from '@/_actions/subscription/cancelSubscription';
+import { actionReactivateSubscription } from '@/_actions/subscription/reactivateSubscription';
 import { useAlertHook } from '@/_hooks/alertHook';
 import { useRouter } from 'next/navigation';
 import { useServerAction } from 'zsa-react';

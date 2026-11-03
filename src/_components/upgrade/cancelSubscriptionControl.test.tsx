@@ -2,12 +2,12 @@ import { CancelSubscriptionControl } from '@/_components/upgrade/cancelSubscript
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-// As ações tocam Stripe e cookies na importação; aqui só interessa qual
+// As ações tocam o backend e cookies na importação; aqui só interessa qual
 // controle aparece, não o que ele executa.
-vi.mock('@/_actions/stripe/cancelSubscription', () => ({
+vi.mock('@/_actions/subscription/cancelSubscription', () => ({
   actionCancelSubscription: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/reactivateSubscription', () => ({
+vi.mock('@/_actions/subscription/reactivateSubscription', () => ({
   actionReactivateSubscription: vi.fn(),
 }));
 vi.mock('@/_hooks/alertHook', () => ({

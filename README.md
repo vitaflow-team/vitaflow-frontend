@@ -67,8 +67,8 @@ um cliente HTTP tipado e de Server Actions.
 - **[React Hook Form](https://react-hook-form.com/)** — formulários
 - **[Recharts](https://recharts.org/)** — gráficos (evolução, engajamento)
 - **[@tanstack/react-table](https://tanstack.com/table)** — tabelas de dados
-- **[Stripe.js](https://stripe.com/docs/js) + React Stripe Elements** — checkout e
-  gestão de assinatura
+- **[Asaas](https://www.asaas.com/)** — checkout e gestão de assinatura (ADR-010); o
+  backend fala com o gateway, o frontend só chama as rotas dele
 - **[Upstash Ratelimit](https://upstash.com/) + Vercel KV** (opcional) — limitação
   de requisições no middleware (proteção contra força bruta)
 - **[Vitest](https://vitest.dev/)** — testes unitários e de componentes
@@ -109,17 +109,18 @@ yarn install
 
 Crie um arquivo `.env.local` (ou `.env`) na raiz do projeto:
 
-| Variável                                    | Obrigatória       | Descrição                                                                                                                                                                                                   |
-| ------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BACKEND_URL`                               | ✅                | URL base da API (`http://localhost:3333` em desenvolvimento local)                                                                                                                                          |
-| `APP_SECRET_KEY`                            | ✅                | Segredo enviado ao backend no header `x-application-secret` — deve ser **idêntico** ao `APPLICATION_SECRET` do backend                                                                                      |
-| `AUTH_URL` ou `NEXTAUTH_URL`                | ✅ (uma das duas) | URL base da própria aplicação, usada pelo Auth.js                                                                                                                                                           |
-| `AUTH_SECRET` ou `NEXTAUTH_SECRET`          | ✅ (uma das duas) | Segredo de assinatura de sessão do Auth.js (gere com `openssl rand -base64 32`)                                                                                                                             |
-| `STRIPE_API_KEY`                            | ✅                | Chave secreta do Stripe (mesma conta do backend)                                                                                                                                                            |
-| `STRIPE_WEBHOOK_SECRET`                     | ✅                | Segredo do webhook do Stripe, para validar eventos recebidos                                                                                                                                                |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | opcional          | Login com Google — defina ambas para habilitar, ou deixe ambas em branco                                                                                                                                    |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`        | opcional          | Chave pública do Stripe; `@stripe/stripe-js`/`@stripe/react-stripe-js` já estão nas dependências, mas o checkout atual é feito via redirecionamento do lado do servidor, não via Stripe Elements no cliente |
-| `KV_REST_API_URL` / `KV_REST_API_TOKEN`     | opcional          | Vercel KV / Upstash Redis para rate limiting no middleware; sem essas variáveis, o rate limiting é ignorado silenciosamente                                                                                 |
+| Variável                                    | Obrigatória       | Descrição                                                                                                                   |
+| ------------------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `BACKEND_URL`                               | ✅                | URL base da API (`http://localhost:3333` em desenvolvimento local)                                                          |
+| `APP_SECRET_KEY`                            | ✅                | Segredo enviado ao backend no header `x-application-secret` — deve ser **idêntico** ao `APPLICATION_SECRET` do backend      |
+| `AUTH_URL` ou `NEXTAUTH_URL`                | ✅ (uma das duas) | URL base da própria aplicação, usada pelo Auth.js                                                                           |
+| `AUTH_SECRET` ou `NEXTAUTH_SECRET`          | ✅ (uma das duas) | Segredo de assinatura de sessão do Auth.js (gere com `openssl rand -base64 32`)                                             |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | opcional          | Login com Google — defina ambas para habilitar, ou deixe ambas em branco                                                    |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN`     | opcional          | Vercel KV / Upstash Redis para rate limiting no middleware; sem essas variáveis, o rate limiting é ignorado silenciosamente |
+
+> O checkout e a gestão de assinatura (Asaas, ADR-010) são inteiramente do
+> backend — suas credenciais (`ASAAS_PLATFORM_API_KEY`, `ASAAS_PLATFORM_WEBHOOK_TOKEN`)
+> vivem no `.env` do `vitaflow-backend`, não aqui.
 
 > As variáveis do servidor são validadas na inicialização (`src/_lib/serverEnv.ts`);
 > uma variável obrigatória ausente derruba o processo com uma mensagem listando

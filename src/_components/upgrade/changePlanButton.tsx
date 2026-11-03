@@ -1,6 +1,6 @@
 'use client';
 
-import { actionChangeSubscriptionPlan } from '@/_actions/stripe/changeSubscriptionPlan';
+import { actionChangeSubscriptionPlan } from '@/_actions/subscription/changeSubscriptionPlan';
 import { useAlertHook } from '@/_hooks/alertHook';
 import type { PlanChangeSummary as PlanChangeResult } from '@/_lib/planChangeSummary';
 import type { PlanType } from '@/_lib/planSelection';

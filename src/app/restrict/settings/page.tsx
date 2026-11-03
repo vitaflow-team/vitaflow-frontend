@@ -1,5 +1,4 @@
 import { actionGetPlans, type Product } from '@/_actions/products/getPlans';
-import { actionUpdateSubscription } from '@/_actions/users/postUpdateSubscription';
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { PlanSessionSync } from '@/_components/settings/planSessionSync';
 import { SettingsBreadcrumb } from '@/_components/settings/settingsBreadcrumb';
@@ -14,7 +13,7 @@ import { loadEducatorEmploymentTab } from '@/_lib/educatorEmploymentData';
 import { isLoadFailure, loadPreferences } from '@/_lib/notificationsData';
 import {
   isSettingsPlanStale,
-  parseCheckoutSessionId,
+  parseCheckoutStatus,
 } from '@/_lib/settingsProfile';
 import {
   parseSettingsTab,
@@ -34,18 +33,8 @@ export const metadata: Metadata = {
 interface SettingsProps {
   searchParams: Promise<{
     tab?: string | string[];
-    checkout_session_id?: string | string[];
+    checkout?: string | string[];
   }>;
-}
-
-/**
- * Fast-path optimistic sync right after returning from Stripe Checkout — the
- * webhook is the authoritative sync and runs independently, this just avoids
- * the UI looking stale for the few seconds it takes to arrive. A failure here
- * is silent on purpose: the webhook still lands.
- */
-async function syncCheckout(sessionId: string): Promise<void> {
-  await actionUpdateSubscription({ sessionId }).catch(() => undefined);
 }
 
 async function loadProfile(): Promise<SettingsProfile | null> {
@@ -77,11 +66,9 @@ export default async function Settings({ searchParams }: SettingsProps) {
   if (!session) return null;
   await redirectIfReceptionist();
 
-  const { tab: tabParam, checkout_session_id: sessionIdParam } =
-    await searchParams;
+  const { tab: tabParam, checkout: checkoutParam } = await searchParams;
   const tab = parseSettingsTab(tabParam);
-  const checkoutSessionId = parseCheckoutSessionId(sessionIdParam);
-  if (checkoutSessionId) await syncCheckout(checkoutSessionId);
+  const justCheckedOut = parseCheckoutStatus(checkoutParam);
 
   const profile = await loadProfile();
   const { plans, plansFailed } = await loadPlans(tab);
@@ -93,7 +80,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
   const planStale = isSettingsPlanStale({
     sessionProductId: session.user?.productId,
     profile,
-    checkoutSessionId,
+    justCheckedOut,
   });
 
   return (

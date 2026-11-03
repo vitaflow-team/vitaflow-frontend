@@ -89,10 +89,10 @@ export default function Terms() {
             própria; hoje o site não tem uma. */}
         <p>
           Alguns recursos exigem uma assinatura paga, cobrada de forma
-          recorrente através do Stripe. Os preços vigentes são exibidos na
-          página de planos antes da confirmação. Você pode cancelar sua
-          assinatura a qualquer momento, sem multa e sem fidelidade; o
-          cancelamento produz efeito ao final do período já pago.
+          recorrente através do Asaas. Os preços vigentes são exibidos na página
+          de planos antes da confirmação. Você pode cancelar sua assinatura a
+          qualquer momento, sem multa e sem fidelidade; o cancelamento produz
+          efeito ao final do período já pago.
         </p>
       </LegalSection>
 
