@@ -4,8 +4,6 @@ const serverEnvSchema = z
   .object({
     BACKEND_URL: z.url(),
     APP_SECRET_KEY: z.string().min(1),
-    STRIPE_API_KEY: z.string().startsWith('sk_'),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1),
     NEXTAUTH_URL: z.url().optional(),
     AUTH_URL: z.url().optional(),
     AUTH_SECRET: z.string().optional(),

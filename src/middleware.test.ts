@@ -371,7 +371,7 @@ describe('platform hardening — CSP nonce', () => {
     const policy = response?.headers.get('content-security-policy');
 
     expect(scriptSource(policy)).toMatch(
-      /^script-src 'self' 'nonce-[A-Za-z0-9+/=]+' https:\/\/js\.stripe\.com$/
+      /^script-src 'self' 'nonce-[A-Za-z0-9+/=]+'$/
     );
     expect(scriptSource(policy)).not.toContain('unsafe-inline');
     expect(scriptSource(policy)).not.toContain('unsafe-eval');
@@ -414,7 +414,7 @@ describe('platform hardening — CSP nonce', () => {
     );
 
     expect(scriptSource(response?.headers.get('content-security-policy'))).toBe(
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
     );
   });
 
@@ -433,7 +433,7 @@ describe('platform hardening — CSP nonce', () => {
   });
 
   it('M-003 runs on every page and skips static assets', () => {
-    for (const path of ['/', '/functions', '/privacy', '/api/stripe/webhook']) {
+    for (const path of ['/', '/functions', '/privacy', '/api/auth/session']) {
       expect(matches(path)).toBe(true);
     }
     for (const path of ['/_next/static/chunks/main.js', '/vitaflow.svg']) {

@@ -4,8 +4,6 @@ import { parseServerEnv } from './serverEnv';
 const VALID_ENV = {
   BACKEND_URL: 'https://backend.example.test',
   APP_SECRET_KEY: 'application-secret',
-  STRIPE_API_KEY: 'sk_test_123',
-  STRIPE_WEBHOOK_SECRET: 'whsec_123',
   NEXTAUTH_URL: 'https://app.example.test',
   NEXTAUTH_SECRET: 'auth-secret',
 };
@@ -15,10 +13,10 @@ function withEnv(overrides: Record<string, string | undefined>) {
 }
 
 describe('platform hardening — central server env schema', () => {
-  it('UT-009 rejects a payload missing STRIPE_API_KEY, naming the field', () => {
+  it('UT-009 rejects a payload missing APP_SECRET_KEY, naming the field', () => {
     expect(() =>
-      parseServerEnv(withEnv({ STRIPE_API_KEY: undefined }))
-    ).toThrow(/STRIPE_API_KEY/);
+      parseServerEnv(withEnv({ APP_SECRET_KEY: undefined }))
+    ).toThrow(/APP_SECRET_KEY/);
   });
 
   it('UT-009 rejects a malformed BACKEND_URL, naming the field', () => {
@@ -27,36 +25,30 @@ describe('platform hardening — central server env schema', () => {
     );
   });
 
-  it('UT-009 rejects a Stripe key that is not a secret key', () => {
-    expect(() =>
-      parseServerEnv(withEnv({ STRIPE_API_KEY: 'pk_live_123' }))
-    ).toThrow(/STRIPE_API_KEY/);
-  });
-
   it('UT-009 treats a blank required variable as missing', () => {
-    expect(() =>
-      parseServerEnv(withEnv({ STRIPE_WEBHOOK_SECRET: '   ' }))
-    ).toThrow(/STRIPE_WEBHOOK_SECRET/);
+    expect(() => parseServerEnv(withEnv({ APP_SECRET_KEY: '   ' }))).toThrow(
+      /APP_SECRET_KEY/
+    );
   });
 
   it('UT-009 never echoes a variable value in the error', () => {
     let message = '';
     try {
-      parseServerEnv(withEnv({ STRIPE_API_KEY: 'pk_live_secret_value' }));
+      parseServerEnv(withEnv({ BACKEND_URL: 'not-a-url-secret_value' }));
     } catch (error) {
       message = (error as Error).message;
     }
 
-    expect(message).toContain('STRIPE_API_KEY');
+    expect(message).toContain('BACKEND_URL');
     expect(message).not.toContain('secret_value');
   });
 
   it('UT-009 lists every problem in one error', () => {
     expect(() =>
       parseServerEnv(
-        withEnv({ APP_SECRET_KEY: undefined, STRIPE_API_KEY: undefined })
+        withEnv({ APP_SECRET_KEY: undefined, BACKEND_URL: undefined })
       )
-    ).toThrow(/APP_SECRET_KEY.*STRIPE_API_KEY/);
+    ).toThrow(/BACKEND_URL.*APP_SECRET_KEY|APP_SECRET_KEY.*BACKEND_URL/);
   });
 
   it('UT-009 requires NEXTAUTH_URL or AUTH_URL', () => {

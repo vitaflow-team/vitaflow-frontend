@@ -1,5 +1,3 @@
-const STRIPE_JS = 'https://js.stripe.com';
-
 export function createNonce(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   return btoa(String.fromCharCode(...bytes));
@@ -9,11 +7,15 @@ export function createNonce(): string {
 // and browsers ignore 'unsafe-inline' once a nonce is present (ADR-002).
 function scriptSource(nonce: string | undefined): string {
   if (!nonce) {
-    return `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${STRIPE_JS}`;
+    return "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
   }
-  return `script-src 'self' 'nonce-${nonce}' ${STRIPE_JS}`;
+  return `script-src 'self' 'nonce-${nonce}'`;
 }
 
+// ADR-010: subscription checkout is a plain full-page redirect to Asaas's
+// hosted page (`window.location.href`), never an embedded script or iframe
+// the way Stripe.js/Checkout needed — so unlike Stripe, Asaas needs no
+// connect-src/frame-src entry here at all.
 export function buildContentSecurityPolicy(nonce?: string): string {
   return [
     "default-src 'self'",
@@ -24,9 +26,7 @@ export function buildContentSecurityPolicy(nonce?: string): string {
     // Exercise images are links the backoffice types in, from any HTTPS host.
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
-    // Stripe's browser SDK needs its API and hosted checkout frame.
-    "connect-src 'self' https://api.stripe.com",
-    'frame-src https://js.stripe.com https://checkout.stripe.com',
+    "connect-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self' https://accounts.google.com",

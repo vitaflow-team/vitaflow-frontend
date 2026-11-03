@@ -13,7 +13,6 @@ const PLANS: Product[] = [
     price: 0,
     groupId: 'group-id',
     type: 'USER',
-    stripeId: null,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
     productInfos: [],

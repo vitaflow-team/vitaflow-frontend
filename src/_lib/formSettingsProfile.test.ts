@@ -22,8 +22,8 @@ const BACKEND_PROFILE = {
   birthDate: '1990-05-01T00:00:00.000Z',
   avatar: 'https://storage.example.test/avatar.png',
   address: { ...ADDRESS, id: 'address-id', userId: 'user-id' },
-  stripeCustomerId: 'cus_123',
-  stripeSubscriptionId: 'sub_123',
+  asaasCustomerId: 'cus_123',
+  asaasSubscriptionId: 'sub_123',
   productId: 'product-id',
   productType: 'USER',
   subscriptionStatus: 'active',
@@ -47,7 +47,7 @@ describe('platform hardening — narrowed FormSettings props', () => {
     });
   });
 
-  it('UT-011 drops backend-only fields such as the Stripe ids', () => {
+  it('UT-011 drops backend-only fields such as the Asaas ids', () => {
     const serialized = JSON.stringify(toFormSettingsProfile(BACKEND_PROFILE));
 
     expect(serialized).not.toContain('cus_123');

@@ -68,7 +68,7 @@ export default function Privacy() {
         </p>
         <p>
           <strong>Dados de pagamento:</strong> ao assinar um plano pago, o
-          processamento é feito pelo Stripe, nosso parceiro de pagamentos — a
+          processamento é feito pelo Asaas, nosso parceiro de pagamentos — a
           Vita Flow não armazena número de cartão de crédito.
         </p>
         <p>
@@ -139,7 +139,7 @@ export default function Privacy() {
         </p>
         <ul>
           <li>
-            <strong>Stripe</strong> — processamento de pagamentos e assinaturas.
+            <strong>Asaas</strong> — processamento de pagamentos e assinaturas.
           </li>
           <li>
             <strong>Google</strong> — verificação de identidade quando você

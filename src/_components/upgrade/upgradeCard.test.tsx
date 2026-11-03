@@ -3,18 +3,18 @@ import type { ComponentProps } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-// The card's actions touch Stripe and cookies on import; only which control
-// the card offers matters here, not what it runs.
-vi.mock('@/_actions/stripe/createCheckoutSession', () => ({
+// The card's actions touch the backend and cookies on import; only which
+// control the card offers matters here, not what it runs.
+vi.mock('@/_actions/subscription/createCheckoutSession', () => ({
   actionCreateCheckoutSession: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/changeSubscriptionPlan', () => ({
+vi.mock('@/_actions/subscription/changeSubscriptionPlan', () => ({
   actionChangeSubscriptionPlan: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/cancelSubscription', () => ({
+vi.mock('@/_actions/subscription/cancelSubscription', () => ({
   actionCancelSubscription: vi.fn(),
 }));
-vi.mock('@/_actions/stripe/reactivateSubscription', () => ({
+vi.mock('@/_actions/subscription/reactivateSubscription', () => ({
   actionReactivateSubscription: vi.fn(),
 }));
 vi.mock('@/_hooks/alertHook', () => ({

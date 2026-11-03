@@ -16,11 +16,11 @@ describe('platform hardening — content security policy', () => {
     expect(createNonce()).not.toBe(nonce);
   });
 
-  it('authorizes scripts only by nonce, self and Stripe when given a nonce', () => {
+  it('authorizes scripts only by nonce and self when given a nonce', () => {
     const policy = buildContentSecurityPolicy('abc123');
 
     expect(directive(policy, 'script-src')).toBe(
-      "script-src 'self' 'nonce-abc123' https://js.stripe.com"
+      "script-src 'self' 'nonce-abc123'"
     );
   });
 
@@ -28,7 +28,7 @@ describe('platform hardening — content security policy', () => {
     const policy = buildContentSecurityPolicy();
 
     expect(directive(policy, 'script-src')).toBe(
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
     );
   });
 

@@ -35,7 +35,7 @@ describe('plan change summary copy', () => {
   });
 
   it('Should describe the charge without exact amounts', () => {
-    expect(chargeLine('checkout')).toContain('Stripe');
+    expect(chargeLine('checkout')).toContain('Asaas');
     expect(chargeLine('immediate-proration')).toContain('proporcionalmente');
     expect(chargeLine('immediate-proration')).not.toMatch(/R\$/);
   });
@@ -115,7 +115,7 @@ describe('plan change summary dialog block', () => {
     expect(body).toContain('A conta passa de uso pessoal para nutricionista');
     expect(body).toContain('Você passa a ter acesso a: Pessoas');
     expect(body).toContain('Seus dados pessoais, medidas e histórico');
-    expect(body).toContain('página segura do Stripe');
+    expect(body).toContain('página segura do Asaas');
     expect(body).not.toContain('ficarão ocultos');
   });
 

@@ -35,12 +35,12 @@ export function hiddenClientsLine(
 }
 
 /**
- * Descreve a cobrança sem valor exato: o preço fechado é o do Stripe, e
+ * Descreve a cobrança sem valor exato: o preço fechado é o do gateway, e
  * prometer um número aqui seria inventá-lo (ADR-010).
  */
 export function chargeLine(charge: PlanChangeResult['charge']): string {
   return charge === 'checkout'
-    ? 'O pagamento é feito na página segura do Stripe, aberta ao confirmar.'
+    ? 'O pagamento é feito na página segura do Asaas, aberta ao confirmar.'
     : 'A troca vale na hora: a diferença é cobrada ou creditada proporcionalmente ao tempo restante do período já pago.';
 }
 

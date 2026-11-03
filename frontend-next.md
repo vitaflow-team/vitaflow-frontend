@@ -116,7 +116,7 @@ export default async function ProgressPage({
 
 ## 4. Fetch on the server, keep secrets on the server
 
-Read data directly in Server Components and Server Actions through `apiClient` (`src/_lib/apiClient.ts`), which runs only on the server, attaches the user's bearer token from the httpOnly cookie, and adds the `x-application-secret` header. Never call the backend from the browser and never pass tokens, secrets, or Stripe identifiers to a Client Component as props.
+Read data directly in Server Components and Server Actions through `apiClient` (`src/_lib/apiClient.ts`), which runs only on the server, attaches the user's bearer token from the httpOnly cookie, and adds the `x-application-secret` header. Never call the backend from the browser and never pass tokens, secrets, or gateway identifiers (Asaas customer/subscription ids) to a Client Component as props.
 
 Mark server-only modules so they cannot be imported into client code by mistake, and pass only the data a client component needs (a serializable subset, not the raw backend response).
 
@@ -190,7 +190,7 @@ export const deleteMeasurementRecord = createServerAction()
   });
 ```
 
-**Exception**: Route Handlers stay only where an external system must call the app — the Stripe webhook (`app/api/stripe/webhook/route.ts`) and the Auth.js handlers.
+**Exception**: Route Handlers stay only where an external system must call the app — currently just the Auth.js handlers (`app/api/auth/[...nextauth]/route.ts`). The Asaas subscription webhook is a backend route, not a frontend one (ADR-010) — the backend is Vita Flow's own server, so it needs no exception here.
 
 ---
 
@@ -223,7 +223,7 @@ All code is TypeScript in strict mode; no `any` without a `// code-standards:` j
 
 Environment variables are read in one place and validated. Read them through a central helper (`src/_lib/getenv.ts`) that throws a clear error when a required variable is missing, and validate the full set with a Zod schema at startup.
 
-- Secrets (`STRIPE_API_KEY`, `APP_SECRET_KEY`, `AUTH_SECRET`, `BACKEND_URL`) have **no** `NEXT_PUBLIC_` prefix and are read only in server code.
+- Secrets (`APP_SECRET_KEY`, `AUTH_SECRET`, `BACKEND_URL`) have **no** `NEXT_PUBLIC_` prefix and are read only in server code.
 - A variable prefixed `NEXT_PUBLIC_` is inlined into the browser bundle: use it only for values that are safe to be public, never for a key, secret, or token.
 
 ```ts
@@ -231,7 +231,6 @@ Environment variables are read in one place and validated. Read them through a c
 const serverEnvSchema = z.object({
   BACKEND_URL: z.url(),
   APP_SECRET_KEY: z.string().min(1),
-  STRIPE_API_KEY: z.string().startsWith('sk_'),
 });
 export const env = serverEnvSchema.parse(process.env);
 ```

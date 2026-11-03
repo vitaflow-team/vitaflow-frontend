@@ -3,8 +3,8 @@ import type { ComponentProps, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-// The action signs out and talks to Stripe on import; the dialog is checked
-// by the markup it produces, not by what the confirm button runs.
+// The action signs out and calls the backend on import; the dialog is
+// checked by the markup it produces, not by what the confirm button runs.
 vi.mock('@/_actions/users/deleteAccount', () => ({
   deleteAccount: vi.fn(),
 }));

@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/_actions/stripe/changeSubscriptionPlan', () => ({
+vi.mock('@/_actions/subscription/changeSubscriptionPlan', () => ({
   actionChangeSubscriptionPlan: vi.fn(),
 }));
 vi.mock('@/_hooks/alertHook', () => ({

@@ -4,21 +4,16 @@ import type { ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { apiClientMock, authMock, getPlansMock, updateSubscriptionMock } =
-  vi.hoisted(() => ({
-    apiClientMock: vi.fn(),
-    authMock: vi.fn(),
-    getPlansMock: vi.fn(),
-    updateSubscriptionMock: vi.fn(),
-  }));
+const { apiClientMock, authMock, getPlansMock } = vi.hoisted(() => ({
+  apiClientMock: vi.fn(),
+  authMock: vi.fn(),
+  getPlansMock: vi.fn(),
+}));
 
 vi.mock('@/auth', () => ({ auth: authMock }));
 vi.mock('@/_lib/apiClient', () => ({ apiClient: apiClientMock }));
 vi.mock('@/_actions/products/getPlans', () => ({
   actionGetPlans: getPlansMock,
-}));
-vi.mock('@/_actions/users/postUpdateSubscription', () => ({
-  actionUpdateSubscription: updateSubscriptionMock,
 }));
 vi.mock('@/_components/layout/defaultLayout', () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
@@ -65,7 +60,6 @@ function resetMocks() {
   authMock.mockResolvedValue({ user: { productId: 'premium' } });
   apiClientMock.mockResolvedValue({ name: 'Ana', productId: 'premium' });
   getPlansMock.mockResolvedValue([[], null]);
-  updateSubscriptionMock.mockResolvedValue([null, null]);
 }
 
 describe('refactor — settings page structure', () => {
@@ -96,33 +90,23 @@ describe('refactor — settings page structure', () => {
   });
 });
 
-describe('refactor — settings page checkout sync and failures', () => {
+describe('refactor — settings page checkout return and failures', () => {
   beforeEach(resetMocks);
 
-  // UT-007 (US-002.EC-1): the checkout sync keeps its exact behavior.
-  it('syncs a returning checkout before reading the profile', async () => {
-    const markup = await renderPage({ checkout_session_id: 'cs_123' });
+  // UT-160 (ADR-010): returning from Asaas checkout marks the plan stale —
+  // there is no client-side session to sync first, unlike the Stripe-era flow.
+  it('marks the plan stale on a successful checkout return', async () => {
+    const markup = await renderPage({ checkout: 'success' });
 
-    expect(updateSubscriptionMock).toHaveBeenCalledWith({
-      sessionId: 'cs_123',
-    });
-    expect(updateSubscriptionMock.mock.invocationCallOrder[0]).toBeLessThan(
-      apiClientMock.mock.invocationCallOrder[0]
-    );
     expect(markup).toContain('data-stale="true"');
   });
 
-  // UT-005
-  it('swallows a failed checkout sync and skips a repeated session id', async () => {
-    updateSubscriptionMock.mockRejectedValue(new Error('stripe down'));
-    await expect(
-      renderPage({ checkout_session_id: 'cs_123' })
-    ).resolves.toContain('data-tab="perfil"');
+  it('ignores a canceled checkout return and a malformed param', async () => {
+    const canceled = await renderPage({ checkout: 'canceled' });
+    expect(canceled).toContain('data-stale="false"');
 
-    updateSubscriptionMock.mockClear();
-    const markup = await renderPage({ checkout_session_id: ['a', 'b'] });
-    expect(updateSubscriptionMock).not.toHaveBeenCalled();
-    expect(markup).toContain('data-stale="false"');
+    const malformed = await renderPage({ checkout: ['a', 'b'] });
+    expect(malformed).toContain('data-stale="false"');
   });
 
   // UT-005

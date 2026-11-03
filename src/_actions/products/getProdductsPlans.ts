@@ -30,7 +30,6 @@ export interface Product {
    * at sign-in (ADR-004).
    */
   type: ProductTypeName;
-  stripeId: string | null;
   createdAt: string;
   updatedAt: string;
   productInfos: ProductInfo[];

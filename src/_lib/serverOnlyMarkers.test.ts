@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 
 const MODULES = [
   'apiClient.ts',
-  'stripe.ts',
   'env.ts',
   'accessTokenCookie.ts',
   'fetchPlanClaims.ts',

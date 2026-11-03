@@ -1,6 +1,6 @@
 'use client';
 
-import { actionCreateCheckoutSession } from '@/_actions/stripe/createCheckoutSession';
+import { actionCreateCheckoutSession } from '@/_actions/subscription/createCheckoutSession';
 import { useAlertHook } from '@/_hooks/alertHook';
 import type { PlanChangeSummary as PlanChangeResult } from '@/_lib/planChangeSummary';
 import type { PlanType } from '@/_lib/planSelection';
