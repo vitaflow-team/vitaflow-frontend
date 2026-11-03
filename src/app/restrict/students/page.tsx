@@ -1,6 +1,7 @@
 import DefaultLayout from '@/_components/layout/defaultLayout';
 import { StudentsView } from '@/_components/students/studentsView';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
+import { loadBillingAccount } from '@/_lib/billingData';
 import { loadEducatorEmployments } from '@/_lib/educatorEmploymentData';
 import { redirectUnlessEducator } from '@/_lib/studentsAuthorization';
 import { isLoadFailure, loadStudents } from '@/_lib/studentsData';
@@ -16,6 +17,7 @@ interface StudentsPageProps {
     q?: string | string[];
     page?: string | string[];
     ordem?: string | string[];
+    pendentes?: string | string[];
   }>;
 }
 
@@ -25,10 +27,12 @@ export default async function StudentsPage({
 }: StudentsPageProps) {
   await redirectUnlessEducator();
   const params = parseStudentsParams(await searchParams);
-  const [list, employments] = await Promise.all([
+  const [list, employments, account] = await Promise.all([
     loadStudents(params),
     loadEducatorEmployments(),
+    loadBillingAccount(),
   ]);
+  const isPremium = !isLoadFailure(account) && account.premium;
 
   return (
     <DefaultLayout>
@@ -42,6 +46,8 @@ export default async function StudentsPage({
           list={list}
           search={params.search}
           order={params.order}
+          pending={params.pending}
+          isPremium={isPremium}
           employments={employments}
         />
       )}

@@ -1,6 +1,7 @@
 import type { EducatorEmployment } from '@/_types/educatorEmployment';
 import type { StudentList } from '@/_types/students';
 import { AddStudentPanel } from './addStudentPanel';
+import { PendingFilterControl } from './pendingFilterControl';
 import { StudentSearch } from './studentSearch';
 import { StudentsOrderControl } from './studentsOrderControl';
 import { StudentsEmptyState } from './studentsEmptyState';
@@ -12,10 +13,12 @@ interface StudentsViewProps {
   list: StudentList;
   search?: string;
   order?: 'name';
+  pending?: boolean;
+  isPremium?: boolean;
   employments?: EducatorEmployment[];
 }
 
-function StudentsContent({ list, search, order }: StudentsViewProps) {
+function StudentsContent({ list, search, order, pending }: StudentsViewProps) {
   if (list.total === 0) {
     return search ? (
       <StudentsNoResults search={search} />
@@ -30,6 +33,7 @@ function StudentsContent({ list, search, order }: StudentsViewProps) {
       <StudentsPagination
         search={search}
         order={order}
+        pending={pending}
         page={list.page}
         total={list.total}
         pageSize={list.pageSize}
@@ -43,6 +47,8 @@ export function StudentsView({
   list,
   search,
   order,
+  pending,
+  isPremium,
   employments = [],
 }: StudentsViewProps) {
   return (
@@ -52,8 +58,22 @@ export function StudentsView({
         <AddStudentPanel employments={employments} />
       </div>
       <StudentSearch initialQuery={search ?? ''} />
-      <StudentsOrderControl order={order} search={search} />
-      <StudentsContent list={list} search={search} order={order} />
+      <div className="flex flex-wrap gap-2">
+        <StudentsOrderControl order={order} search={search} />
+        {isPremium && (
+          <PendingFilterControl
+            pending={pending}
+            search={search}
+            order={order}
+          />
+        )}
+      </div>
+      <StudentsContent
+        list={list}
+        search={search}
+        order={order}
+        pending={pending}
+      />
     </div>
   );
 }

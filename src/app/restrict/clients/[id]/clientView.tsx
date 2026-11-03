@@ -2,7 +2,6 @@
 
 import { actionGetClientById } from '@/_actions/clients/getClientById';
 import { actionPostClientByUser } from '@/_actions/clients/postClientsByUser';
-import DefaultLayout from '@/_components/layout/defaultLayout';
 import { Button } from '@/_components/ui/button';
 import { ButtonLink } from '@/_components/ui/buttonLink';
 import {
@@ -24,7 +23,16 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useServerAction } from 'zsa-react';
 
-export default function ClientView({ id }: { id: string }) {
+interface ClientViewProps {
+  id: string;
+  /** Where "Cancelar" and a successful save navigate to. */
+  backUrl?: string;
+}
+
+export default function ClientView({
+  id,
+  backUrl: backUrlProp,
+}: ClientViewProps) {
   const {
     execute: executeGet,
     data: dataGet,
@@ -44,7 +52,9 @@ export default function ClientView({ id }: { id: string }) {
     },
   });
   const { openError } = useAlertHook();
-  const { onSuccess, backUrl } = useFormRedirect('/restrict/clients');
+  const { onSuccess, backUrl } = useFormRedirect(
+    backUrlProp ?? '/restrict/clients'
+  );
 
   useEffect(() => {
     async function LoadData() {
@@ -87,7 +97,7 @@ export default function ClientView({ id }: { id: string }) {
   }
 
   return (
-    <DefaultLayout>
+    <>
       <Form {...methods}>
         <form
           className="flex flex-col w-full gap-6"
@@ -194,6 +204,6 @@ export default function ClientView({ id }: { id: string }) {
           </div>
         </form>
       </Form>
-    </DefaultLayout>
+    </>
   );
 }

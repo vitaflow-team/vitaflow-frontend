@@ -1,3 +1,4 @@
+import DefaultLayout from '@/_components/layout/defaultLayout';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
 import { redirectUnlessProfessional } from '@/_lib/clientsAuthorization';
 import type { Metadata } from 'next';
@@ -14,5 +15,9 @@ export default async function ClientPage({
 }) {
   await redirectUnlessProfessional();
   const { id } = await params;
-  return <ClientView id={id} />;
+  return (
+    <DefaultLayout>
+      <ClientView id={id} />
+    </DefaultLayout>
+  );
 }

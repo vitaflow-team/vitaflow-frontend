@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { parseSettingsTab, settingsTabHref } from './settingsTabs';
+import {
+  parseSettingsTab,
+  settingsTabHref,
+  settingsTabsForType,
+} from './settingsTabs';
 
 describe('settings tabs', () => {
   it('UT-015 keeps every known tab', () => {
@@ -15,6 +19,14 @@ describe('settings tabs', () => {
     expect(parseSettingsTab('xyz')).toBe('perfil');
     expect(parseSettingsTab('PLANO')).toBe('perfil');
     expect(parseSettingsTab(['plano', 'conta'])).toBe('perfil');
+  });
+
+  it('UT-121 the cobrança tab appears only for professionals', () => {
+    expect(settingsTabsForType('PHYSICAL_EDUCATOR')).toContain('cobranca');
+    expect(settingsTabsForType('NUTRITIONIST')).toContain('cobranca');
+    expect(settingsTabsForType('USER')).not.toContain('cobranca');
+    expect(settingsTabsForType('ACADEMIA')).not.toContain('cobranca');
+    expect(settingsTabsForType(null)).not.toContain('cobranca');
   });
 
   it('UT-017 builds the tab address and keeps extra parameters', () => {

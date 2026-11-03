@@ -21,6 +21,7 @@ const STUDENTS: StudentListItem[] = [
     hasAccount: true,
     lastAssessedOn: '2026-09-15',
     nextSession: null,
+    financialSituation: null,
   },
   {
     id: 's2',
@@ -29,6 +30,7 @@ const STUDENTS: StudentListItem[] = [
     hasAccount: false,
     lastAssessedOn: null,
     nextSession: null,
+    financialSituation: null,
   },
 ];
 
@@ -44,6 +46,22 @@ describe('students list', () => {
     expect(html).toContain('Sem conta');
     expect(html).toContain('Sem avaliação');
     expect(html).toContain('href="/restrict/students/s1"');
+  });
+
+  it('UT-128 shows the financial situation chip only when it is not null', () => {
+    const premium: StudentListItem = {
+      ...STUDENTS[0],
+      financialSituation: 'OVERDUE',
+    };
+    const html = renderToStaticMarkup(<StudentsList students={[premium]} />);
+
+    expect(html).toContain('Em atraso');
+  });
+
+  it('UT-128 shows no chip for a non-Premium professional', () => {
+    const html = renderToStaticMarkup(<StudentsList students={STUDENTS} />);
+
+    expect(html).not.toMatch(/Em atraso|Pendente|Em dia|Sem cobrança/);
   });
 
   it('UT-110 shows the first-use explanation and an "Adicionar aluno" action', () => {

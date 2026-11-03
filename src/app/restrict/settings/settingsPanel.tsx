@@ -1,5 +1,6 @@
 import type { Product } from '@/_actions/products/getPlans';
 import { AcademiaSettingsPanel } from '@/_components/academia/academiaSettingsPanel';
+import { BillingSettingsPanel } from '@/_components/billing/billingSettingsPanel';
 import { AccountPanel } from '@/_components/settings/accountPanel';
 import { NotificationPreferencesPanel } from '@/_components/settings/notificationPreferencesPanel';
 import { PlanPanel } from '@/_components/settings/planPanel';
@@ -14,6 +15,8 @@ import {
   profileClientsCount,
 } from '@/_lib/settingsProfile';
 import type { SettingsTab } from '@/_lib/settingsTabs';
+import type { BillingAccount } from '@/_types/billing';
+import type { LoadFailure } from '@/_types/loadFailure';
 import type { NotificationPreferences } from '@/_types/notifications';
 import type { SettingsProfile } from '@/_types/settingsProfile';
 import FormSettings from './form';
@@ -76,6 +79,74 @@ export function PlanSettingsPanel({
   );
 }
 
+interface AcademiaTabPanelProps {
+  profile: SettingsProfile | null;
+  academiaData: AcademiaSettingsData | null;
+}
+
+function AcademiaTabPanel({ profile, academiaData }: AcademiaTabPanelProps) {
+  if (!profile || profile.productType !== 'ACADEMIA' || !academiaData) {
+    return <div>Esta área não está disponível para o seu tipo de conta.</div>;
+  }
+  return (
+    <>
+      <PanelTitle label="Academia" />
+      <AcademiaSettingsPanel data={academiaData} />
+    </>
+  );
+}
+
+interface VinculosTabPanelProps {
+  profile: SettingsProfile | null;
+  educatorEmployments: EducatorEmployment[] | null;
+}
+
+function VinculosTabPanel({
+  profile,
+  educatorEmployments,
+}: VinculosTabPanelProps) {
+  if (
+    !profile ||
+    profile.productType !== 'PHYSICAL_EDUCATOR' ||
+    !educatorEmployments
+  ) {
+    return <div>Esta área não está disponível para o seu tipo de conta.</div>;
+  }
+  return (
+    <>
+      <PanelTitle label="Vínculos com academias" />
+      <EducatorEmploymentPanel employments={educatorEmployments} />
+    </>
+  );
+}
+
+function NotificationsTabPanel({
+  preferences,
+}: {
+  preferences: NotificationPreferences | null;
+}) {
+  if (!preferences) {
+    return (
+      <div>Erro ao carregar preferências. Tente novamente mais tarde.</div>
+    );
+  }
+  return (
+    <>
+      <PanelTitle label="Notificações" />
+      <NotificationPreferencesPanel preferences={preferences} />
+    </>
+  );
+}
+
+function PerfilTabPanel({ profile }: { profile: SettingsProfile }) {
+  return (
+    <>
+      <PanelTitle label="Meu perfil" />
+      <FormSettings profile={toFormSettingsProfile(profile)} />
+    </>
+  );
+}
+
 interface SettingsPanelProps {
   tab: SettingsTab;
   profile: SettingsProfile | null;
@@ -84,6 +155,7 @@ interface SettingsPanelProps {
   preferences: NotificationPreferences | null;
   academiaData: AcademiaSettingsData | null;
   educatorEmployments: EducatorEmployment[] | null;
+  billingAccount: BillingAccount | LoadFailure | null;
 }
 
 /**
@@ -98,47 +170,27 @@ export function SettingsPanel({
   preferences,
   academiaData,
   educatorEmployments,
+  billingAccount,
 }: SettingsPanelProps) {
+  if (tab === 'cobranca') {
+    return <BillingSettingsPanel account={billingAccount} />;
+  }
+
   if (tab === 'academia') {
-    if (!profile || profile.productType !== 'ACADEMIA' || !academiaData) {
-      return <div>Esta área não está disponível para o seu tipo de conta.</div>;
-    }
-    return (
-      <>
-        <PanelTitle label="Academia" />
-        <AcademiaSettingsPanel data={academiaData} />
-      </>
-    );
+    return <AcademiaTabPanel profile={profile} academiaData={academiaData} />;
   }
 
   if (tab === 'vinculos') {
-    if (
-      !profile ||
-      profile.productType !== 'PHYSICAL_EDUCATOR' ||
-      !educatorEmployments
-    ) {
-      return <div>Esta área não está disponível para o seu tipo de conta.</div>;
-    }
     return (
-      <>
-        <PanelTitle label="Vínculos com academias" />
-        <EducatorEmploymentPanel employments={educatorEmployments} />
-      </>
+      <VinculosTabPanel
+        profile={profile}
+        educatorEmployments={educatorEmployments}
+      />
     );
   }
 
   if (tab === 'notificacoes') {
-    if (!preferences) {
-      return (
-        <div>Erro ao carregar preferências. Tente novamente mais tarde.</div>
-      );
-    }
-    return (
-      <>
-        <PanelTitle label="Notificações" />
-        <NotificationPreferencesPanel preferences={preferences} />
-      </>
-    );
+    return <NotificationsTabPanel preferences={preferences} />;
   }
 
   if (!profile) {
@@ -147,14 +199,7 @@ export function SettingsPanel({
 
   if (tab === 'conta') return <AccountSettingsPanel profile={profile} />;
 
-  if (tab === 'perfil') {
-    return (
-      <>
-        <PanelTitle label="Meu perfil" />
-        <FormSettings profile={toFormSettingsProfile(profile)} />
-      </>
-    );
-  }
+  if (tab === 'perfil') return <PerfilTabPanel profile={profile} />;
 
   return (
     <PlanSettingsPanel

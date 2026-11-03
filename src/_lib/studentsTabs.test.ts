@@ -9,13 +9,14 @@ import {
 const ID = '01890a5d-ac96-774b-bcce-b302099a8057';
 
 describe('student record tabs', () => {
-  it('UT-122 has exactly the tabs Visão geral, Anamnese, Avaliação física, Treinos and Horários', () => {
+  it('has exactly the tabs Visão geral, Anamnese, Avaliação física, Treinos, Horários and Cobrança', () => {
     expect(STUDENT_TABS.map(tab => STUDENT_TAB_LABELS[tab])).toEqual([
       'Visão geral',
       'Anamnese',
       'Avaliação física',
       'Treinos',
       'Horários',
+      'Cobrança',
     ]);
   });
 
@@ -75,6 +76,17 @@ describe('student record tabs', () => {
     expect(activeStudentTab(`/restrict/students/${ID}`, ID)).toBe('overview');
     expect(activeStudentTab('/restrict/students/other/assessment', ID)).toBe(
       'overview'
+    );
+  });
+});
+
+describe('student record tabs — billing', () => {
+  it('reads the billing address as the billing tab', () => {
+    expect(studentTabHref(ID, 'billing')).toBe(
+      `/restrict/students/${ID}/billing`
+    );
+    expect(activeStudentTab(`/restrict/students/${ID}/billing`, ID)).toBe(
+      'billing'
     );
   });
 });

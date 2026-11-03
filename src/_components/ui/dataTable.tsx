@@ -51,6 +51,10 @@ interface DataTableProps<TData, TValue> {
   messageNotFound?: string;
   getEditLink?: (row: TData) => string;
   deleteAction?: (row: TData) => Promise<any>;
+  /** Appended to the confirmation text; omit to keep the generic wording. */
+  deleteWarning?: (row: TData) => string;
+  /** Called with the deleted row and `deleteAction`'s own result, once it resolves. */
+  onDeleted?: (row: TData, result: any) => void;
 }
 
 declare module '@tanstack/react-table' {
@@ -69,6 +73,8 @@ export function DataTable<TData, TValue>({
   messageNotFound = 'Sem resultados',
   getEditLink,
   deleteAction,
+  deleteWarning,
+  onDeleted,
 }: DataTableProps<TData, TValue>) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
@@ -175,6 +181,7 @@ export function DataTable<TData, TValue>({
                     <AlertDialogDescription>
                       Esta ação não pode ser desfeita. Isso excluirá
                       permanentemente o registro.
+                      {deleteWarning && ` ${deleteWarning(row.original)}`}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -187,7 +194,8 @@ export function DataTable<TData, TValue>({
                         'w-full sm:w-32'
                       )}
                       onClick={async () => {
-                        await deleteAction(row.original);
+                        const result = await deleteAction(row.original);
+                        onDeleted?.(row.original, result);
                       }}
                     >
                       Sim
@@ -223,7 +231,7 @@ export function DataTable<TData, TValue>({
     });
 
     return [selectColumn, ...modifiedColumns, settingsColumn];
-  }, [columns, getEditLink, deleteAction]);
+  }, [columns, getEditLink, deleteAction, deleteWarning, onDeleted]);
 
   const table = useReactTable({
     data,

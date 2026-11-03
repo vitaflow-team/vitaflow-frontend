@@ -23,6 +23,12 @@ describe('patientTabHref', () => {
     expect(patientTabHref(PATIENT_ID, 'diario-alimentar')).toBe(
       `/restrict/patients/${PATIENT_ID}/diario-alimentar`
     );
+    expect(patientTabHref(PATIENT_ID, 'cadastro')).toBe(
+      `/restrict/patients/${PATIENT_ID}/cadastro`
+    );
+    expect(patientTabHref(PATIENT_ID, 'cobranca')).toBe(
+      `/restrict/patients/${PATIENT_ID}/cobranca`
+    );
   });
 });
 
@@ -58,5 +64,14 @@ describe('activePatientTab', () => {
         PATIENT_ID
       )
     ).toBe('diario-alimentar');
+  });
+
+  it('UT-129 opens the Cadastro and Cobranças tabs', () => {
+    expect(
+      activePatientTab(`/restrict/patients/${PATIENT_ID}/cadastro`, PATIENT_ID)
+    ).toBe('cadastro');
+    expect(
+      activePatientTab(`/restrict/patients/${PATIENT_ID}/cobranca`, PATIENT_ID)
+    ).toBe('cobranca');
   });
 });

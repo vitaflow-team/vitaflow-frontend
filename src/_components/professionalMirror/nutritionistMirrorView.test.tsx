@@ -121,4 +121,59 @@ describe('NutritionistMirrorView', () => {
     expect(html).not.toContain('Emagrecimento');
     expect(html).not.toContain('R$ 150');
   });
+
+  it('UT-130 shows the open invoice and "Pagar agora" opening in an isolated new tab', () => {
+    const html = renderToStaticMarkup(
+      <NutritionistMirrorView
+        mirror={{
+          ...MIRROR,
+          billingStatus: {
+            openInvoice: {
+              competenceYear: 2026,
+              competenceMonth: 11,
+              amountCents: 19990,
+              dueDate: '2026-11-20',
+              status: 'PENDING',
+              paymentUrl: 'https://pay.example.test/abc',
+            },
+            otherOpenCount: 0,
+            latestPaid: null,
+          },
+        }}
+      />
+    );
+
+    expect(html).toContain('Novembro de 2026');
+    expect(html).toContain('Pendente');
+    expect(html).toContain('href="https://pay.example.test/abc"');
+    expect(html).toContain('target="_blank"');
+    expect(html).toContain('rel="noopener noreferrer"');
+    expect(html).not.toMatch(/CPF|CNPJ|chave de API/i);
+  });
+
+  it('UT-130 shows the latest paid invoice and the honest empty state otherwise', () => {
+    const paid = renderToStaticMarkup(
+      <NutritionistMirrorView
+        mirror={{
+          ...MIRROR,
+          billingStatus: {
+            openInvoice: null,
+            otherOpenCount: 0,
+            latestPaid: {
+              competenceYear: 2026,
+              competenceMonth: 10,
+              amountCents: 19990,
+              paidAt: '2026-10-05',
+            },
+          },
+        }}
+      />
+    );
+    expect(paid).toContain('Pago em 05/10/2026');
+
+    const empty = renderToStaticMarkup(
+      <NutritionistMirrorView mirror={MIRROR} />
+    );
+    expect(empty).toContain('Nenhuma cobrança registrada ainda.');
+  });
 });

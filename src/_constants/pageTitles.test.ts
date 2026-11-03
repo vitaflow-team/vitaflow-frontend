@@ -18,6 +18,8 @@ describe('restricted page titles', () => {
       'Avaliação',
       'Plano alimentar',
       'Diário alimentar',
+      'Cadastro',
+      'Cobranças',
       'Alunos',
       'Aluno',
       'Aluno não encontrado',
@@ -45,9 +47,9 @@ describe('restricted page titles', () => {
   it('UT-032 contains non-empty, pairwise distinct values', () => {
     const titles = Object.values(PAGE_TITLES);
 
-    expect(titles).toHaveLength(35);
+    expect(titles).toHaveLength(37);
     expect(titles.every(title => title.length > 0)).toBe(true);
-    expect(new Set(titles).size).toBe(35);
+    expect(new Set(titles).size).toBe(37);
   });
 
   it('UT-158 includes the students list, the record and the not-found titles', () => {

@@ -13,6 +13,8 @@ export const PAGE_TITLES = {
   patientAssessment: 'Avaliação',
   patientMealPlan: 'Plano alimentar',
   patientFoodDiary: 'Diário alimentar',
+  patientRegistration: 'Cadastro',
+  patientBilling: 'Cobranças',
   students: 'Alunos',
   student: 'Aluno',
   studentNotFound: 'Aluno não encontrado',

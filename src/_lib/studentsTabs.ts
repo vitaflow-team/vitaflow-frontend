@@ -1,15 +1,13 @@
 import { STUDENTS_PATH } from '@/_lib/studentsList';
 
-/**
- * Only the tabs that have content: videos and billing are not listed until
- * they exist (ADR-001).
- */
+/** Only the tabs that have content: videos are not listed until they exist (ADR-001). */
 export const STUDENT_TABS = [
   'overview',
   'anamnese',
   'assessment',
   'workouts',
   'schedule',
+  'billing',
 ] as const;
 
 export type StudentTab = (typeof STUDENT_TABS)[number];
@@ -20,6 +18,7 @@ export const STUDENT_TAB_LABELS: Record<StudentTab, string> = {
   assessment: 'Avaliação física',
   workouts: 'Treinos',
   schedule: 'Horários',
+  billing: 'Cobrança',
 };
 
 export function studentTabHref(studentId: string, tab: StudentTab): string {
@@ -40,6 +39,7 @@ export function activeStudentTab(
   if (under('anamnese')) return 'anamnese';
   if (under('assessment')) return 'assessment';
   if (under('workouts')) return 'workouts';
+  if (under('billing')) return 'billing';
   return under('schedule') ? 'schedule' : 'overview';
 }
 

@@ -3,11 +3,11 @@ import {
   CalendarClock,
   ClipboardList,
   NotebookText,
-  Receipt,
   UtensilsCrossed,
 } from 'lucide-react';
 import { MirrorAnamneseCard } from './mirrorAnamneseCard';
 import { MirrorAssessmentCard } from './mirrorAssessmentCard';
+import { BillingSection } from './mirrorBillingCard';
 import { MirrorIdentityCard } from './mirrorIdentityCard';
 import { MirrorMealPlanCard } from './mirrorMealPlanCard';
 import { MirrorSectionCard } from './mirrorSectionCard';
@@ -61,11 +61,7 @@ export function NutritionistMirrorView({
           icon={CalendarClock}
           emptyMessage="Nenhuma consulta agendada ainda."
         />
-        <MirrorSectionCard
-          title="Cobrança"
-          icon={Receipt}
-          emptyMessage="Nenhuma cobrança configurada ainda."
-        />
+        <BillingSection billingStatus={mirror.billingStatus} />
       </section>
     </div>
   );

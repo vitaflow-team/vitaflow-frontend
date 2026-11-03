@@ -58,6 +58,7 @@ const STUDENT: Student = {
     currentWorkout: null,
     nextSession: null,
   },
+  financialSituation: null,
 };
 
 function remove(hasAssessments: boolean) {
@@ -85,6 +86,10 @@ describe('remove student dialog', () => {
 
     expect(html).toContain('não tem avaliações registradas');
     expect(html).not.toContain('O histórico de avaliações físicas');
+  });
+
+  it('UT-131 mentions that open invoices will be canceled', () => {
+    expect(remove(true)).toContain('Cobranças em aberto serão canceladas.');
   });
 
   it('UT-150 offers a cancel that is not the destructive button', () => {

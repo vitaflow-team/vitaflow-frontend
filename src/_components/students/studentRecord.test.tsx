@@ -33,6 +33,7 @@ const STUDENT: Student = {
     currentWorkout: null,
     nextSession: null,
   },
+  financialSituation: null,
 };
 
 const LATEST = {
@@ -82,6 +83,16 @@ describe('student record header', () => {
 
     expect(html).not.toMatch(/\d+ anos/);
     expect(html).toContain('Aluno desde setembro de 2026');
+  });
+
+  it('UT-128 shows the financial situation chip on the header only when present', () => {
+    const withSituation = renderToStaticMarkup(
+      <StudentHeader student={{ ...STUDENT, financialSituation: 'PENDING' }} />
+    );
+    const without = renderToStaticMarkup(<StudentHeader student={STUDENT} />);
+
+    expect(withSituation).toContain('Pendente');
+    expect(without).not.toMatch(/Pendente|Em atraso|Em dia|Sem cobrança/);
   });
 
   it('UT-125 shows "Mensagem" only for a student with an account', () => {
@@ -141,18 +152,19 @@ describe('student record header', () => {
 });
 
 describe('student record tabs', () => {
-  it('UT-122 lists exactly Visão geral, Anamnese, Avaliação física, Treinos and Horários', () => {
+  it('lists exactly Visão geral, Anamnese, Avaliação física, Treinos, Horários and Cobrança', () => {
     const html = renderToStaticMarkup(
       <StudentTabList studentId="s1" selected="overview" />
     );
 
-    expect(html.match(/role="tab"/g)).toHaveLength(5);
+    expect(html.match(/role="tab"/g)).toHaveLength(6);
     expect(html).toContain('Visão geral');
     expect(html).toContain('Anamnese');
     expect(html).toContain('Avaliação física');
     expect(html).toContain('Treinos');
     expect(html).toContain('Horários');
-    expect(html).not.toMatch(/Vídeos|Cobrança|Academia/);
+    expect(html).toContain('Cobrança');
+    expect(html).not.toMatch(/Vídeos|Academia/);
   });
 
   it('UT-168 marks the assessment tab as the selected one', () => {

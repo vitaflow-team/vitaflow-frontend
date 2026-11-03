@@ -1,3 +1,4 @@
+import { FinancialSituationChip } from '@/_components/billing/financialSituationChip';
 import { ageInYears, formatMemberSince } from '@/_lib/studentsDates';
 import type { Student } from '@/_types/students';
 import { AccountChip } from './accountChip';
@@ -22,6 +23,9 @@ export function StudentIdentity({ student }: StudentIdentityProps) {
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="min-w-0 truncate">{student.email}</span>
         <AccountChip hasAccount={student.hasAccount} />
+        {student.financialSituation && (
+          <FinancialSituationChip situation={student.financialSituation} />
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import type { FinancialSituation } from '@/_types/billing';
 import type { FormRecord } from '@/_types/clinicalRecords';
 import type { NextSessionSummary } from '@/_types/educatorSchedule';
 
@@ -14,6 +15,8 @@ export interface StudentListItem {
   lastAssessedOn: string | null;
   /** The next fixed session or booking with this educator, or null. */
   nextSession: NextSessionSummary | null;
+  /** `null` for a professional who is not Premium. */
+  financialSituation: FinancialSituation | null;
 }
 
 export interface StudentList {
@@ -50,6 +53,8 @@ export interface Student {
   userId: string | null;
   createdAt: string;
   overview: StudentOverview;
+  /** `null` for a professional who is not Premium. */
+  financialSituation: FinancialSituation | null;
 }
 
 export interface AccountLookup {

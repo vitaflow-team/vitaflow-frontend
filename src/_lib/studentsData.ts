@@ -42,16 +42,19 @@ interface ListInput {
   search?: string;
   page: number;
   order?: 'name';
+  pending?: boolean;
 }
 
 export async function loadStudents({
   search,
   page,
   order,
+  pending,
 }: ListInput): Promise<StudentList | LoadFailure> {
   const query = new URLSearchParams({ page: String(page) });
   if (search) query.set('search', search);
   if (order) query.set('order', order);
+  if (pending) query.set('pending', 'true');
 
   return await guarded('list', () =>
     apiClient<StudentList>(`/educator/students?${query.toString()}`, {
