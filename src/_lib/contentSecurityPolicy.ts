@@ -26,7 +26,12 @@ export function buildContentSecurityPolicy(nonce?: string): string {
     // Exercise images are links the backoffice types in, from any HTTPS host.
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
-    "connect-src 'self'",
+    // Browser-side Sentry capture (task_03) uploads its already-scrubbed
+    // event envelope (ADR-006) straight to the ingest host baked into
+    // `NEXT_PUBLIC_SENTRY_DSN` — without this, `connect-src 'self'` silently
+    // blocks every captured browser error, in every environment, and
+    // `instrumentation-client.ts`'s `Sentry.init` never actually reports.
+    "connect-src 'self' https://*.sentry.io",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self' https://accounts.google.com",
