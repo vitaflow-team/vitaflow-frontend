@@ -36,6 +36,7 @@ function EditorBody({ studentId, tree, students }: WorkoutEditorProps) {
     <div className="flex flex-col gap-4">
       <EditorHeader
         studentId={studentId}
+        workoutId={tree.id}
         status={editor.status}
         isGone={editor.isGone}
       />

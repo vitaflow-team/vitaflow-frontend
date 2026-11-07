@@ -12,4 +12,5 @@ export const NUTRITIONIST_CLINICAL_RECORDS_ACTIONS: ClinicalRecordsActions = {
     update: updateTemplate,
     discontinue: discontinueTemplate,
   },
+  pdfRoleSegment: 'professionals',
 };

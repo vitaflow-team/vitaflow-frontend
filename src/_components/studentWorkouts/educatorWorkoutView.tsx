@@ -1,5 +1,7 @@
+import { buttonVariants } from '@/_components/ui/button';
 import { Title } from '@/_components/ui/title';
 import type { StudentEducatorWorkout } from '@/_types/educatorWorkouts';
+import Link from 'next/link';
 import { EducatorExerciseItem } from './educatorExerciseItem';
 
 interface EducatorWorkoutViewProps {
@@ -42,7 +44,14 @@ export function EducatorWorkoutView({ item }: EducatorWorkoutViewProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <Title label={workout.title} />
+      <Title label={workout.title}>
+        <Link
+          href="/api/me/educator-workouts/pdf"
+          className={buttonVariants({ variant: 'outline' })}
+        >
+          Exportar PDF
+        </Link>
+      </Title>
       <p className="text-sm text-muted-foreground">
         Treino de {educator.name}
         {workout.weeklyFrequency !== null

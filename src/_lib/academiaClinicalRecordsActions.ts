@@ -16,4 +16,5 @@ export const ACADEMIA_CLINICAL_RECORDS_ACTIONS: ClinicalRecordsActions = {
     update: updateTemplate,
     discontinue: discontinueTemplate,
   },
+  pdfRoleSegment: 'academia',
 };
