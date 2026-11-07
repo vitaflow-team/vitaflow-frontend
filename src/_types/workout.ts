@@ -46,8 +46,13 @@ export interface ConversationTurn {
  * turn that completes the conversation, the freshly generated workout. */
 export type ConversationOrWorkout = ConversationTurn | Workout;
 
+/** Parameter typed against the generic `ConversationTurnLike` (not the
+ * workout-specific `ConversationTurn`) so this guard satisfies the
+ * generalized `ConversationChat`'s `isReady` prop shape (ADR-009) — a
+ * `ConversationTurn` value still satisfies `ConversationTurnLike`
+ * structurally (it just carries the extra `field`/`done` fields too). */
 export function isGeneratedWorkout(
-  result: ConversationOrWorkout
+  result: { conversationId: string; question: string } | Workout
 ): result is Workout {
   return 'days' in result;
 }

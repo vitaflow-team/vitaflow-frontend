@@ -1,6 +1,7 @@
 import { buttonVariants } from '@/_components/ui/button';
 import type { MealPlanDraft, MealPlanVersion } from '@/_types/mealPlan';
 import Link from 'next/link';
+import { MealPlanAiGenerator } from './mealPlanAiGenerator';
 import { PublishButton } from './publishButton';
 import { VersionHistoryPanel } from './versionHistoryPanel';
 import { WeekdayGrid } from './weekdayGrid';
@@ -28,6 +29,7 @@ export function MealPlanSection({
         <h2 className="text-lg font-semibold">Plano alimentar</h2>
         <div className="flex items-center gap-2">
           <VersionHistoryPanel clientId={clientId} versions={versions} />
+          <MealPlanAiGenerator clientId={clientId} />
           <PublishButton clientId={clientId} />
           <Link
             href={`/api/professionals/clients/${clientId}/meal-plan/draft/pdf`}

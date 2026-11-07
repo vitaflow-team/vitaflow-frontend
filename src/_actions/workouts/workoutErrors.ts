@@ -2,6 +2,7 @@ import type { ErrorMapping } from '@/_types/errorMapping';
 
 export const PREMIUM_REQUIRED: ErrorMapping = {
   status: 402,
+  code: 'premium_required',
   message: 'Regeneração requer o plano Premium.',
 };
 

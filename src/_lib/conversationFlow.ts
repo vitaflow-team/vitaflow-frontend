@@ -1,15 +1,21 @@
-import {
-  isGeneratedWorkout,
-  type ConversationOrWorkout,
-  type Workout,
-} from '@/_types/workout';
-
 export interface ConversationTurnRecord {
   question: string;
   answer?: string;
 }
 
-export interface ConversationState {
+/**
+ * Generic over the "ready" result (`TReady`) a feature's intake eventually
+ * produces — a `Workout`, a `MealPlanDraftResponseDTO`, or any future
+ * domain's equivalent (ADR-009). None of this state's own fields depend on
+ * `TReady`: the reducer never stores a ready result, it only hands one back
+ * to the caller via `AdvanceEvent`'s `'ready'` variant, so `TReady` defaults
+ * to `unknown` and every instantiation is structurally interchangeable.
+ */
+// `TReady` is a deliberate phantom parameter here: no field below depends
+// on it, it only keeps this interface's shape aligned with
+// `AdvanceEvent<TReady>`'s (ADR-009).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface ConversationState<TReady = unknown> {
   history: ConversationTurnRecord[];
   conversationId?: string;
   currentQuestion?: string;
@@ -34,6 +40,16 @@ export const INITIAL_CONVERSATION_STATE: ConversationState = {
   premiumRequired: false,
   turn: 0,
 };
+
+/** The common shape of one intake turn, across every domain's own
+ * conversation DTO (`ConversationTurn` for workouts, `MealPlanConversationTurn`
+ * for meal plans, ...) — only the fields `conversationReducer` itself reads. */
+export interface ConversationTurnLike {
+  conversationId: string;
+  question: string;
+  reprompt: boolean;
+  optional: boolean;
+}
 
 export type ConversationEvent =
   | { type: 'advance-started' }
@@ -104,30 +120,51 @@ export function conversationReducer(
   }
 }
 
-export type AdvanceEvent =
+/** Replaces the old workout-specific `'workout-ready'`/`workout` variant
+ * with a generic `'ready'` event carrying `TReady` (ADR-009) — the caller
+ * (`ConversationChat`) intercepts this before it ever reaches the reducer,
+ * exactly as it intercepted `'workout-ready'` before. */
+export type AdvanceEvent<TReady = unknown> =
   | ConversationEvent
-  | { type: 'workout-ready'; workout: Workout };
+  | { type: 'ready'; result: TReady };
 
 /**
  * Translates one server-action result/error pair into the event the
- * reducer (or, for `workout-ready`, the caller's own navigation) should act
- * on next.
+ * reducer (or, for `'ready'`, the caller's own on-ready callback) should act
+ * on next. `isReady` is the caller's own type guard distinguishing a
+ * finished "ready" result (`Workout`, `MealPlanDraftResponseDTO`, ...) from
+ * a plain intake turn — each feature owns that distinction, the generic
+ * flow here doesn't (ADR-009).
+ *
+ * Premium-gate detection checks the error's structured `code`
+ * (`'premium_required'`) rather than matching a substring of the
+ * human-readable `message` — the previous `message.includes('Premium')`
+ * check was fragile: it only worked because the current Portuguese message
+ * happened to contain that literal word.
  */
-export function eventForAdvance(
-  result: ConversationOrWorkout | undefined,
-  error: { message: string } | undefined,
-  previousAnswer: string | undefined
-): AdvanceEvent {
+export interface EventForAdvanceInput<TReady> {
+  result: ConversationTurnLike | TReady | undefined;
+  error: { message: string; code?: string } | undefined;
+  previousAnswer: string | undefined;
+  isReady: (result: ConversationTurnLike | TReady) => result is TReady;
+}
+
+export function eventForAdvance<TReady>({
+  result,
+  error,
+  previousAnswer,
+  isReady,
+}: EventForAdvanceInput<TReady>): AdvanceEvent<TReady> {
   if (error) {
-    return error.message.includes('Premium')
+    return error.code === 'premium_required'
       ? { type: 'premium-blocked' }
       : { type: 'load-failed', message: error.message };
   }
   if (!result) {
     return { type: 'noop' };
   }
-  if (isGeneratedWorkout(result)) {
-    return { type: 'workout-ready', workout: result };
+  if (isReady(result)) {
+    return { type: 'ready', result };
   }
   return {
     type: 'question-received',

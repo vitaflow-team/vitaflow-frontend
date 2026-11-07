@@ -55,7 +55,12 @@ describe('actionPostConversation', () => {
   });
 
   it('maps a 402 into the Premium-gate message', async () => {
-    apiClientMock.mockRejectedValue(new AppError('nope', 402));
+    // The backend's `ProfessionalPremiumGuard`/equivalent sends `code:
+    // 'premium_required'` alongside the 402 (ADR-009/ADR-010) — the mapping
+    // entry now requires both, matching that real contract more strictly.
+    apiClientMock.mockRejectedValue(
+      new AppError('nope', 402, 'premium_required')
+    );
 
     const [, error] = await actionPostConversation({
       conversationId: CONVERSATION_ID,

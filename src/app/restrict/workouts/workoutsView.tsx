@@ -14,9 +14,9 @@ import { isLoadFailure, loadCurrentWorkout } from '@/_lib/workoutData';
 import type { StudentEducatorWorkout } from '@/_types/educatorWorkouts';
 import { auth } from '@/auth';
 import type { ReactNode } from 'react';
-import { ConversationChat } from './conversationChat';
 import { GeneratedWorkoutView } from './generatedWorkoutView';
 import { LoadFailureNotice } from './loadFailureNotice';
+import { WorkoutConversationChat } from './workoutConversationChat';
 
 interface WorkoutsViewProps {
   searchParams: Promise<{ gerar?: string; plano?: string }>;
@@ -57,7 +57,7 @@ function WithPlanSwitch({
  * the conversational intake — exactly as it was before educator workouts.
  * `?gerar=1` re-enters the conversation to regenerate (US-005/US-009) —
  * the Premium gate, if it applies, surfaces from the conversation's own
- * completion, not before it starts (see `ConversationChat`). */
+ * completion, not before it starts (see `WorkoutConversationChat`). */
 export default async function WorkoutsView({
   searchParams,
 }: WorkoutsViewProps) {
@@ -86,7 +86,7 @@ export default async function WorkoutsView({
       ) : isLoadFailure(workout) ? (
         <LoadFailureNotice />
       ) : (
-        <ConversationChat hasExistingWorkout={Boolean(workout)} />
+        <WorkoutConversationChat hasExistingWorkout={Boolean(workout)} />
       )}
     </DefaultLayout>
   );
