@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
 }));
 
-import { AnswerForm } from './conversationChat';
+import { AnswerForm, ConversationChat } from './conversationChat';
 
 // `ConversationChat` itself mounts via a `useEffect` that never runs under
 // `renderToStaticMarkup`, so its state-transition behavior (the
@@ -85,5 +85,20 @@ describe('AnswerForm', () => {
     // `AnswerForm`'s button-disabling logic).
     expect(markup).toMatch(/disabled=""[^>]*>Enviar<\/button>/);
     expect(markup).toMatch(/disabled=""[^>]*>Pular<\/button>/);
+  });
+});
+
+// pdf-export UT-037: `ConversationChat` is what renders instead of
+// `GeneratedWorkoutView` when there is no current AI workout — it must
+// never render that screen's export link (its own `advance()` effect
+// never runs under static rendering, but the initial markup still does).
+describe('ConversationChat — pdf-export US-003.EC-1', () => {
+  it('UT-037 never renders the AI-workout Exportar PDF link when there is no current workout', () => {
+    const html = renderToStaticMarkup(
+      <ConversationChat hasExistingWorkout={false} />
+    );
+
+    expect(html).not.toContain('/api/workouts/current/pdf');
+    expect(html).not.toContain('Exportar PDF');
   });
 });

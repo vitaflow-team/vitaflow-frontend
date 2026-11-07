@@ -13,4 +13,5 @@ export const EDUCATOR_CLINICAL_RECORDS_ACTIONS: ClinicalRecordsActions = {
     update: updateTemplate,
     discontinue: discontinueTemplate,
   },
+  pdfRoleSegment: 'professionals',
 };

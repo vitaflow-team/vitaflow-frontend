@@ -30,4 +30,14 @@ export interface TemplateActions {
 export interface ClinicalRecordsActions {
   formRecord: FormRecordActions;
   template: TemplateActions;
+  /**
+   * Which backend PDF-export namespace this context's records belong to
+   * (pdf-export US-005): the nutritionist and physical-educator contexts
+   * both resolve through the same `/professionals/...` guard; the academia
+   * context resolves through `/academia/...`. Threaded through as data,
+   * same as the other actions above, so the shared `AnamneseSection`/
+   * `AssessmentSection` components never need to know which persona is
+   * rendering them.
+   */
+  pdfRoleSegment: 'professionals' | 'academia';
 }

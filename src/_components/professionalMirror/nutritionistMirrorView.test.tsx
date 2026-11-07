@@ -151,6 +151,29 @@ describe('NutritionistMirrorView', () => {
     expect(html).not.toMatch(/CPF|CNPJ|chave de API/i);
   });
 
+  // pdf-export US-002: the client's own meal-plan export link.
+  it('shows an Exportar PDF link for the current published version when a meal plan exists', () => {
+    const html = renderToStaticMarkup(
+      <NutritionistMirrorView mirror={{ ...MIRROR, mealPlan: MEAL_PLAN }} />
+    );
+
+    expect(html).toContain(
+      'href="/api/me/nutritionist/meal-plan/versions/2/pdf"'
+    );
+    expect(html).toContain('Exportar PDF');
+  });
+
+  // pdf-export US-002.EC-1 / UT-035: no meal plan yet → no export link,
+  // never pointing at a request that would 404.
+  it('UT-035 shows no Exportar PDF link when there is no meal plan yet', () => {
+    const html = renderToStaticMarkup(
+      <NutritionistMirrorView mirror={MIRROR} />
+    );
+
+    expect(html).not.toContain('Exportar PDF');
+    expect(html).not.toContain('/api/me/nutritionist/meal-plan');
+  });
+
   it('UT-130 shows the latest paid invoice and the honest empty state otherwise', () => {
     const paid = renderToStaticMarkup(
       <NutritionistMirrorView

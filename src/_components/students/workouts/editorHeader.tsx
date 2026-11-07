@@ -6,12 +6,18 @@ import Link from 'next/link';
 
 interface EditorHeaderProps {
   studentId: string;
+  workoutId: string;
   status: WorkoutStatus;
   isGone: boolean;
 }
 
-/** Back link, the workout status and the notice when it can no longer be saved. */
-export function EditorHeader({ studentId, status, isGone }: EditorHeaderProps) {
+/** Back link, export action, the workout status and the notice when it can no longer be saved. */
+export function EditorHeader({
+  studentId,
+  workoutId,
+  status,
+  isGone,
+}: EditorHeaderProps) {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -21,9 +27,17 @@ export function EditorHeader({ studentId, status, isGone }: EditorHeaderProps) {
         >
           ← Voltar para Treinos
         </Link>
-        <p className="rounded-full border border-line px-2 py-0.5 text-xs font-medium">
-          {WORKOUT_STATUS_LABELS[status]}
-        </p>
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/api/educator/students/${studentId}/workouts/${workoutId}/pdf`}
+            className={buttonVariants({ variant: 'outline', size: 'sm' })}
+          >
+            Exportar PDF
+          </Link>
+          <p className="rounded-full border border-line px-2 py-0.5 text-xs font-medium">
+            {WORKOUT_STATUS_LABELS[status]}
+          </p>
+        </div>
       </div>
       {isGone && (
         <p
