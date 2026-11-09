@@ -1,6 +1,20 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { EngajamentoSummary } from '@/_types/engajamento';
+
+vi.mock('zsa-react', () => ({
+  useServerAction: () => ({ isPending: false, execute: vi.fn() }),
+}));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
+vi.mock('@/_hooks/alertHook', () => ({
+  useAlertHook: () => ({ openError: vi.fn() }),
+}));
+vi.mock('@/_actions/academia-engajamento/dismissChurnRisk', () => ({
+  dismissChurnRisk: vi.fn(),
+}));
+
 import { EngajamentoView } from './engajamentoView';
 
 const EMPTY: EngajamentoSummary = {
@@ -69,5 +83,13 @@ describe('EngajamentoView — gym-checkin US-009 through US-012, US-015', () => 
     expect(html).toContain('Carla Lima');
     expect(html).toContain('Bruno Alves');
     expect(html).toContain('Fora da validade do plano');
+  });
+
+  it("UT-027 shows a Dispensar action wired to each at-risk student's clientId", () => {
+    const html = renderToStaticMarkup(<EngajamentoView summary={POPULATED} />);
+
+    expect(html.match(/Dispensar/g)).toHaveLength(2);
+    expect(html).toContain('data-testid="dismiss-churn-risk-c1"');
+    expect(html).toContain('data-testid="dismiss-churn-risk-c2"');
   });
 });

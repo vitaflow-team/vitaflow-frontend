@@ -8,6 +8,7 @@ export const notificationCategorySchema = z.enum([
   'MESSAGES',
   'BILLING',
   'PRODUCT_NEWS',
+  'CHURN_RISK_ALERT',
 ]);
 
 export const markReadSchema = z.object({
