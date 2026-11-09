@@ -9,6 +9,8 @@ vi.mock('@/_lib/apiClient', () => ({ apiClient: apiClientMock }));
 vi.mock('@/auth', () => ({ auth: authMock }));
 
 import { AppError } from '@/_lib/AppError';
+import { eventForAdvance, toAdvanceError } from '@/_lib/conversationFlow';
+import { isGeneratedWorkout } from '@/_types/workout';
 import { actionPatchWorkoutExercise } from './patchWorkoutExercise';
 import { actionPostConversation } from './postConversation';
 
@@ -55,7 +57,12 @@ describe('actionPostConversation', () => {
   });
 
   it('maps a 402 into the Premium-gate message', async () => {
-    apiClientMock.mockRejectedValue(new AppError('nope', 402));
+    // The backend's `ProfessionalPremiumGuard`/equivalent sends `code:
+    // 'premium_required'` alongside the 402 (ADR-009/ADR-010) — the mapping
+    // entry now requires both, matching that real contract more strictly.
+    apiClientMock.mockRejectedValue(
+      new AppError('nope', 402, 'premium_required')
+    );
 
     const [, error] = await actionPostConversation({
       conversationId: CONVERSATION_ID,
@@ -63,6 +70,33 @@ describe('actionPostConversation', () => {
     });
 
     expect(error?.message).toBe('Regeneração requer o plano Premium.');
+    // The app code the client needs to branch on rides in `data`, not in
+    // zsa's own top-level `code` (always `'ERROR'`) — ADR-009.
+    expect(error?.data).toBe('premium_required');
+  });
+
+  it('UT-027 (integration) a real Premium-gate error, carried through the actual zsa pipeline and toAdvanceError, resolves to premium-blocked', async () => {
+    // Unlike the pure-function UT-027 in conversationFlow.test.ts (which
+    // hand-constructs `{message, code}`), this drives the real action and
+    // zsa's own `handleError` — proving the fix actually reaches a browser
+    // session, not just the pure reducer logic (ADR-009).
+    apiClientMock.mockRejectedValue(
+      new AppError('nope', 402, 'premium_required')
+    );
+
+    const [, error] = await actionPostConversation({
+      conversationId: CONVERSATION_ID,
+      answer: '3',
+    });
+
+    const event = eventForAdvance({
+      result: undefined,
+      error: toAdvanceError(error),
+      previousAnswer: undefined,
+      isReady: isGeneratedWorkout,
+    });
+
+    expect(event).toEqual({ type: 'premium-blocked' });
   });
 
   it('rejects an unauthenticated call before touching the backend', async () => {

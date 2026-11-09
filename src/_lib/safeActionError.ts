@@ -33,17 +33,24 @@ function matches(error: unknown, entry: ErrorMapping): boolean {
   return entry.code === undefined || errorCode(error) === entry.code;
 }
 
+export interface MappedError {
+  message: string;
+  code?: string;
+}
+
 /**
- * Picks the safe message for an error the action expects, or the fallback.
- * The error's own `.message` is never returned: it may carry backend or
- * Stripe internals (ADR-002).
+ * Picks the safe message for an error the action expects, or the fallback —
+ * plus the matched entry's own `code`, when it set one, so a caller can
+ * branch on it client-side (ADR-009). The error's own `.message` is never
+ * returned: it may carry backend or Stripe internals (ADR-002).
  */
 export function mapKnownError(
   error: unknown,
   table: ErrorMapping[],
   fallback: string = SAFE_ACTION_FALLBACK
-): string {
-  return table.find(entry => matches(error, entry))?.message ?? fallback;
+): MappedError {
+  const entry = table.find(entry => matches(error, entry));
+  return { message: entry?.message ?? fallback, code: entry?.code };
 }
 
 // Structural fields only: messages from the backend or Stripe can echo what
@@ -62,6 +69,23 @@ function logActionError(action: string, error: unknown): void {
 }
 
 /**
+ * zsa stringifies whatever `data` a thrown `ZSAError` carries and hands it
+ * to the client untouched, but its own top-level `code` field is reserved
+ * for zsa's framework codes — every action here throws with `'ERROR'`, so
+ * that field can never carry an app-specific code. `data` is therefore the
+ * one field left to carry the matched `ErrorMapping` entry's own `code`
+ * through to the client as a plain string (ADR-009). `message` is set
+ * directly afterwards, since passing a string as `data` would make zsa's
+ * own constructor copy it into `message` too, overwriting the safe copy
+ * with the bare code.
+ */
+function buildSafeActionError(message: string, code?: string): ZSAError {
+  const error = new ZSAError('ERROR', code);
+  error.message = message;
+  return error;
+}
+
+/**
  * Turns whatever an action's `try` caught into a `ZSAError` with a safe
  * message. A `ZSAError` the action threw itself already carries a safe,
  * hand-written message and passes through untouched.
@@ -74,7 +98,8 @@ export function toSafeActionError(
   if (error instanceof ZSAError) return error;
   logActionError(action, error);
   if (errorCode(error) === 'view_as_write_blocked') {
-    return new ZSAError('ERROR', VIEW_AS_WRITE_BLOCKED_MESSAGE);
+    return buildSafeActionError(VIEW_AS_WRITE_BLOCKED_MESSAGE);
   }
-  return new ZSAError('ERROR', mapKnownError(error, table));
+  const { message, code } = mapKnownError(error, table);
+  return buildSafeActionError(message, code);
 }

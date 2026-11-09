@@ -21,8 +21,8 @@ vi.mock('@/_lib/educatorWorkoutsData', () => ({
 vi.mock('@/_components/layout/defaultLayout', () => ({
   default: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
-vi.mock('./conversationChat', () => ({
-  ConversationChat: ({
+vi.mock('./workoutConversationChat', () => ({
+  WorkoutConversationChat: ({
     hasExistingWorkout,
   }: {
     hasExistingWorkout: boolean;

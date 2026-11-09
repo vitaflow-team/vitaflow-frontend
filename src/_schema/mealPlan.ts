@@ -46,4 +46,16 @@ export const publishMealPlanSchema = z.object({
   clientId: z.uuid(),
 });
 
+/** Body for `POST .../meal-plan/generation/conversation`: `clientId`
+ * always; empty (besides `clientId`) to start, otherwise the free-text
+ * reply to the previous question — mirroring `conversationAnswerSchema`
+ * (`_schema/workout.tsx`). `confirmOverwrite` is read only on the start
+ * call (no `conversationId`), per ADR-013. */
+export const mealPlanConversationSchema = z.object({
+  clientId: z.string(),
+  conversationId: z.uuid().optional(),
+  answer: z.string().optional(),
+  confirmOverwrite: z.boolean().optional(),
+});
+
 export type MealInputData = z.infer<typeof mealInputSchema>;

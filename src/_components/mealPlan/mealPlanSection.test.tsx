@@ -16,6 +16,9 @@ vi.mock('./versionHistoryPanel', () => ({
 vi.mock('./weekdayGrid', () => ({
   WeekdayGrid: () => <div>grid</div>,
 }));
+vi.mock('./mealPlanAiGenerator', () => ({
+  MealPlanAiGenerator: () => <button type="button">Gerar com IA</button>,
+}));
 
 import type { MealPlanDraft } from '@/_types/mealPlan';
 import { MealPlanSection } from './mealPlanSection';
@@ -31,6 +34,18 @@ describe('MealPlanSection — pdf-export US-001', () => {
     expect(html).toContain(
       'href="/api/professionals/clients/client-1/meal-plan/draft/pdf"'
     );
+    expect(html).toContain('Exportar PDF');
+  });
+});
+
+describe('MealPlanSection — ai-meal-plan-generator entry point', () => {
+  it('UT-032 (happy) renders the "Gerar com IA" entry point alongside the existing PublishButton/PDF-export controls', () => {
+    const html = renderToStaticMarkup(
+      <MealPlanSection clientId="client-1" draft={DRAFT} versions={[]} />
+    );
+
+    expect(html).toContain('Gerar com IA');
+    expect(html).toContain('Publicar plano');
     expect(html).toContain('Exportar PDF');
   });
 });
