@@ -5,6 +5,7 @@ import {
   conversationReducer,
   eventForAdvance,
   INITIAL_CONVERSATION_STATE,
+  toAdvanceError,
   type ConversationState,
 } from './conversationFlow';
 
@@ -46,6 +47,31 @@ function advanceState(
   });
   return event.type === 'ready' ? state : conversationReducer(state, event);
 }
+
+describe('toAdvanceError', () => {
+  it("ADR-009 reads the app code from `data`, which is distinct from zsa's own top-level `code` (always `'ERROR'`, never read here)", () => {
+    expect(
+      toAdvanceError({
+        message: 'Regeneração requer o plano Premium.',
+        data: 'premium_required',
+      })
+    ).toEqual({
+      message: 'Regeneração requer o plano Premium.',
+      code: 'premium_required',
+    });
+  });
+
+  it('leaves `code` undefined when `data` carries no app code', () => {
+    expect(
+      toAdvanceError({ message: 'Erro genérico.', data: undefined })
+    ).toEqual({ message: 'Erro genérico.', code: undefined });
+  });
+
+  it('passes undefined through for no error', () => {
+    expect(toAdvanceError(undefined)).toBeUndefined();
+    expect(toAdvanceError(null)).toBeUndefined();
+  });
+});
 
 describe('eventForAdvance', () => {
   it('routes a Premium-gate error to premium-blocked, not load-failed', () => {

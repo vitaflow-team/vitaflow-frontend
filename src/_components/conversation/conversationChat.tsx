@@ -8,9 +8,11 @@ import {
   conversationReducer,
   eventForAdvance,
   INITIAL_CONVERSATION_STATE,
+  toAdvanceError,
   type ConversationEvent,
   type ConversationState,
   type ConversationTurnLike,
+  type ZsaClientError,
 } from '@/_lib/conversationFlow';
 import Link from 'next/link';
 import { useEffect, useReducer, useRef } from 'react';
@@ -163,7 +165,7 @@ export interface ConversationChatConfig<
 
 type AdvanceResultTuple<TReady> = [
   (ConversationTurnLike | TReady) | null | undefined,
-  { message: string; code?: string } | null | undefined,
+  ZsaClientError | null | undefined,
 ];
 
 /** zsa-react's `execute` type spreads its args conditionally on whether the
@@ -263,7 +265,7 @@ function useConversationAdvance<
     const [result, error] = await callAction(input);
     const event = eventForAdvance<TReady>({
       result: result ?? undefined,
-      error: error ?? undefined,
+      error: toAdvanceError(error),
       previousAnswer: input.answer,
       isReady: isReady as (
         result: ConversationTurnLike | TReady

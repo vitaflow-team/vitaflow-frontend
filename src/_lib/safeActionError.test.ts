@@ -26,30 +26,35 @@ describe('auth input hardening — safe action errors', () => {
   });
 
   it('UT-009 maps a matching backend status to its safe message', () => {
-    expect(mapKnownError(new AppError(RAW, 402), TABLE, 'fallback')).toBe(
-      'Já existe um cliente cadastrado com este e-mail.'
-    );
+    expect(mapKnownError(new AppError(RAW, 402), TABLE, 'fallback')).toEqual({
+      message: 'Já existe um cliente cadastrado com este e-mail.',
+      code: undefined,
+    });
   });
 
   it('UT-009 maps a matching third-party code to its safe message', () => {
     expect(
       mapKnownError(stripeLikeError('card_declined', 402), TABLE, 'fallback')
-    ).toBe('Cartão recusado.');
+    ).toEqual({ message: 'Cartão recusado.', code: 'card_declined' });
   });
 
   it('UT-009 requires both fields when an entry sets status and code', () => {
     const withCode = Object.assign(new AppError(RAW, 400), { code: 'special' });
 
-    expect(mapKnownError(withCode, TABLE, 'fallback')).toBe('Ambos.');
-    expect(mapKnownError(new AppError(RAW, 400), TABLE, 'fallback')).toBe(
-      'fallback'
-    );
+    expect(mapKnownError(withCode, TABLE, 'fallback')).toEqual({
+      message: 'Ambos.',
+      code: 'special',
+    });
+    expect(mapKnownError(new AppError(RAW, 400), TABLE, 'fallback')).toEqual({
+      message: 'fallback',
+      code: undefined,
+    });
   });
 
   it('UT-009 never matches a status that is not a backend AppError status', () => {
     expect(
       mapKnownError(stripeLikeError('other', 402), TABLE, 'fallback')
-    ).toBe('fallback');
+    ).toEqual({ message: 'fallback', code: undefined });
   });
 
   it.each([
@@ -58,10 +63,11 @@ describe('auth input hardening — safe action errors', () => {
     ['a string', RAW],
     ['null', null],
   ])('UT-009 falls back for %s, never echoing the raw message', (_, error) => {
-    const message = mapKnownError(error, TABLE);
+    const { message, code } = mapKnownError(error, TABLE);
 
     expect(message).toBe(SAFE_ACTION_FALLBACK);
     expect(message).not.toContain(RAW);
+    expect(code).toBeUndefined();
   });
 
   it('wraps a caught error into a safe ZSAError and logs no raw message', () => {
@@ -80,6 +86,28 @@ describe('auth input hardening — safe action errors', () => {
     expect(log).toHaveBeenCalledTimes(1);
     expect(JSON.stringify(log.mock.calls)).not.toContain(RAW);
     expect(JSON.stringify(log.mock.calls)).toContain('402');
+  });
+
+  it("ADR-009 threads the matched entry's code through as the error's `data`, not its own zsa `code`", () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const result = toSafeActionError(
+      'someAction',
+      stripeLikeError('card_declined', 402),
+      TABLE
+    );
+
+    expect(result.message).toBe('Cartão recusado.');
+    expect(result.data).toBe('card_declined');
+    expect(result.code).toBe('ERROR');
+  });
+
+  it('ADR-009 leaves `data` unset when the matched entry (or the fallback) has no code', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const result = toSafeActionError('someAction', new AppError(RAW, 999));
+
+    expect(result.data).toBeUndefined();
   });
 
   it('passes a hand-written ZSAError through untouched', () => {

@@ -142,6 +142,33 @@ export type AdvanceEvent<TReady = unknown> =
  * check was fragile: it only worked because the current Portuguese message
  * happened to contain that literal word.
  */
+/** The real shape zsa-react's `execute()` resolves an error to. Its `code`
+ * is zsa's own framework code — every conversation action here throws with
+ * `'ERROR'`, so that field is never the app-specific code; the matched
+ * `ErrorMapping` entry's own `code` rides in `data` instead, the one field
+ * `safeActionError.ts` can carry it through as a plain string (ADR-009). */
+export interface ZsaClientError {
+  message: string;
+  data?: unknown;
+}
+
+/**
+ * Normalizes zsa-react's real client error shape into the `{message,
+ * code}` pair `eventForAdvance` reads. This is the boundary fix for
+ * ADR-009: the previous call site assumed zsa's own top-level `code` field
+ * already carried the app-specific code, which it never did in a real
+ * browser session — only `data` does.
+ */
+export function toAdvanceError(
+  error: ZsaClientError | null | undefined
+): { message: string; code?: string } | undefined {
+  if (!error) return undefined;
+  return {
+    message: error.message,
+    code: typeof error.data === 'string' ? error.data : undefined,
+  };
+}
+
 export interface EventForAdvanceInput<TReady> {
   result: ConversationTurnLike | TReady | undefined;
   error: { message: string; code?: string } | undefined;
