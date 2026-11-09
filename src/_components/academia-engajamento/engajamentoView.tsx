@@ -1,4 +1,5 @@
 import type { EngajamentoSummary } from '@/_types/engajamento';
+import { DismissChurnRiskButton } from './dismissChurnRiskButton';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', {
@@ -52,14 +53,17 @@ export function EngajamentoView({ summary }: EngajamentoViewProps) {
             {summary.atRisk.map(student => (
               <li
                 key={student.clientId}
-                className="bg-card flex items-center justify-between rounded-lg border px-4 py-3"
+                className="bg-card flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
               >
                 <span>{student.name}</span>
-                <span className="text-sm text-muted-foreground">
-                  {student.lastCheckInAt
-                    ? `Último check-in: ${formatDate(student.lastCheckInAt)}`
-                    : 'Nunca fez check-in'}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">
+                    {student.lastCheckInAt
+                      ? `Último check-in: ${formatDate(student.lastCheckInAt)}`
+                      : 'Nunca fez check-in'}
+                  </span>
+                  <DismissChurnRiskButton clientId={student.clientId} />
+                </div>
               </li>
             ))}
           </ul>

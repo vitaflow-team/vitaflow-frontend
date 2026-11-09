@@ -19,6 +19,7 @@ const PREFERENCES_DEFAULT_NEW_USER: NotificationPreferences = {
   MESSAGES: true,
   BILLING: true,
   PRODUCT_NEWS: false,
+  CHURN_RISK_ALERT: true,
 };
 
 describe('NotificationPreferencesPanel', () => {
@@ -47,7 +48,7 @@ describe('NotificationPreferencesPanel', () => {
     // Each row renders a checkbox whose checked state reflects the
     // preference; the product-news row is the only one expected unchecked.
     const rows = markup.split('<li').slice(1);
-    expect(rows).toHaveLength(7);
+    expect(rows).toHaveLength(8);
     const productNewsRow = rows.find(row =>
       row.includes('Novidades Vita Flow')
     );
@@ -80,5 +81,42 @@ describe('schedule change category (UT-121)', () => {
     );
 
     expect(markup).toContain('Horários com seu educador');
+  });
+});
+
+describe('churn-risk alert category (UT-028, UT-029)', () => {
+  it('UT-028 renders the churn-risk category as its own togglable row', () => {
+    const markup = renderToStaticMarkup(
+      <NotificationPreferencesPanel
+        preferences={PREFERENCES_DEFAULT_NEW_USER}
+      />
+    );
+
+    expect(markup).toContain('Alerta de risco de evasão');
+    const rows = markup.split('<li').slice(1);
+    const churnRiskRow = rows.find(row =>
+      row.includes('Alerta de risco de evasão')
+    );
+    expect(churnRiskRow).toContain('data-state="checked"');
+  });
+
+  it('UT-029 toggling the churn-risk category leaves other categories unaffected, and vice versa', () => {
+    const churnRiskDisabled: NotificationPreferences = {
+      ...PREFERENCES_DEFAULT_NEW_USER,
+      CHURN_RISK_ALERT: false,
+    };
+
+    const markup = renderToStaticMarkup(
+      <NotificationPreferencesPanel preferences={churnRiskDisabled} />
+    );
+
+    const rows = markup.split('<li').slice(1);
+    const churnRiskRow = rows.find(row =>
+      row.includes('Alerta de risco de evasão')
+    );
+    const billingRow = rows.find(row => row.includes('Cobranças'));
+
+    expect(churnRiskRow).toContain('data-state="unchecked"');
+    expect(billingRow).toContain('data-state="checked"');
   });
 });

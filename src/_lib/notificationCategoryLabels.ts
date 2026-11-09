@@ -8,6 +8,7 @@ export const NOTIFICATION_CATEGORIES: NotificationCategory[] = [
   'MESSAGES',
   'BILLING',
   'PRODUCT_NEWS',
+  'CHURN_RISK_ALERT',
 ];
 
 export const NOTIFICATION_CATEGORY_LABELS: Record<
@@ -21,4 +22,5 @@ export const NOTIFICATION_CATEGORY_LABELS: Record<
   MESSAGES: 'Mensagens',
   BILLING: 'Cobranças',
   PRODUCT_NEWS: 'Novidades Vita Flow',
+  CHURN_RISK_ALERT: 'Alerta de risco de evasão',
 };

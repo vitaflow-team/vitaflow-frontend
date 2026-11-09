@@ -5,7 +5,8 @@ export type NotificationCategory =
   | 'CONSULTATION_REMINDER'
   | 'MESSAGES'
   | 'BILLING'
-  | 'PRODUCT_NEWS';
+  | 'PRODUCT_NEWS'
+  | 'CHURN_RISK_ALERT';
 
 export interface Notification {
   id: string;

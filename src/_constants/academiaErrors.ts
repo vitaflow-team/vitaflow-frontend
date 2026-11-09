@@ -109,6 +109,16 @@ export const ACCESS_PLAN_NOT_FOUND: ErrorMapping = {
   message: 'Plano de acesso não encontrado.',
 };
 
+// No `code` on purpose: the backend's churn-risk dismiss endpoint (built
+// independently in this PRD's backend task) hasn't settled on one, so this
+// matches on status alone — any 404 from this endpoint means the client
+// doesn't exist or isn't owned by the caller's academia (TechSpec API
+// Endpoint table; ADR-009).
+export const CHURN_RISK_CLIENT_NOT_FOUND: ErrorMapping = {
+  status: 404,
+  message: 'Aluno não encontrado nesta academia.',
+};
+
 export const INVITE_ERRORS: ErrorMapping[] = [
   INVITATION_PENDING,
   NOT_PHYSICAL_EDUCATOR,
@@ -156,4 +166,8 @@ export const TURMA_ENROLL_ERRORS: ErrorMapping[] = [
   TURMA_NOT_FOUND,
   TURMA_FULL,
   NOT_ELIGIBLE,
+];
+
+export const CHURN_RISK_DISMISS_ERRORS: ErrorMapping[] = [
+  CHURN_RISK_CLIENT_NOT_FOUND,
 ];
