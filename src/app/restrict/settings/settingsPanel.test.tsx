@@ -40,6 +40,11 @@ vi.mock('@/_components/billing/billingSettingsPanel', () => ({
     <pre data-section="billing">{JSON.stringify(props)}</pre>
   ),
 }));
+vi.mock('@/_components/settings/servicePackagesSection', () => ({
+  ServicePackagesSection: (props: object) => (
+    <pre data-section="service-packages">{JSON.stringify(props)}</pre>
+  ),
+}));
 
 import { SettingsPanel } from './settingsPanel';
 
@@ -88,6 +93,7 @@ function render(tab: 'perfil' | 'plano' | 'conta', profile = PROFILE) {
       academiaData={null}
       educatorEmployments={null}
       billingAccount={null}
+      servicePackages={[]}
     />
   );
 }
@@ -164,11 +170,64 @@ describe('refactor — settings plan panel and load failure', () => {
         academiaData={null}
         educatorEmployments={null}
         billingAccount={null}
+        servicePackages={[]}
       />
     );
 
     expect(markup).toBe(
       '<div>Erro ao carregar perfil. Tente novamente mais tarde.</div>'
+    );
+  });
+});
+
+describe('pacotes tab — plan-pricing-management US-006, US-009', () => {
+  // UT-022
+  it('feeds the package section with the professional own catalog', () => {
+    const packages = [
+      {
+        id: 'sp1',
+        name: 'Pacote de 10',
+        sessionCount: 10,
+        referencePrice: 1200,
+        active: true,
+      },
+    ];
+    const markup = renderToStaticMarkup(
+      <SettingsPanel
+        tab="pacotes"
+        profile={PROFILE}
+        plans={[]}
+        plansFailed={false}
+        preferences={null}
+        academiaData={null}
+        educatorEmployments={null}
+        billingAccount={null}
+        servicePackages={packages}
+      />
+    );
+
+    expect(markup).toContain('Pacotes');
+    expect(sectionProps(markup)).toEqual({ packages });
+  });
+
+  // UT-009 (ADR-006): never shown for a role outside NUTRITIONIST/PHYSICAL_EDUCATOR.
+  it('denies the package catalog for a disallowed role', () => {
+    const markup = renderToStaticMarkup(
+      <SettingsPanel
+        tab="pacotes"
+        profile={{ ...PROFILE, productType: 'ACADEMIA' }}
+        plans={[]}
+        plansFailed={false}
+        preferences={null}
+        academiaData={null}
+        educatorEmployments={null}
+        billingAccount={null}
+        servicePackages={[]}
+      />
+    );
+
+    expect(markup).toBe(
+      '<div>Esta área não está disponível para o seu tipo de conta.</div>'
     );
   });
 });

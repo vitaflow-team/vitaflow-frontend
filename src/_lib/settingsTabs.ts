@@ -6,6 +6,7 @@ export const SETTINGS_TABS = [
   'academia',
   'vinculos',
   'cobranca',
+  'pacotes',
 ] as const;
 
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
@@ -18,8 +19,12 @@ export const SETTINGS_TAB_LABELS: Record<SettingsTab, string> = {
   academia: 'Academia',
   vinculos: 'Vínculos',
   cobranca: 'Cobrança',
+  pacotes: 'Pacotes',
 };
 
+// Também usado por `pacotes` (US-006/US-007): o catálogo de pacotes de
+// sessão/consulta é a mesma dupla de papéis, mirando o filtro de `cobranca`
+// exatamente (ADR-002/ADR-010).
 const BILLING_PROFESSIONAL_TYPES = new Set([
   'NUTRITIONIST',
   'PHYSICAL_EDUCATOR',
@@ -31,7 +36,7 @@ export function settingsTabsForType(
   return SETTINGS_TABS.filter(tab => {
     if (tab === 'academia') return productType === 'ACADEMIA';
     if (tab === 'vinculos') return productType === 'PHYSICAL_EDUCATOR';
-    if (tab === 'cobranca') {
+    if (tab === 'cobranca' || tab === 'pacotes') {
       return BILLING_PROFESSIONAL_TYPES.has(productType ?? '');
     }
     return true;

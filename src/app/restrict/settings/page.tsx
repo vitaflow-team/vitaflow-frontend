@@ -12,6 +12,7 @@ import { apiClient } from '@/_lib/apiClient';
 import { loadBillingAccountForTab } from '@/_lib/billingData';
 import { loadEducatorEmploymentTab } from '@/_lib/educatorEmploymentData';
 import { isLoadFailure, loadPreferences } from '@/_lib/notificationsData';
+import { loadServicePackagesForTab } from '@/_lib/servicePackagesData';
 import {
   isSettingsPlanStale,
   parseCheckoutStatus,
@@ -67,6 +68,7 @@ async function loadTabData(tab: SettingsTab, profile: SettingsProfile | null) {
   const academiaData = await loadAcademiaDataForTab(tab, profile);
   const educatorEmployments = await loadEducatorEmploymentTab(tab, profile);
   const billingAccount = await loadBillingAccountForTab(tab, profile);
+  const servicePackages = await loadServicePackagesForTab(tab, profile);
   const prefsResult = tab === 'notificacoes' ? await loadPreferences() : null;
   const preferences =
     prefsResult && !isLoadFailure(prefsResult) ? prefsResult : null;
@@ -76,6 +78,7 @@ async function loadTabData(tab: SettingsTab, profile: SettingsProfile | null) {
     academiaData,
     educatorEmployments,
     billingAccount,
+    servicePackages,
     preferences,
   };
 }
