@@ -4,6 +4,7 @@ import { BillingSettingsPanel } from '@/_components/billing/billingSettingsPanel
 import { AccountPanel } from '@/_components/settings/accountPanel';
 import { NotificationPreferencesPanel } from '@/_components/settings/notificationPreferencesPanel';
 import { PlanPanel } from '@/_components/settings/planPanel';
+import { ServicePackagesSection } from '@/_components/settings/servicePackagesSection';
 import { EducatorEmploymentPanel } from '@/_components/educatorEmployment/educatorEmploymentPanel';
 import { Title } from '@/_components/ui/title';
 import type { EducatorEmployment } from '@/_types/educatorEmployment';
@@ -18,6 +19,7 @@ import type { SettingsTab } from '@/_lib/settingsTabs';
 import type { BillingAccount } from '@/_types/billing';
 import type { LoadFailure } from '@/_types/loadFailure';
 import type { NotificationPreferences } from '@/_types/notifications';
+import type { ServicePackage } from '@/_types/servicePackages';
 import type { SettingsProfile } from '@/_types/settingsProfile';
 import FormSettings from './form';
 
@@ -120,6 +122,25 @@ function VinculosTabPanel({
   );
 }
 
+const PACOTES_TYPES = new Set(['NUTRITIONIST', 'PHYSICAL_EDUCATOR']);
+
+interface PacotesTabPanelProps {
+  profile: SettingsProfile | null;
+  servicePackages: ServicePackage[];
+}
+
+function PacotesTabPanel({ profile, servicePackages }: PacotesTabPanelProps) {
+  if (!profile || !PACOTES_TYPES.has(profile.productType ?? '')) {
+    return <div>Esta área não está disponível para o seu tipo de conta.</div>;
+  }
+  return (
+    <>
+      <PanelTitle label="Pacotes" />
+      <ServicePackagesSection packages={servicePackages} />
+    </>
+  );
+}
+
 function NotificationsTabPanel({
   preferences,
 }: {
@@ -156,6 +177,7 @@ interface SettingsPanelProps {
   academiaData: AcademiaSettingsData | null;
   educatorEmployments: EducatorEmployment[] | null;
   billingAccount: BillingAccount | LoadFailure | null;
+  servicePackages: ServicePackage[];
 }
 
 /**
@@ -171,9 +193,16 @@ export function SettingsPanel({
   academiaData,
   educatorEmployments,
   billingAccount,
+  servicePackages,
 }: SettingsPanelProps) {
   if (tab === 'cobranca') {
     return <BillingSettingsPanel account={billingAccount} />;
+  }
+
+  if (tab === 'pacotes') {
+    return (
+      <PacotesTabPanel profile={profile} servicePackages={servicePackages} />
+    );
   }
 
   if (tab === 'academia') {
