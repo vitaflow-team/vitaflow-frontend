@@ -25,6 +25,7 @@ export const PAGE_TITLES = {
   professionalProfile: 'Perfil do profissional',
   nutritionistMirror: 'Minha nutricionista',
   educatorMirror: 'Meu educador físico',
+  academiaMirror: 'Minha academia',
   messages: 'Mensagens',
   messageThread: 'Conversa',
   scheduling: 'Agenda',

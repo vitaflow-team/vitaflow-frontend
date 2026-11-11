@@ -30,6 +30,7 @@ describe('restricted page titles', () => {
       'Perfil do profissional',
       'Minha nutricionista',
       'Meu educador físico',
+      'Minha academia',
       'Mensagens',
       'Conversa',
       'Agenda',
@@ -49,9 +50,9 @@ describe('restricted page titles', () => {
   it('UT-032 contains non-empty, pairwise distinct values', () => {
     const titles = Object.values(PAGE_TITLES);
 
-    expect(titles).toHaveLength(39);
+    expect(titles).toHaveLength(40);
     expect(titles.every(title => title.length > 0)).toBe(true);
-    expect(new Set(titles).size).toBe(39);
+    expect(new Set(titles).size).toBe(40);
   });
 
   it('UT-158 includes the students list, the record and the not-found titles', () => {
