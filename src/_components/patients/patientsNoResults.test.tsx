@@ -13,7 +13,7 @@ describe('PatientsNoResults', () => {
 
   it('offers a link that clears the search', () => {
     const html = renderToStaticMarkup(<PatientsNoResults search="zzz" />);
-    expect(html).toContain('href="/restrict/patients"');
+    expect(html).toContain('href="/restrict/patients/lista"');
     expect(html).toContain('Limpar busca');
   });
 });

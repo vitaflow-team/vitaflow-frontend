@@ -1,8 +1,13 @@
+import { AdherenceCard } from '@/_components/progress/adherenceCard';
+import { CorrelationChart } from '@/_components/progress/correlationChart';
 import { EmptyState } from '@/_components/progress/emptyState';
 import { FloatingRegisterButton } from '@/_components/progress/floatingRegisterButton';
 import { HistoryList } from '@/_components/progress/historyList';
+import { PeriodComparisonCard } from '@/_components/progress/periodComparisonCard';
 import { PeriodSelector } from '@/_components/progress/periodSelector';
 import { RecordFormModal } from '@/_components/progress/recordFormModal';
+import { SmoothedTrendChart } from '@/_components/progress/smoothedTrendChart';
+import { StreakCard } from '@/_components/progress/streakCard';
 import { SummaryCards } from '@/_components/progress/summaryCards';
 import { TrendChart } from '@/_components/progress/trendChart';
 import { apiClient } from '@/_lib/apiClient';
@@ -74,6 +79,24 @@ export async function MedidasTab({ semanas }: MedidasTabProps) {
                 educatorName: point.educatorName,
               }))}
             />
+          </section>
+          <section
+            aria-label="Consistência e comparativos"
+            className="grid min-w-0 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+          >
+            <StreakCard streak={dashboard.streak} />
+            <AdherenceCard adherence={dashboard.adherence} />
+            <PeriodComparisonCard metrics={dashboard.periodComparison} />
+          </section>
+          <section
+            aria-label="Tendência suavizada e correlação"
+            className="grid min-w-0 gap-4 xl:grid-cols-2"
+          >
+            <SmoothedTrendChart
+              points={dashboard.smoothedTrend}
+              period={period}
+            />
+            <CorrelationChart points={dashboard.correlation} />
           </section>
           <HistoryList records={dashboard.history} />
         </div>

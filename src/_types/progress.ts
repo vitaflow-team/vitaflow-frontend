@@ -18,6 +18,38 @@ export interface MeasurementRecordResponseDTO {
   educatorName: string | null;
 }
 
+export interface SmoothedWeightPoint {
+  recordedAt: string;
+  weightKg: number;
+  smoothedWeightKg: number | null;
+}
+
+export interface PeriodComparisonMetricDTO {
+  metric: 'weight' | 'diaryLoggedDays';
+  current: number | null;
+  previous: number | null;
+  deltaPercent: number | null;
+  noActivityThisPeriod?: boolean;
+}
+
+export interface StreakSummaryDTO {
+  currentDays: number;
+  personalBestDays: number;
+}
+
+export interface AdherenceSummaryDTO {
+  workoutPercent: null;
+  workoutTrackingUnavailable: true;
+  hasWorkoutPlan: boolean;
+  diaryPercent: number;
+}
+
+export interface CorrelationPointDTO {
+  date: string;
+  weight: number | null;
+  diaryAdherencePercent: number | null;
+}
+
 export interface DashboardResponseDTO {
   latest: MeasurementRecordResponseDTO | null;
   weightVariationKg: number | null;
@@ -31,6 +63,11 @@ export interface DashboardResponseDTO {
   history: MeasurementRecordResponseDTO[];
   /** Janela exata usada pelo backend — é ela, e não `Date.now()`, que define o eixo de tempo. */
   period: { weeks: 4 | 8 | 12; start: string; end: string };
+  smoothedTrend: SmoothedWeightPoint[];
+  periodComparison: PeriodComparisonMetricDTO[];
+  streak: StreakSummaryDTO;
+  adherence: AdherenceSummaryDTO;
+  correlation: CorrelationPointDTO[];
 }
 
 export interface TrendPoint {

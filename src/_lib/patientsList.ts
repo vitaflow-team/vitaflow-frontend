@@ -1,4 +1,14 @@
+// The base for an individual patient's own record/tab URLs
+// (`/restrict/patients/:id/...`) — unrelated to which view currently lives
+// at the bare `/restrict/patients` route, so this never changes when that
+// landing view does.
 export const PATIENTS_PATH = '/restrict/patients';
+
+// The full patient list's own URL (ADR-007, role-management-dashboards
+// task_05): the portfolio dashboard is now the default landing view at the
+// bare `/restrict/patients`, so the list itself — and every link meant to
+// go back to it — targets this sub-route instead.
+export const PATIENTS_LIST_PATH = '/restrict/patients/lista';
 
 const MAX_SEARCH_LENGTH = 100;
 
@@ -24,7 +34,7 @@ export function patientsHref({ search }: PatientsParams): string {
   if (search) params.set('q', search);
 
   const query = params.toString();
-  return query ? `${PATIENTS_PATH}?${query}` : PATIENTS_PATH;
+  return query ? `${PATIENTS_LIST_PATH}?${query}` : PATIENTS_LIST_PATH;
 }
 
 export function searchHref(search: string): string {

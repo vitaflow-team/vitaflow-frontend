@@ -20,20 +20,22 @@ describe('parsePatientsParams', () => {
 
 describe('patientsHref', () => {
   it('stays the bare path with no search', () => {
-    expect(patientsHref({})).toBe('/restrict/patients');
+    expect(patientsHref({})).toBe('/restrict/patients/lista');
   });
 
   it('adds the search term as ?q=', () => {
-    expect(patientsHref({ search: 'ana' })).toBe('/restrict/patients?q=ana');
+    expect(patientsHref({ search: 'ana' })).toBe(
+      '/restrict/patients/lista?q=ana'
+    );
   });
 });
 
 describe('searchHref', () => {
   it('clears the search when the term is blank', () => {
-    expect(searchHref('   ')).toBe('/restrict/patients');
+    expect(searchHref('   ')).toBe('/restrict/patients/lista');
   });
 
   it('trims the typed term', () => {
-    expect(searchHref('  ana  ')).toBe('/restrict/patients?q=ana');
+    expect(searchHref('  ana  ')).toBe('/restrict/patients/lista?q=ana');
   });
 });

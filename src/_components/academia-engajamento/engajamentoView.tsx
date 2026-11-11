@@ -1,5 +1,7 @@
 import type { EngajamentoSummary } from '@/_types/engajamento';
+import { CheckInHeatmap } from './checkInHeatmap';
 import { DismissChurnRiskButton } from './dismissChurnRiskButton';
+import { MonthOverMonthCard } from './monthOverMonthCard';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', {
@@ -40,6 +42,11 @@ export function EngajamentoView({ summary }: EngajamentoViewProps) {
             {summary.weeklyFrequencyAverage.toFixed(1)}
           </p>
         </div>
+      </section>
+
+      <section className="grid gap-4 xl:grid-cols-2">
+        <CheckInHeatmap cells={summary.checkInHeatmap} />
+        <MonthOverMonthCard data={summary.monthOverMonth} />
       </section>
 
       <section className="flex flex-col gap-3">

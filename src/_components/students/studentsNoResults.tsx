@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/_components/ui/button';
-import { STUDENTS_PATH } from '@/_lib/studentsList';
+import { STUDENTS_LIST_PATH } from '@/_lib/studentsList';
 import Link from 'next/link';
 
 /** A search that matched nothing; the search term is plain text, never markup. */
@@ -15,7 +15,7 @@ export function StudentsNoResults({ search }: { search: string }) {
         busca.
       </p>
       <Link
-        href={STUDENTS_PATH}
+        href={STUDENTS_LIST_PATH}
         className={buttonVariants({ variant: 'outline' })}
       >
         Limpar busca

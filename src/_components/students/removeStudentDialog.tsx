@@ -18,7 +18,7 @@ import { Button } from '@/_components/ui/button';
 import { useConfirmedAction } from '@/_hooks/useConfirmedAction';
 import { removalWarning } from '@/_lib/assessmentDisplay';
 import { billingWarningsMessage } from '@/_lib/billingWarnings';
-import { STUDENTS_PATH } from '@/_lib/studentsList';
+import { STUDENTS_LIST_PATH } from '@/_lib/studentsList';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -86,7 +86,7 @@ function useRemoveFlow(studentId: string) {
   const [warning, setWarning] = useState<string | null>(null);
 
   function leave() {
-    router.push(STUDENTS_PATH);
+    router.push(STUDENTS_LIST_PATH);
     router.refresh();
   }
 

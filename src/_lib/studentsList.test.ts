@@ -8,19 +8,19 @@ import {
 
 describe('students list address', () => {
   it('UT-112 searching writes q after trimming and goes back to page 1', () => {
-    expect(searchHref('  ana ')).toBe('/restrict/students?q=ana');
-    expect(searchHref('joão')).toBe('/restrict/students?q=jo%C3%A3o');
-    expect(searchHref('   ')).toBe('/restrict/students');
+    expect(searchHref('  ana ')).toBe('/restrict/students/lista?q=ana');
+    expect(searchHref('joão')).toBe('/restrict/students/lista?q=jo%C3%A3o');
+    expect(searchHref('   ')).toBe('/restrict/students/lista');
   });
 
   it('keeps the page in the address only after page 1', () => {
     expect(studentsHref({ search: 'ana', page: 1 })).toBe(
-      '/restrict/students?q=ana'
+      '/restrict/students/lista?q=ana'
     );
     expect(studentsHref({ search: 'ana', page: 3 })).toBe(
-      '/restrict/students?q=ana&page=3'
+      '/restrict/students/lista?q=ana&page=3'
     );
-    expect(studentsHref({ page: 2 })).toBe('/restrict/students?page=2');
+    expect(studentsHref({ page: 2 })).toBe('/restrict/students/lista?page=2');
   });
 
   it.each([

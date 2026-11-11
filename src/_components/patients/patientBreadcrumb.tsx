@@ -1,7 +1,7 @@
 import { Breadcrumbs } from '@/_components/layout/breadcrumbs';
 import { APP_ROUTES } from '@/_constants/routes';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
-import { PATIENTS_PATH } from '@/_lib/patientsList';
+import { PATIENTS_LIST_PATH } from '@/_lib/patientsList';
 
 interface PatientBreadcrumbProps {
   name: string;
@@ -13,7 +13,7 @@ export function PatientBreadcrumb({ name }: PatientBreadcrumbProps) {
     <Breadcrumbs
       items={[
         { label: 'Vita Flow', href: APP_ROUTES.ROUTE_PRIVATE },
-        { label: PAGE_TITLES.patients, href: PATIENTS_PATH },
+        { label: PAGE_TITLES.patients, href: PATIENTS_LIST_PATH },
         { label: name },
       ]}
     />

@@ -5,11 +5,11 @@ import { PendingFilterControl } from './pendingFilterControl';
 describe('pending filter control', () => {
   it('UT-128 toggles the "pendentes" query param and marks itself current', () => {
     const off = renderToStaticMarkup(<PendingFilterControl />);
-    expect(off).toContain('href="/restrict/students?pendentes=1"');
+    expect(off).toContain('href="/restrict/students/lista?pendentes=1"');
     expect(off).not.toContain('aria-current');
 
     const on = renderToStaticMarkup(<PendingFilterControl pending />);
-    expect(on).toContain('href="/restrict/students"');
+    expect(on).toContain('href="/restrict/students/lista"');
     expect(on).toContain('aria-current="true"');
   });
 

@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/_components/ui/button';
-import { PATIENTS_PATH } from '@/_lib/patientsList';
+import { PATIENTS_LIST_PATH } from '@/_lib/patientsList';
 import type { LoadFailure } from '@/_types/loadFailure';
 import Link from 'next/link';
 
@@ -30,7 +30,7 @@ export function PatientNotFound({ reason }: PatientNotFoundProps) {
           : 'Este paciente não existe ou foi removido da sua lista.'}
       </p>
       <Link
-        href={PATIENTS_PATH}
+        href={PATIENTS_LIST_PATH}
         className={buttonVariants({ variant: 'outline' })}
       >
         Voltar para Pacientes

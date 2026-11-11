@@ -1,7 +1,7 @@
 import { Breadcrumbs } from '@/_components/layout/breadcrumbs';
 import { APP_ROUTES } from '@/_constants/routes';
 import { PAGE_TITLES } from '@/_constants/pageTitles';
-import { STUDENTS_PATH } from '@/_lib/studentsList';
+import { STUDENTS_LIST_PATH } from '@/_lib/studentsList';
 
 interface StudentBreadcrumbProps {
   name: string;
@@ -13,7 +13,7 @@ export function StudentBreadcrumb({ name }: StudentBreadcrumbProps) {
     <Breadcrumbs
       items={[
         { label: 'Vita Flow', href: APP_ROUTES.ROUTE_PRIVATE },
-        { label: PAGE_TITLES.students, href: STUDENTS_PATH },
+        { label: PAGE_TITLES.students, href: STUDENTS_LIST_PATH },
         { label: name },
       ]}
     />
