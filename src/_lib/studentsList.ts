@@ -4,10 +4,9 @@
 // landing view does.
 export const STUDENTS_PATH = '/restrict/students';
 
-// The full student list's own URL (ADR-007, role-management-dashboards
-// task_05): the portfolio dashboard is now the default landing view at the
-// bare `/restrict/students`, so the list itself — and every link meant to
-// go back to it — targets this sub-route instead.
+// The full student list's own URL (ADR-007): the portfolio dashboard is the
+// default landing view at the bare `/restrict/students`, so the list itself
+// — and every link meant to go back to it — targets this sub-route instead.
 export const STUDENTS_LIST_PATH = '/restrict/students/lista';
 
 const MAX_SEARCH_LENGTH = 100;
