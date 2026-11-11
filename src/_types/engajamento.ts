@@ -12,9 +12,23 @@ export interface EngajamentoFeedEntry {
   planValidAtCheckIn: boolean;
 }
 
+export interface EngajamentoHeatmapCell {
+  weekday: number;
+  hour: number;
+  count: number;
+}
+
+export interface EngajamentoMonthOverMonth {
+  currentMonthCount: number;
+  previousMonthCount: number | null;
+  isCurrentMonthPartial: boolean;
+}
+
 export interface EngajamentoSummary {
   todayCheckInCount: number;
   weeklyFrequencyAverage: number;
   atRisk: EngajamentoAtRiskStudent[];
   recentFeed: EngajamentoFeedEntry[];
+  checkInHeatmap: EngajamentoHeatmapCell[];
+  monthOverMonth: EngajamentoMonthOverMonth;
 }

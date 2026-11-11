@@ -22,6 +22,12 @@ const EMPTY: EngajamentoSummary = {
   weeklyFrequencyAverage: 0,
   atRisk: [],
   recentFeed: [],
+  checkInHeatmap: [],
+  monthOverMonth: {
+    currentMonthCount: 0,
+    previousMonthCount: null,
+    isCurrentMonthPartial: true,
+  },
 };
 
 const POPULATED: EngajamentoSummary = {
@@ -51,6 +57,12 @@ const POPULATED: EngajamentoSummary = {
       planValidAtCheckIn: false,
     },
   ],
+  checkInHeatmap: [{ weekday: 1, hour: 18, count: 4 }],
+  monthOverMonth: {
+    currentMonthCount: 12,
+    previousMonthCount: 10,
+    isCurrentMonthPartial: true,
+  },
 };
 
 describe('EngajamentoView — gym-checkin US-009 through US-012, US-015', () => {

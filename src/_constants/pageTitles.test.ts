@@ -12,6 +12,7 @@ describe('restricted page titles', () => {
       'Pessoas',
       'Cliente',
       'Pacientes',
+      'Lista de pacientes',
       'Paciente',
       'Paciente não encontrado',
       'Anamnese',
@@ -21,6 +22,7 @@ describe('restricted page titles', () => {
       'Cadastro',
       'Cobranças',
       'Alunos',
+      'Lista de alunos',
       'Aluno',
       'Aluno não encontrado',
       'Diário Alimentar',
@@ -47,9 +49,9 @@ describe('restricted page titles', () => {
   it('UT-032 contains non-empty, pairwise distinct values', () => {
     const titles = Object.values(PAGE_TITLES);
 
-    expect(titles).toHaveLength(37);
+    expect(titles).toHaveLength(39);
     expect(titles.every(title => title.length > 0)).toBe(true);
-    expect(new Set(titles).size).toBe(37);
+    expect(new Set(titles).size).toBe(39);
   });
 
   it('UT-158 includes the students list, the record and the not-found titles', () => {

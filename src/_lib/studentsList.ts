@@ -1,4 +1,13 @@
+// The base for an individual student's own record/tab URLs
+// (`/restrict/students/:id/...`) — unrelated to which view currently lives
+// at the bare `/restrict/students` route, so this never changes when that
+// landing view does.
 export const STUDENTS_PATH = '/restrict/students';
+
+// The full student list's own URL (ADR-007): the portfolio dashboard is the
+// default landing view at the bare `/restrict/students`, so the list itself
+// — and every link meant to go back to it — targets this sub-route instead.
+export const STUDENTS_LIST_PATH = '/restrict/students/lista';
 
 const MAX_SEARCH_LENGTH = 100;
 
@@ -50,7 +59,7 @@ export function studentsHref({
   if (page > 1) params.set('page', String(page));
 
   const query = params.toString();
-  return query ? `${STUDENTS_PATH}?${query}` : STUDENTS_PATH;
+  return query ? `${STUDENTS_LIST_PATH}?${query}` : STUDENTS_LIST_PATH;
 }
 
 /** Searching starts again from the first page. */

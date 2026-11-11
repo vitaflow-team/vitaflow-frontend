@@ -77,7 +77,7 @@ describe('students list', () => {
     expect(html).toContain('Nenhum aluno encontrado');
     expect(html).toContain('“zzz”');
     expect(html).toContain('Limpar busca');
-    expect(html).toContain('href="/restrict/students"');
+    expect(html).toContain('href="/restrict/students/lista"');
   });
 
   it('UT-113 renders a name with markup as visible text and creates no element', () => {
@@ -106,8 +106,8 @@ describe('students list', () => {
     );
 
     expect(html).toContain('Página 2 de 3');
-    expect(html).toContain('href="/restrict/students?q=ana"');
-    expect(html).toContain('href="/restrict/students?q=ana&amp;page=3"');
+    expect(html).toContain('href="/restrict/students/lista?q=ana"');
+    expect(html).toContain('href="/restrict/students/lista?q=ana&amp;page=3"');
   });
 
   it('shows no pagination for a single page', () => {

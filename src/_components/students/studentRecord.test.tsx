@@ -116,7 +116,7 @@ describe('student record header', () => {
     expect(html).toMatch(
       /Vita Flow<\/a>[\s\S]*Alunos<\/a>[\s\S]*aria-current="page"[^>]*>Diego Martins/
     );
-    expect(html).toContain('href="/restrict/students"');
+    expect(html).toContain('href="/restrict/students/lista"');
   });
 
   it('tells the remove dialog whether there is history to lose', () => {
@@ -265,7 +265,7 @@ describe('student not found', () => {
     const html = renderToStaticMarkup(<StudentNotFound reason="not-found" />);
 
     expect(html).toContain('Aluno não encontrado');
-    expect(html).toContain('href="/restrict/students"');
+    expect(html).toContain('href="/restrict/students/lista"');
     expect(html).toContain('Voltar para Alunos');
   });
 

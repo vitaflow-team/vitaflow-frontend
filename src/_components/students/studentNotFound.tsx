@@ -1,5 +1,5 @@
 import { buttonVariants } from '@/_components/ui/button';
-import { STUDENTS_PATH } from '@/_lib/studentsList';
+import { STUDENTS_LIST_PATH } from '@/_lib/studentsList';
 import type { LoadFailure } from '@/_types/loadFailure';
 import Link from 'next/link';
 
@@ -28,7 +28,7 @@ export function StudentNotFound({ reason }: StudentNotFoundProps) {
           : 'Este aluno não existe ou foi removido da sua lista.'}
       </p>
       <Link
-        href={STUDENTS_PATH}
+        href={STUDENTS_LIST_PATH}
         className={buttonVariants({ variant: 'outline' })}
       >
         Voltar para Alunos

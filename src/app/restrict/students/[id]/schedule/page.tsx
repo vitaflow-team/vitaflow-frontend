@@ -5,7 +5,7 @@ import { isLoadFailure, loadStudent } from '@/_lib/studentsData';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buttonVariants } from '@/_components/ui/button';
-import { STUDENTS_PATH } from '@/_lib/studentsList';
+import { STUDENTS_LIST_PATH } from '@/_lib/studentsList';
 
 export const metadata: Metadata = {
   title: PAGE_TITLES.student,
@@ -33,7 +33,7 @@ export default async function StudentSchedulePage({
             : 'Aluno não encontrado.'}
         </p>
         <Link
-          href={STUDENTS_PATH}
+          href={STUDENTS_LIST_PATH}
           className={buttonVariants({ variant: 'outline' })}
         >
           Voltar para Alunos
