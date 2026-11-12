@@ -1,6 +1,7 @@
 import {
   Apple,
   Activity,
+  Building2,
   CalendarDays,
   CalendarRange,
   ChartNoAxesCombined,
@@ -161,6 +162,16 @@ const PRIVATE: AppRoute[] = [
     SHORT_TITLE: 'Educador',
     URL: '/restrict/physical-educator',
     ICON: Activity,
+    PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    // Também por último, mesma razão dos itens acima. Visível aos três
+    // tipos, mesma lógica de "Minha nutricionista"/"Meu educador físico":
+    // qualquer conta pode ter um Client vinculado a uma academia.
+    TITLE: 'Minha academia',
+    SHORT_TITLE: 'Academia',
+    URL: '/restrict/academia',
+    ICON: Building2,
     PRODUCT_TYPE: ['USER', 'NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
   },
   {
