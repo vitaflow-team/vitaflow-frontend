@@ -1,4 +1,6 @@
 import type { ChurnByRole } from '@/_types/churnByRole';
+import type { CohortRetentionRow } from '@/_types/cohortRetentionRow';
+import type { LtvBySegmentEntry } from '@/_types/ltvBySegmentEntry';
 import type { RegisteredByRole } from '@/_types/registeredByRole';
 
 /** `GET /backoffice/metrics` response (TechSpec Core Interfaces, ADR-005). */
@@ -12,4 +14,6 @@ export interface PlatformMetrics {
   };
   registeredByRole: RegisteredByRole[];
   churnByRole: ChurnByRole[];
+  cohortRetention: CohortRetentionRow[];
+  ltvBySegment: LtvBySegmentEntry[];
 }

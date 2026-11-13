@@ -26,6 +26,28 @@ export function formatCount(value: number): string {
   return value.toLocaleString('pt-BR');
 }
 
+const MONTH_LABELS = [
+  'Jan',
+  'Fev',
+  'Mar',
+  'Abr',
+  'Mai',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Set',
+  'Out',
+  'Nov',
+  'Dez',
+];
+
+/** Formats a "yyyy-MM" cohort month key as e.g. "Nov/2025" (cohort-ltv-analysis). */
+export function formatCohortMonthLabel(cohortMonth: string): string {
+  const [year, month] = cohortMonth.split('-');
+  const monthIndex = Number(month) - 1;
+  return `${MONTH_LABELS[monthIndex]}/${year}`;
+}
+
 export interface MrrTrendDisplay {
   label: string;
   tone: 'positive' | 'negative' | 'neutral' | 'unavailable';
