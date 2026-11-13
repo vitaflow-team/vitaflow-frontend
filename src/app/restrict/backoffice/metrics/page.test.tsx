@@ -39,6 +39,11 @@ const METRICS: PlatformMetrics = {
     { role: 'PHYSICAL_EDUCATOR', canceledThisMonth: 0 },
     { role: 'ACADEMIA', canceledThisMonth: 0 },
   ],
+  cohortRetention: [],
+  ltvBySegment: [
+    { role: 'USER', ltv: 2000 },
+    { role: 'NUTRITIONIST', ltv: null },
+  ],
 };
 
 function resetMocks() {
@@ -127,5 +132,46 @@ describe('Backoffice metrics page — MRR comparison unavailable (UT-020)', () =
     const html = renderToStaticMarkup(<>{page}</>);
 
     expect(html).toContain('Não foi possível carregar as métricas agora');
+  });
+});
+
+describe('Backoffice metrics page — cohort retention and LTV by segment (cohort-ltv-analysis)', () => {
+  beforeEach(resetMocks);
+
+  it('renders the cohort retention grid and the LTV-by-segment tiles alongside the existing sections', async () => {
+    const page = await BackofficeMetricsPage();
+    const html = renderToStaticMarkup(<>{page}</>);
+
+    expect(html).toContain('Retenção por coorte de cadastro');
+    expect(html).toContain('LTV projetado por segmento');
+  });
+
+  // UT-022
+  it('renders the "unavailable" tone, never a literal zero, for a role with ltv: null', async () => {
+    const page = await BackofficeMetricsPage();
+    const html = renderToStaticMarkup(<>{page}</>);
+
+    expect(html).toContain('Dados insuficientes');
+  });
+
+  it('omits a role entirely from the LTV section when the backend omits it', async () => {
+    loadPlatformMetricsMock.mockResolvedValue({
+      ...METRICS,
+      ltvBySegment: [{ role: 'USER', ltv: 2000 }],
+    });
+
+    const page = await BackofficeMetricsPage();
+    const html = renderToStaticMarkup(<>{page}</>);
+
+    expect(html).toContain('2.000,00');
+    expect(html).not.toContain('Dados insuficientes');
+  });
+
+  it('labels the LTV section as projected, and never shows an LTV:CAC figure', async () => {
+    const page = await BackofficeMetricsPage();
+    const html = renderToStaticMarkup(<>{page}</>);
+
+    expect(html).toContain('LTV projetado');
+    expect(html.toLowerCase()).not.toContain('cac');
   });
 });
