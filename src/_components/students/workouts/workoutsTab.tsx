@@ -1,5 +1,6 @@
 import type { WorkoutList } from '@/_types/educatorWorkouts';
 import { ArchivedPagination } from './archivedPagination';
+import { GenerateAiWorkoutDialog } from './generateAiWorkoutDialog';
 import { NewWorkoutDialog } from './newWorkoutDialog';
 import { WorkoutGroup } from './workoutGroup';
 
@@ -23,7 +24,10 @@ function EmptyWorkouts({ studentId }: { studentId: string }) {
         Este aluno ainda não tem treinos. Crie o primeiro como rascunho e ative
         quando estiver pronto.
       </p>
-      <NewWorkoutDialog studentId={studentId} />
+      <div className="flex gap-2">
+        <NewWorkoutDialog studentId={studentId} />
+        <GenerateAiWorkoutDialog studentId={studentId} />
+      </div>
     </div>
   );
 }
@@ -36,7 +40,12 @@ export function WorkoutsTab({ studentId, list }: WorkoutsTabProps) {
         <h2 id="workouts-title" className="text-lg font-semibold">
           Treinos
         </h2>
-        {!isEmpty(list) && <NewWorkoutDialog studentId={studentId} />}
+        {!isEmpty(list) && (
+          <div className="flex gap-2">
+            <NewWorkoutDialog studentId={studentId} />
+            <GenerateAiWorkoutDialog studentId={studentId} />
+          </div>
+        )}
       </div>
       {isEmpty(list) ? (
         <EmptyWorkouts studentId={studentId} />
