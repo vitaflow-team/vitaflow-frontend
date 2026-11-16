@@ -215,6 +215,18 @@ export const createWorkoutSchema = z.object({
   weeklyFrequency: weeklyFrequencySchema,
 });
 
+/** Empty body starts a new intake for the student; `conversationId`+`answer`
+ * advances it. `workoutId` (read only on the start call) targets an exact
+ * existing draft for regeneration instead of creating a new one; its sibling
+ * `confirmOverwrite` is read only alongside it. */
+export const educatorAiWorkoutConversationSchema = z.object({
+  studentId: z.string(),
+  conversationId: z.uuid().optional(),
+  answer: z.string().optional(),
+  workoutId: z.string().optional(),
+  confirmOverwrite: z.boolean().optional(),
+});
+
 export const duplicateInputSchema = z.object({
   studentId: z.string(),
   workoutId: z.string(),

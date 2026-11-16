@@ -5,6 +5,9 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('./newWorkoutDialog', () => ({
   NewWorkoutDialog: () => <button type="button">Novo treino</button>,
 }));
+vi.mock('./generateAiWorkoutDialog', () => ({
+  GenerateAiWorkoutDialog: () => <button type="button">Gerar com IA</button>,
+}));
 
 import { CurrentWorkoutCard } from './currentWorkoutCard';
 import { WorkoutsTab } from './workoutsTab';

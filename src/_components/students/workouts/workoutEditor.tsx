@@ -9,11 +9,13 @@ import { useWorkoutLifecycle } from '@/_hooks/useWorkoutLifecycle';
 import type { WorkoutTree } from '@/_types/educatorWorkouts';
 import type { StudentListItem } from '@/_types/students';
 import { useEffect } from 'react';
+import { AiExplanationPanel } from './aiExplanationPanel';
 import { DuplicateWorkoutDialog } from './duplicateWorkoutDialog';
 import { EditorFields } from './editorFields';
 import { EditorFooter } from './editorFooter';
 import { EditorHeader } from './editorHeader';
 import { LifecycleActions } from './lifecycleActions';
+import { RegenerateAiWorkoutButton } from './regenerateAiWorkoutButton';
 import { SessionArea } from './sessionArea';
 
 interface WorkoutEditorProps {
@@ -32,6 +34,8 @@ function EditorBody({ studentId, tree, students }: WorkoutEditorProps) {
   const { isDirty } = editor;
   useEffect(() => setDirty(isDirty), [isDirty, setDirty]);
 
+  const wasAiGenerated = Boolean(tree.lastGeneratedAt);
+
   return (
     <div className="flex flex-col gap-4">
       <EditorHeader
@@ -40,6 +44,15 @@ function EditorBody({ studentId, tree, students }: WorkoutEditorProps) {
         status={editor.status}
         isGone={editor.isGone}
       />
+      {wasAiGenerated && (
+        <div className="flex flex-col gap-2">
+          <AiExplanationPanel explanation={tree.aiExplanation} />
+          <RegenerateAiWorkoutButton
+            studentId={studentId}
+            workoutId={tree.id}
+          />
+        </div>
+      )}
       <EditorFields
         state={editor.state}
         errors={editor.errors}
