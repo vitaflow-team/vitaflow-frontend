@@ -26,9 +26,55 @@ const ACCOUNT_DELETED_NOTICE: AccessNotice = {
   type: 'success',
 };
 
+// unified-login-account: why a Google attempt was refused, or that Google
+// was connected. Reached only through the redirect Auth.js issues after
+// Google has verified the email, never typed by the person.
+const GOOGLE_NOTICES: Record<string, AccessNotice> = {
+  'google-conta-equipe': {
+    title: 'Entre com e-mail e senha',
+    message:
+      'Esta conta tem acesso à equipe Vita Flow. Entre com seu e-mail e senha e conecte o Google em Configurações → Conta.',
+    type: 'warning',
+  },
+  'google-recepcionista': {
+    title: 'Entre com e-mail e senha',
+    message:
+      'Este e-mail é de um acesso de recepção, que não usa o Google. Entre com seu e-mail e senha.',
+    type: 'warning',
+  },
+  'google-email-diferente': {
+    title: 'Google não conectado',
+    message:
+      'A conta Google escolhida tem um e-mail diferente do e-mail desta conta. Escolha a conta Google com o mesmo e-mail.',
+    type: 'error',
+  },
+  'google-ja-vinculado': {
+    title: 'Google já conectado',
+    message: 'Esta conta já está conectada a uma conta Google.',
+    type: 'info',
+  },
+  'google-em-uso': {
+    title: 'Google não conectado',
+    message: 'Esta conta Google já está conectada a outra conta Vita Flow.',
+    type: 'error',
+  },
+  'google-nao-conectado': {
+    title: 'Google não conectado',
+    message:
+      'Não foi possível conectar o Google desta vez. Tente de novo em Configurações → Conta.',
+    type: 'error',
+  },
+  'google-conectado': {
+    title: 'Google conectado',
+    message: 'Agora você também pode entrar com o Google, na mesma conta.',
+    type: 'success',
+  },
+};
+
 const NOTICES: Record<string, AccessNotice> = {
   [ACCESS_DENIED_CODE]: ACCESS_DENIED_NOTICE,
   [ACCOUNT_DELETED_CODE]: ACCOUNT_DELETED_NOTICE,
+  ...GOOGLE_NOTICES,
 };
 
 export function getAccessNotice(code: string | null): AccessNotice | null {

@@ -4,11 +4,10 @@ import NextAuth, { type User } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import { clearAccessTokenCookie } from './_lib/accessTokenCookie';
-import {
-  signInWithCredentials,
-  signInWithGoogleIdToken,
-} from './_lib/backendSignIn';
-import { jwtCallback, sessionCallback } from './authCallbacks';
+import { signInWithCredentials } from './_lib/backendSignIn';
+import { clearGoogleLinkIntentCookie } from './_lib/googleLinkIntent';
+import { resolveGoogleUser } from './_lib/googleProfile';
+import { jwtCallback, sessionCallback, signInCallback } from './authCallbacks';
 
 // `unstable_update` é o único caminho de atualização de sessão do servidor no
 // NextAuth v5 beta; ele escreve o cookie, então só roda em server action ou
@@ -25,21 +24,13 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
                 throw new AppError('Falha ao autenticar via Google.');
               }
 
-              const user = await signInWithGoogleIdToken(tokens.id_token).catch(
-                () => {
-                  throw new AppError('Falha ao autenticar via Google.');
-                }
+              // Sign-in, or the link of this Google identity to the account
+              // already signed in — and a refusal the person can act on
+              // comes back as a marker, not as an error (ADR-008, ADR-009).
+              return await resolveGoogleUser(
+                tokens.id_token,
+                profile.picture ?? profile.image
               );
-
-              if (!user) {
-                throw new AppError('Falha ao autenticar via Google.');
-              }
-
-              return {
-                ...user,
-                avatar:
-                  profile.picture ?? profile.image ?? user.avatar ?? undefined,
-              } as User;
             },
           }),
         ]
@@ -83,9 +74,11 @@ export const { handlers, signIn, signOut, auth, unstable_update } = NextAuth({
   events: {
     async signOut() {
       await clearAccessTokenCookie();
+      await clearGoogleLinkIntentCookie();
     },
   },
   callbacks: {
+    signIn: params => signInCallback({ user: params.user }),
     jwt: params =>
       jwtCallback({
         token: params.token,
