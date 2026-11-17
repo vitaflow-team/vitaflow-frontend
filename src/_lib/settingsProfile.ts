@@ -26,6 +26,16 @@ export function profileClientsCount(profile: SettingsProfile): number | null {
   return typeof profile.clientsCount === 'number' ? profile.clientsCount : null;
 }
 
+/** Absent on an older backend, which reads as not linked. */
+export function isGoogleLinked(profile: SettingsProfile): boolean {
+  return profile.googleLinked === true;
+}
+
+/** Absent on an older backend, which reads as no staff access. */
+export function hasStaffAccess(profile: SettingsProfile): boolean {
+  return profile.isBackoffice === true;
+}
+
 /** `?checkout=success` marks a return from the Asaas checkout page (ADR-010). */
 export function parseCheckoutStatus(
   value: string | string[] | undefined

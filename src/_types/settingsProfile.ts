@@ -14,4 +14,8 @@ export type SettingsProfile = FormSettingsProfile & {
   autoRenew?: boolean | null;
   /** `0` for non-professionals; absent when the backend does not send it (ADR-008). */
   clientsCount?: number | null;
+  /** Whether a Google identity is linked to the account. */
+  googleLinked?: boolean | null;
+  /** Whether the account holds internal-staff access. */
+  isBackoffice?: boolean | null;
 };

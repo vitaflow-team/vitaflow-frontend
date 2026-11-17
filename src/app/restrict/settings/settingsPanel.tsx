@@ -12,6 +12,8 @@ import type { AcademiaSettingsData } from '@/_lib/academiaSettingsData';
 import { toFormSettingsProfile } from '@/_lib/formSettingsProfile';
 import {
   hasPaidSubscription,
+  hasStaffAccess,
+  isGoogleLinked,
   isProfessionalProfile,
   profileClientsCount,
 } from '@/_lib/settingsProfile';
@@ -46,6 +48,8 @@ export function AccountSettingsPanel({ profile }: ProfilePanelProps) {
         clientsCount={profileClientsCount(profile)}
         isProfessional={isProfessionalProfile(profile)}
         hasPaidSubscription={hasPaidSubscription(profile)}
+        googleLinked={isGoogleLinked(profile)}
+        isBackoffice={hasStaffAccess(profile)}
       />
     </>
   );

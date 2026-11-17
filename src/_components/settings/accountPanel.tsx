@@ -8,6 +8,10 @@ interface AccountPanelProps {
   clientsCount: number | null;
   isProfessional: boolean;
   hasPaidSubscription: boolean;
+  /** Whether the account already signs in with Google. */
+  googleLinked: boolean;
+  /** Whether the account holds internal-staff access. */
+  isBackoffice: boolean;
 }
 
 /**
@@ -25,6 +29,8 @@ export function AccountPanel({
   clientsCount,
   isProfessional,
   hasPaidSubscription,
+  googleLinked,
+  isBackoffice,
 }: AccountPanelProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -34,6 +40,19 @@ export function AccountPanel({
           <span className="text-sm text-muted-foreground">E-mail</span>
           <p className="text-base break-all">{email}</p>
         </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-sm text-muted-foreground">
+            Login com Google
+          </span>
+          <p className="text-base">
+            {googleLinked ? 'Conectado' : 'Não conectado'}
+          </p>
+        </div>
+        {isBackoffice && (
+          <p className="text-sm text-muted-foreground">
+            Esta conta tem acesso à área da equipe Vita Flow.
+          </p>
+        )}
         <SignOutButton />
       </Card>
 
