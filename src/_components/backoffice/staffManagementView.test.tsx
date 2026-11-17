@@ -16,6 +16,9 @@ vi.mock('@/_actions/backoffice/changeStaffTier', () => ({
   changeStaffTier: {},
 }));
 vi.mock('@/_actions/backoffice/removeStaff', () => ({ removeStaff: {} }));
+vi.mock('@/_actions/backoffice/resendStaffInvitation', () => ({
+  resendStaffInvitation: {},
+}));
 
 import { StaffManagementView } from './staffManagementView';
 
@@ -26,6 +29,7 @@ const STAFF: StaffListItem[] = [
     email: 'ana@vitaflow.com',
     tier: 'ADMIN',
     active: true,
+    pending: false,
     createdAt: '2026-10-01T00:00:00.000Z',
   },
   {
@@ -34,6 +38,7 @@ const STAFF: StaffListItem[] = [
     email: 'pendente@vitaflow.com',
     tier: 'EQUIPE',
     active: false,
+    pending: true,
     createdAt: '2026-10-10T00:00:00.000Z',
   },
 ];
@@ -54,5 +59,48 @@ describe('StaffManagementView — platform-admin-access US-007 through US-009', 
     expect(html).toContain('pendente@vitaflow.com');
     expect(html).toContain('Convite pendente');
     expect(html).toContain('Remover acesso');
+  });
+});
+
+describe('StaffManagementView — unified login account UT-044', () => {
+  // An existing account that was invited: it is active as an account,
+  // and pending only as a staff member.
+  const INVITED: StaffListItem = {
+    id: 's3',
+    name: 'Bia Cliente',
+    email: 'bia@example.test',
+    tier: 'ADMIN',
+    active: true,
+    pending: true,
+    createdAt: '2026-11-01T00:00:00.000Z',
+  };
+
+  it('marks a pending invitation with the tier it offers and lets it be re-sent', () => {
+    const html = renderToStaticMarkup(
+      <StaffManagementView staff={[INVITED]} />
+    );
+
+    expect(html).toContain('Convite pendente · Admin interno');
+    expect(html).toContain('Reenviar convite');
+    expect(html).toContain('aria-label="Reenviar convite para Bia Cliente"');
+    expect(html).toContain('Remover acesso');
+  });
+
+  it('offers no tier control for an invitation that was not accepted yet', () => {
+    const html = renderToStaticMarkup(
+      <StaffManagementView staff={[INVITED]} />
+    );
+
+    expect(html).not.toContain('<select');
+  });
+
+  it('offers the tier control, and no re-send, for an active member', () => {
+    const html = renderToStaticMarkup(
+      <StaffManagementView staff={[STAFF[0]]} />
+    );
+
+    expect(html).toContain('<select');
+    expect(html).not.toContain('Reenviar convite');
+    expect(html).not.toContain('Convite pendente');
   });
 });

@@ -25,6 +25,25 @@ export const removeStaffSchema = z.object({
   staffId: z.string().min(1),
 });
 
+export const resendStaffInvitationSchema = z.object({
+  staffId: z.string().min(1),
+});
+
+export const staffInvitationTokenSchema = z.object({
+  token: z.string().min(1).max(512),
+});
+
+// The password is the account's existing one, so only its presence is
+// checked — the strength rules apply when a password is being chosen.
+export const acceptStaffInvitationSchema = staffInvitationTokenSchema.extend({
+  password: z.string().min(1, 'Informe sua senha.').max(72),
+});
+
+export type AcceptStaffInvitationFormData = Pick<
+  z.infer<typeof acceptStaffInvitationSchema>,
+  'password'
+>;
+
 // Coerced from the `<input type="number">` string a form submits, same
 // pattern as `accessPlanSchema`'s own price field (`_schema/academia.ts`).
 const coercedPositivePrice = z

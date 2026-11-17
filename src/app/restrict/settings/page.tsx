@@ -1,5 +1,6 @@
 import { actionGetPlans, type Product } from '@/_actions/products/getPlans';
 import DefaultLayout from '@/_components/layout/defaultLayout';
+import { CustomerActivationCard } from '@/_components/settings/customerActivationCard';
 import { PlanSessionSync } from '@/_components/settings/planSessionSync';
 import { SettingsBreadcrumb } from '@/_components/settings/settingsBreadcrumb';
 import { SettingsTabs } from '@/_components/settings/settingsTabs';
@@ -105,6 +106,7 @@ export default async function Settings({ searchParams }: SettingsProps) {
       <PlanSessionSync stale={planStale} />
       <SettingsBreadcrumb tab={tab} />
       <Title label={PAGE_TITLES.settings} className="text-left" />
+      {profile && <CustomerActivationCard productId={profile.productId} />}
       <SettingsTabs selected={tab} productType={session.user?.productType} />
       <UnsavedChangesProvider>
         <div

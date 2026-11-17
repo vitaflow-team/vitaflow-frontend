@@ -2,6 +2,8 @@ import type { SettingsProfile } from '@/_types/settingsProfile';
 import { describe, expect, it } from 'vitest';
 import {
   hasPaidSubscription,
+  hasStaffAccess,
+  isGoogleLinked,
   isProfessionalProfile,
   isSettingsPlanStale,
   parseCheckoutStatus,
@@ -34,6 +36,27 @@ function isPaid(subscriptionStatus: string | null | undefined): boolean {
 function isProfessional(productType: string | null): boolean {
   return isProfessionalProfile(profile({ productType }));
 }
+
+// unified-login-account UT-047
+describe('settingsProfile Google link and staff access', () => {
+  it.each([
+    [true, true],
+    [false, false],
+    [null, false],
+    [undefined, false],
+  ])('reads googleLinked %s as %s', (googleLinked, expected) => {
+    expect(isGoogleLinked(profile({ googleLinked }))).toBe(expected);
+  });
+
+  it.each([
+    [true, true],
+    [false, false],
+    [null, false],
+    [undefined, false],
+  ])('reads isBackoffice %s as %s', (isBackoffice, expected) => {
+    expect(hasStaffAccess(profile({ isBackoffice }))).toBe(expected);
+  });
+});
 
 describe('refactor — settingsProfile status checks', () => {
   // UT-007: ACTIVE_STATUSES check

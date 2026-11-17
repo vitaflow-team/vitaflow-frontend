@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // The interactive children are client components with their own session and
 // router needs; the view is checked for what it composes around them.
@@ -11,6 +11,15 @@ vi.mock('./newPassword', () => ({ NewPassword: () => <i>new-password</i> }));
 vi.mock('./resetPassword', () => ({ default: () => <i>reset</i> }));
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+}));
+vi.mock('@/_components/layout/accessNotice', () => ({
+  AccessNotice: () => <i>notice</i>,
+}));
+const { googleEnabledMock } = vi.hoisted(() => ({
+  googleEnabledMock: vi.fn(),
+}));
+vi.mock('@/_lib/googleSignIn', () => ({
+  isGoogleSignInEnabled: googleEnabledMock,
 }));
 
 import { NewPasswordWrapper } from './newPasswordWrapper';
@@ -22,6 +31,10 @@ function source(file: string): string {
 }
 
 describe('refactor — sign-in server components', () => {
+  beforeEach(() => {
+    googleEnabledMock.mockReturnValue(true);
+  });
+
   // UT-008
   it('keeps no client directive in the view or the wrapper', () => {
     expect(source('./signinView.tsx')).not.toContain("'use client'");
@@ -60,5 +73,27 @@ describe('refactor — sign-in server components', () => {
     expect(markup).toContain('<i>reset</i>');
     expect(markup).toContain('Voltar para a página inicial');
     expect(markup).toContain('lucide-arrow-left');
+  });
+});
+
+describe('unified login account — sign-in view notices and Google option', () => {
+  beforeEach(() => {
+    googleEnabledMock.mockReturnValue(true);
+  });
+
+  // UT-046: a refused Google sign-in lands here with `?aviso=`.
+  it('mounts the notice component, so the refusal explains itself on this screen', () => {
+    expect(renderToStaticMarkup(<SigninView />)).toContain('<i>notice</i>');
+  });
+
+  it('offers Google only where it is configured', () => {
+    expect(renderToStaticMarkup(<SigninView />)).toContain('<i>google</i>');
+
+    googleEnabledMock.mockReturnValue(false);
+    const markup = renderToStaticMarkup(<SigninView />);
+
+    expect(markup).not.toContain('<i>google</i>');
+    expect(markup).not.toContain('Ou acesse com');
+    expect(markup).toContain('<i>account</i>');
   });
 });

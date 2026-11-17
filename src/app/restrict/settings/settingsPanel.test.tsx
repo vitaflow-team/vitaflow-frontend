@@ -109,6 +109,26 @@ describe('refactor — settings account and profile panels', () => {
       clientsCount: 2,
       isProfessional: true,
       hasPaidSubscription: true,
+      googleLinked: false,
+      isBackoffice: false,
+    });
+  });
+
+  // unified-login-account UT-047
+  it('passes googleLinked and isBackoffice to the account section, and nothing else new', () => {
+    const markup = render('conta', {
+      ...PROFILE,
+      googleLinked: true,
+      isBackoffice: true,
+    });
+
+    expect(sectionProps(markup)).toEqual({
+      email: 'ana@example.test',
+      clientsCount: 2,
+      isProfessional: true,
+      hasPaidSubscription: true,
+      googleLinked: true,
+      isBackoffice: true,
     });
   });
 

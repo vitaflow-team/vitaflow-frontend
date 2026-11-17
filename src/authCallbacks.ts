@@ -1,6 +1,23 @@
+import { refusalRedirect } from '@/_lib/googleRefusal';
 import type { Session, User } from 'next-auth';
 import type { AdapterUser } from 'next-auth/adapters';
 import type { JWT } from 'next-auth/jwt';
+
+/**
+ * A Google attempt the backend refused for a reason the person can act on
+ * arrives here as a marker (`resolveGoogleUser`). Returning a URL makes
+ * Auth.js redirect there before any session exists; everyone else signs in.
+ */
+export function signInCallback({
+  user,
+}: {
+  user?: User | AdapterUser | null;
+}): true | string {
+  const refusal = (user as User | null | undefined)?.refusal;
+  if (!refusal) return true;
+
+  return refusalRedirect(refusal, Boolean((user as User).linking));
+}
 
 export async function jwtCallback({
   token,
@@ -17,7 +34,8 @@ export async function jwtCallback({
    */
   session?: unknown;
 }) {
-  if (user) {
+  // A refusal marker is not an account: it must never become a session.
+  if (user && !(user as User).refusal) {
     const authUser = user as User;
     token.id = authUser.id;
     token.name = authUser.name;

@@ -1,5 +1,6 @@
 import { Card, CardTitle } from '@/_components/ui/card';
 import { DeleteAccountDialog } from './deleteAccountDialog';
+import { GoogleConnectionCard } from './googleConnectionCard';
 import { SignOutButton } from './signOutButton';
 
 interface AccountPanelProps {
@@ -8,6 +9,10 @@ interface AccountPanelProps {
   clientsCount: number | null;
   isProfessional: boolean;
   hasPaidSubscription: boolean;
+  /** Whether the account already signs in with Google. */
+  googleLinked: boolean;
+  /** Whether the account holds internal-staff access. */
+  isBackoffice: boolean;
 }
 
 /**
@@ -25,6 +30,8 @@ export function AccountPanel({
   clientsCount,
   isProfessional,
   hasPaidSubscription,
+  googleLinked,
+  isBackoffice,
 }: AccountPanelProps) {
   return (
     <div className="flex flex-col gap-4">
@@ -34,8 +41,18 @@ export function AccountPanel({
           <span className="text-sm text-muted-foreground">E-mail</span>
           <p className="text-base break-all">{email}</p>
         </div>
+        {isBackoffice && (
+          <p className="text-sm text-muted-foreground">
+            Esta conta tem acesso à área da equipe Vita Flow.
+          </p>
+        )}
         <SignOutButton />
       </Card>
+
+      <GoogleConnectionCard
+        googleLinked={googleLinked}
+        isBackoffice={isBackoffice}
+      />
 
       <Card className="h-fit gap-3 border-destructive/50 p-5">
         <CardTitle className="text-base text-destructive">

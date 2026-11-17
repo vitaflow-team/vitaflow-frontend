@@ -19,6 +19,7 @@ vi.mock('@/_lib/accessTokenCookie', () => ({
 
 import * as backendSignIn from './backendSignIn';
 import {
+  linkGoogleIdToken,
   signInWithCredentials,
   signInWithGoogleIdToken,
 } from './backendSignIn';
@@ -42,6 +43,7 @@ describe('backendSignIn — sign-in is not a public Server Action', () => {
     expect(source).not.toMatch(/^\s*['"]use server['"];?\s*$/m);
     expect(source).toMatch(/^import 'server-only';/);
     expect(Object.keys(backendSignIn).sort()).toEqual([
+      'linkGoogleIdToken',
       'signInWithCredentials',
       'signInWithGoogleIdToken',
     ]);
@@ -122,5 +124,72 @@ describe('signInWithGoogleIdToken', () => {
     expect(error.message).toBe('Falha ao autenticar via Google.');
     expect(error.message).not.toContain('raw backend account detail');
     expect(setAccessTokenCookieMock).not.toHaveBeenCalled();
+  });
+});
+
+function rejectionOf(promise: Promise<unknown>): Promise<AppError> {
+  return promise.then(
+    () => {
+      throw new Error('Expected the call to be rejected.');
+    },
+    (caught: unknown) => caught as AppError
+  );
+}
+
+describe('unified login account — UT-034 Google failures keep their code', () => {
+  beforeEach(() => {
+    apiClientMock.mockReset();
+    setAccessTokenCookieMock.mockReset();
+  });
+
+  it.each([
+    ['signInWithGoogleIdToken', signInWithGoogleIdToken, '/auth/google'],
+    ['linkGoogleIdToken', linkGoogleIdToken, '/auth/google/link'],
+  ] as const)(
+    '%s rethrows the backend code with a generic message',
+    async (_name, call, path) => {
+      apiClientMock.mockRejectedValue(
+        new AppError('backend copy', 403, 'google_link_required')
+      );
+
+      const error = await rejectionOf(call('id-token', 'the-intent'));
+
+      expect(apiClientMock.mock.calls[0][0]).toBe(path);
+      expect(error).toBeInstanceOf(AppError);
+      expect(error.code).toBe('google_link_required');
+      expect(error.statusCode).toBe(403);
+      expect(error.message).toBe('Falha ao autenticar via Google.');
+      expect(setAccessTokenCookieMock).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([
+    ['a failure without a code', new AppError('raw detail', 401)],
+    ['a network error', new Error('ECONNREFUSED')],
+  ])(
+    'turns %s into the generic error with no code',
+    async (_label, failure) => {
+      apiClientMock.mockRejectedValue(failure);
+
+      const error = await rejectionOf(
+        linkGoogleIdToken('id-token', 'the-intent')
+      );
+
+      expect(error.code).toBeUndefined();
+      expect(error.message).toBe('Falha ao autenticar via Google.');
+    }
+  );
+
+  it('the link call sends the token and the intent, stores the new token and drops it from the user', async () => {
+    apiClientMock.mockResolvedValue(BACKEND_USER);
+
+    const user = await linkGoogleIdToken('id-token', 'the-intent');
+
+    expect(apiClientMock).toHaveBeenCalledWith('/auth/google/link', {
+      method: 'POST',
+      body: JSON.stringify({ idToken: 'id-token', intent: 'the-intent' }),
+    });
+    expect(setAccessTokenCookieMock).toHaveBeenCalledWith('backend-secret');
+    expect(user).not.toHaveProperty('accessToken');
   });
 });

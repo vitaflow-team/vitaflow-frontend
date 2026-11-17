@@ -23,6 +23,11 @@ vi.mock('@/_components/settings/planSessionSync', () => ({
     <i data-stale={String(stale)} />
   ),
 }));
+vi.mock('@/_components/settings/customerActivationCard', () => ({
+  CustomerActivationCard: ({ productId }: { productId?: string | null }) => (
+    <u data-activation-product={String(productId)} />
+  ),
+}));
 vi.mock('@/_components/settings/settingsBreadcrumb', () => ({
   SettingsBreadcrumb: () => null,
 }));
@@ -87,6 +92,24 @@ describe('refactor — settings page structure', () => {
     const markup = await renderPage({ tab: 'plano' });
     expect(getPlansMock).toHaveBeenCalledTimes(1);
     expect(markup).toContain('data-plans-failed="false"');
+  });
+});
+
+// unified-login-account US-011: the opt-in card decides on its own whether
+// to show; the page only hands it the fresh profile's plan.
+describe('settings page customer opt-in card', () => {
+  beforeEach(resetMocks);
+
+  it('hands the card the plan of the freshly loaded profile', async () => {
+    apiClientMock.mockResolvedValue({ name: 'Equipe', productId: null });
+
+    expect(await renderPage({})).toContain('data-activation-product="null"');
+  });
+
+  it('renders no card when the profile failed to load', async () => {
+    apiClientMock.mockRejectedValue(new Error('backend down'));
+
+    expect(await renderPage({})).not.toContain('data-activation-product');
   });
 });
 
