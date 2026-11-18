@@ -2,15 +2,16 @@
 
 import { assertAcademiaOwner } from '@/_lib/academiaAuthorization';
 import { apiClient } from '@/_lib/apiClient';
+import { toBillingActionError } from '@/_lib/billingActionError';
 import { parseAcademiaId } from '@/_lib/idValidation';
-import { toSafeActionError } from '@/_lib/safeActionError';
+import { assignAccessPlanSchema } from '@/_schema/gymBilling';
+import type { AssignAccessPlanResult } from '@/_types/assignAccessPlanResult';
 import { auth } from '@/auth';
-import { z } from 'zod';
 import { ZSAError, createServerAction } from 'zsa';
 
 export const assignAccessPlan = createServerAction()
-  .input(z.object({ clientId: z.string(), accessPlanId: z.string() }))
-  .handler(async ({ input: { clientId, accessPlanId } }) => {
+  .input(assignAccessPlanSchema)
+  .handler(async ({ input: { clientId, accessPlanId, billing } }) => {
     const session = await auth();
     if (!session?.user) {
       throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado');
@@ -19,11 +20,11 @@ export const assignAccessPlan = createServerAction()
     const id = parseAcademiaId(clientId);
 
     try {
-      await apiClient(`/academia/students/${id}/access-plan`, {
-        method: 'POST',
-        body: JSON.stringify({ accessPlanId }),
-      });
+      return await apiClient<AssignAccessPlanResult>(
+        `/academia/students/${id}/access-plan`,
+        { method: 'POST', body: JSON.stringify({ accessPlanId, billing }) }
+      );
     } catch (error) {
-      throw toSafeActionError('assignAccessPlan', error);
+      throw toBillingActionError('assignAccessPlan', error);
     }
   });

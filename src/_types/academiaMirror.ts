@@ -1,3 +1,5 @@
+import type { MembershipFee } from './membershipFee';
+
 export type AccessPlanStatus = 'NO_PLAN' | 'VALID' | 'EXPIRED' | 'EXHAUSTED';
 
 export type AccessPlanValidityType = 'DAYS' | 'VISITS';
@@ -29,4 +31,6 @@ export interface AcademiaMembership {
   academiaName: string;
   currentPlan: CurrentAccessPlan;
   history: ArchivedAccessPlan[];
+  /** The student's own monthly fees at this gym; canceled fees never appear. */
+  fees: MembershipFee[];
 }

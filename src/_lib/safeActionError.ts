@@ -79,7 +79,7 @@ function logActionError(action: string, error: unknown): void {
  * own constructor copy it into `message` too, overwriting the safe copy
  * with the bare code.
  */
-function buildSafeActionError(message: string, code?: string): ZSAError {
+export function buildSafeActionError(message: string, code?: string): ZSAError {
   const error = new ZSAError('ERROR', code);
   error.message = message;
   return error;

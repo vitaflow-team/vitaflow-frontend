@@ -6,8 +6,16 @@ vi.mock('./invoiceGenerationPanel', () => ({
   InvoiceGenerationPanel: () => <p>painel de geração</p>,
 }));
 vi.mock('./invoiceList', () => ({
-  InvoiceList: ({ items }: { items: unknown[] }) => (
-    <p>lista-mock:{items.length}</p>
+  InvoiceList: ({
+    items,
+    allowEdit,
+  }: {
+    items: unknown[];
+    allowEdit?: boolean;
+  }) => (
+    <p>
+      lista-mock:{items.length}:{String(allowEdit)}
+    </p>
   ),
 }));
 vi.mock('./taxIdSection', () => ({ TaxIdSection: () => null }));
@@ -68,5 +76,54 @@ describe('billing tab', () => {
     );
 
     expect(html).toContain('Aluno não encontrado');
+  });
+
+  it('financial-health: a gym owner without a paid subscription sees the subscription message, not Premium', () => {
+    const html = renderToStaticMarkup(
+      <BillingTab
+        clientId="c1"
+        basePath="/x"
+        audience="GYM"
+        invoices={{ ...BASE, gateway: { connected: true, premium: false } }}
+      />
+    );
+
+    expect(html).toContain('exige uma assinatura ativa');
+    expect(html).not.toContain('Premium');
+    expect(html).not.toContain('painel de geração');
+    expect(html).not.toContain('lista-mock');
+  });
+
+  it('financial-health: a gym owner gets the fee list without the manual generation panel or editing', () => {
+    const html = renderToStaticMarkup(
+      <BillingTab clientId="c1" basePath="/x" audience="GYM" invoices={BASE} />
+    );
+
+    expect(html).toContain('lista-mock:0:false');
+    expect(html).not.toContain('painel de geração');
+  });
+
+  it('financial-health: a professional keeps the generation panel and editing', () => {
+    const html = renderToStaticMarkup(
+      <BillingTab clientId="c1" basePath="/x" invoices={BASE} />
+    );
+
+    expect(html).toContain('painel de geração');
+    expect(html).toContain('lista-mock:0:true');
+  });
+
+  it('financial-health: a gym owner not connected is told to connect the gym account', () => {
+    const html = renderToStaticMarkup(
+      <BillingTab
+        clientId="c1"
+        basePath="/x"
+        audience="GYM"
+        invoices={{ ...BASE, gateway: { connected: false, premium: true } }}
+      />
+    );
+
+    expect(html).toContain('Conecte a conta Asaas da academia');
+    expect(html).not.toContain('Conecte sua conta Asaas');
+    expect(html).toContain('lista-mock');
   });
 });

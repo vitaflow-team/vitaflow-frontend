@@ -26,6 +26,18 @@ vi.mock('@/_actions/academia/assignAccessPlan', () => ({
 vi.mock('@/_actions/academia/listAccessPlansCatalog', () => ({
   listAccessPlansCatalog: {},
 }));
+vi.mock('@/_actions/academia/changeBillingTerms', () => ({
+  changeBillingTerms: {},
+}));
+vi.mock('@/_actions/academia/unlinkAccessPlan', () => ({
+  unlinkAccessPlan: {},
+}));
+vi.mock('@/_actions/academia/listEligibleStudents', () => ({
+  listEligibleStudents: {},
+}));
+vi.mock('@/_actions/academia/activateBilling', () => ({
+  activateBilling: {},
+}));
 vi.mock('@/_components/ui/dialog', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DialogTrigger: ({ children }: { children: React.ReactNode }) => (
@@ -93,6 +105,7 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
       <AcademiaAlunosView
         list={EMPTY}
         employments={EMPLOYMENTS}
+        billing="READY"
         horario={undefined}
       />
     );
@@ -106,6 +119,7 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
       <AcademiaAlunosView
         list={EMPTY}
         employments={EMPLOYMENTS}
+        billing="READY"
         search="zzz"
         horario={undefined}
       />
@@ -120,6 +134,7 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
       <AcademiaAlunosView
         list={POPULATED}
         employments={EMPLOYMENTS}
+        billing="READY"
         horario={undefined}
       />
     );
@@ -140,6 +155,7 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
       <AcademiaAlunosView
         list={POPULATED}
         employments={EMPLOYMENTS}
+        billing="READY"
         horario={undefined}
       />
     );
@@ -154,6 +170,7 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
       <AcademiaAlunosView
         list={POPULATED}
         employments={EMPLOYMENTS}
+        billing="READY"
         horario="COM"
       />
     );
@@ -162,5 +179,46 @@ describe('AcademiaAlunosView — gym-students US-001, US-002, US-003, US-008, US
     expect(html).toContain('Com horário');
     expect(html).toContain('Sem horário');
     expect(html).toContain('aria-selected="true"');
+  });
+
+  it('financial-health US-015 offers the bulk activation next to the registration when billing is ready', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaAlunosView
+        list={POPULATED}
+        employments={EMPLOYMENTS}
+        billing="READY"
+        horario={undefined}
+      />
+    );
+
+    expect(html).toContain('Ativar cobrança mensal');
+  });
+
+  it('financial-health US-015.AC-4 replaces the bulk activation with the reason when billing is not connected', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaAlunosView
+        list={POPULATED}
+        employments={EMPLOYMENTS}
+        billing="NOT_CONNECTED"
+        horario={undefined}
+      />
+    );
+
+    expect(html).not.toContain('Ativar cobrança mensal');
+    expect(html).toContain('Conecte a conta Asaas da academia');
+    expect(html).toContain('href="/restrict/settings?tab=cobranca"');
+  });
+
+  it('financial-health US-015 offers no bulk activation for an academia without students', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaAlunosView
+        list={EMPTY}
+        employments={EMPLOYMENTS}
+        billing="READY"
+        horario={undefined}
+      />
+    );
+
+    expect(html).not.toContain('Ativar cobrança mensal');
   });
 });

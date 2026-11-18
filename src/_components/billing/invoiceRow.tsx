@@ -10,10 +10,12 @@ import { ResendInvoiceDialog } from './resendInvoiceDialog';
 
 interface InvoiceRowProps {
   invoice: Invoice;
+  /** Gym fees come from the recurrence, so a gym owner cannot edit them. */
+  allowEdit?: boolean;
 }
 
 /** One invoice: its facts, and, only while open, its actions (US-005 through US-008). */
-export function InvoiceRow({ invoice }: InvoiceRowProps) {
+export function InvoiceRow({ invoice, allowEdit = true }: InvoiceRowProps) {
   const isOpen = invoice.status === 'PENDING' || invoice.status === 'OVERDUE';
 
   return (
@@ -33,7 +35,7 @@ export function InvoiceRow({ invoice }: InvoiceRowProps) {
       </div>
       {isOpen && (
         <div className="flex flex-wrap gap-2 pt-1">
-          <EditInvoiceDialog invoice={invoice} />
+          {allowEdit && <EditInvoiceDialog invoice={invoice} />}
           <MarkPaidInvoiceDialog invoiceId={invoice.id} />
           <ResendInvoiceDialog
             invoiceId={invoice.id}

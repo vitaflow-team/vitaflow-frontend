@@ -116,4 +116,36 @@ describe('invoice list', () => {
     expect(html).toContain('Página 1 de 2');
     expect(html).toContain('href="/x?page=2"');
   });
+
+  it('financial-health hides editing of a gym fee but keeps mark paid, resend and cancel', () => {
+    const html = renderToStaticMarkup(
+      <InvoiceList
+        items={[BASE]}
+        total={1}
+        page={1}
+        pageSize={20}
+        basePath="/x"
+        allowEdit={false}
+      />
+    );
+
+    expect(html).not.toContain('Editar');
+    expect(html).toContain('Marcar como paga');
+    expect(html).toContain('Reenviar e-mail');
+    expect(html).toContain('Cancelar cobrança');
+  });
+
+  it('financial-health offers editing by default, as professionals have always had it', () => {
+    const html = renderToStaticMarkup(
+      <InvoiceList
+        items={[BASE]}
+        total={1}
+        page={1}
+        pageSize={20}
+        basePath="/x"
+      />
+    );
+
+    expect(html).toContain('Editar');
+  });
 });

@@ -2,8 +2,11 @@ import 'server-only';
 
 import { apiClient } from '@/_lib/apiClient';
 import { AppError } from '@/_lib/AppError';
+import { loadBillingAccount } from '@/_lib/billingData';
+import { gymBillingAvailability } from '@/_lib/gymBillingAvailability';
 import type { AcademiaEmployment } from '@/_types/academia';
 import type { AcademiaAlunosList } from '@/_types/academiaAlunos';
+import type { GymBillingAvailability } from '@/_types/gymBillingAvailability';
 import type { LoadFailure } from '@/_types/loadFailure';
 import { unstable_rethrow } from 'next/navigation';
 import type { AcademiaAlunosParams } from './academiaAlunosList';
@@ -11,6 +14,8 @@ import type { AcademiaAlunosParams } from './academiaAlunosList';
 export interface AcademiaAlunosPageData {
   list: AcademiaAlunosList;
   employments: AcademiaEmployment[];
+  /** Whether the gym can start charging monthly fees; never blocks the list. */
+  billing: GymBillingAvailability;
 }
 
 function toFailure(error: unknown, source: string): LoadFailure {
@@ -37,7 +42,7 @@ export async function loadAcademiaAlunos({
   if (horario) query.set('horario', horario);
 
   try {
-    const [list, employments] = await Promise.all([
+    const [list, employments, account] = await Promise.all([
       apiClient<AcademiaAlunosList>(`/academia/students?${query.toString()}`, {
         method: 'GET',
         cache: 'no-store',
@@ -46,8 +51,13 @@ export async function loadAcademiaAlunos({
         method: 'GET',
         cache: 'no-store',
       }),
+      loadBillingAccount(),
     ]);
-    return { list, employments };
+    return {
+      list,
+      employments,
+      billing: gymBillingAvailability(account),
+    };
   } catch (error) {
     return toFailure(error, 'list');
   }

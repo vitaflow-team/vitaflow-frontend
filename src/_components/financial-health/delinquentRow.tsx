@@ -1,20 +1,12 @@
 import { formatBRL, formatDays } from '@/_lib/financialHealthDisplay';
 import type { DelinquentRow as DelinquentRowData } from '@/_types/delinquentRow';
 import Link from 'next/link';
+import { DelinquentFigure } from './delinquentFigure';
 
 interface DelinquentRowProps {
   row: DelinquentRowData;
   href: string;
   overdueColumn: string;
-}
-
-function Figure({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col">
-      <dt className="text-muted-foreground text-xs">{label}</dt>
-      <dd className="font-semibold tabular-nums break-words">{value}</dd>
-    </div>
-  );
 }
 
 /** One delinquent person: the name is the single link to their billing area. */
@@ -33,9 +25,15 @@ export function DelinquentRow({
         {row.name}
       </Link>
       <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-        <Figure label="Total devido" value={formatBRL(row.totalOwedCents)} />
-        <Figure label={overdueColumn} value={String(row.overdueCount)} />
-        <Figure
+        <DelinquentFigure
+          label="Total devido"
+          value={formatBRL(row.totalOwedCents)}
+        />
+        <DelinquentFigure
+          label={overdueColumn}
+          value={String(row.overdueCount)}
+        />
+        <DelinquentFigure
           label="Atraso mais antigo"
           value={formatDays(row.oldestDaysOverdue)}
         />

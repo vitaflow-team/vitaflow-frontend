@@ -3,6 +3,9 @@ export const FINANCIAL_PANEL_PATHS = {
   GYM: '/restrict/academia-financeiro',
 } as const;
 
+/** The page of the Vitaflow team (backoffice). */
+export const PLATFORM_FINANCIAL_PATH = '/restrict/backoffice/financial-health';
+
 /** How many months before the current one a panel may open. */
 export const FINANCIAL_MONTHS_BACK = 12;
 
