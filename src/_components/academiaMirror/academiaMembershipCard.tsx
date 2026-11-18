@@ -4,6 +4,7 @@ import type {
 } from '@/_types/academiaMirror';
 import { cn } from '@/_lib/utils';
 import { AccessPlanHistoryList } from './accessPlanHistoryList';
+import { MirrorFeeCard } from './mirrorFeeCard';
 
 const STATUS_LABELS: Record<AccessPlanStatus, string> = {
   VALID: 'Válido',
@@ -39,9 +40,10 @@ function validityLabel(membership: AcademiaMembership): string | null {
     : `${currentPlan.planName} · ${currentPlan.validityValue} visitas`;
 }
 
-// US-001: no status here ever carries a call-to-action — no link, no
-// button, no instructional copy (ADR-003). The screen only reports what
-// the gym already assigned.
+// US-001: no plan status here ever carries a call-to-action — no link, no
+// button, no instructional copy (ADR-003). The only link on the card is the
+// "Pagar agora" of a fee the gym issued, so a membership without fees stays
+// free of links and buttons.
 export function AcademiaMembershipCard({
   membership,
 }: {
@@ -66,6 +68,7 @@ export function AcademiaMembershipCard({
       </div>
       {validity && <p className="text-sm text-muted-foreground">{validity}</p>}
       {remaining && <p className="text-sm font-medium">{remaining}</p>}
+      <MirrorFeeCard fees={membership.fees} />
       <AccessPlanHistoryList history={membership.history} />
     </div>
   );

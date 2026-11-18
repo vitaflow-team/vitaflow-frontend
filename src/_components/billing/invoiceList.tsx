@@ -10,6 +10,7 @@ interface InvoiceListProps {
   page: number;
   pageSize: number;
   basePath: string;
+  allowEdit?: boolean;
 }
 
 interface InvoicePaginationProps {
@@ -60,6 +61,7 @@ export function InvoiceList({
   page,
   pageSize,
   basePath,
+  allowEdit = true,
 }: InvoiceListProps) {
   if (items.length === 0 && page === 1) {
     return (
@@ -73,7 +75,11 @@ export function InvoiceList({
     <div className="flex flex-col gap-3">
       <ul className="flex flex-col gap-2">
         {items.map(invoice => (
-          <InvoiceRow key={invoice.id} invoice={invoice} />
+          <InvoiceRow
+            key={invoice.id}
+            invoice={invoice}
+            allowEdit={allowEdit}
+          />
         ))}
       </ul>
       <InvoicePagination

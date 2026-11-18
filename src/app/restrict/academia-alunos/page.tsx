@@ -36,6 +36,7 @@ export default async function AcademiaAlunosPage({
         <AcademiaAlunosView
           list={data.list}
           employments={data.employments}
+          billing={data.billing}
           search={params.search}
           horario={params.horario}
         />

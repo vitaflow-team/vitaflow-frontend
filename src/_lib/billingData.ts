@@ -2,6 +2,7 @@ import 'server-only';
 
 import { apiClient } from '@/_lib/apiClient';
 import { AppError } from '@/_lib/AppError';
+import { isBillingOwnerType } from '@/_lib/billingOwnerType';
 import type { SettingsTab } from '@/_lib/settingsTabs';
 import type { BillingAccount, InvoiceList } from '@/_types/billing';
 import type { SettingsProfile } from '@/_types/settingsProfile';
@@ -51,12 +52,7 @@ export async function loadBillingAccountForTab(
   profile: SettingsProfile | null
 ): Promise<BillingAccount | LoadFailure | null> {
   if (tab !== 'cobranca') return null;
-  if (
-    profile?.productType !== 'NUTRITIONIST' &&
-    profile?.productType !== 'PHYSICAL_EDUCATOR'
-  ) {
-    return null;
-  }
+  if (!isBillingOwnerType(profile?.productType)) return null;
   return await loadBillingAccount();
 }
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { assertProfessional } from '@/_lib/billingAuthorization';
+import { assertBillingOwner } from '@/_lib/billingAuthorization';
 import { toBillingActionError } from '@/_lib/billingActionError';
 import { apiClient } from '@/_lib/apiClient';
 import { parseBackendId } from '@/_lib/idValidation';
@@ -22,7 +22,7 @@ export const setTaxId = createServerAction()
     if (!session?.user) {
       throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado');
     }
-    await assertProfessional();
+    await assertBillingOwner();
     const id = parseBackendId(input.clientId);
 
     try {

@@ -1,3 +1,5 @@
+import { isBillingOwnerType } from '@/_lib/billingOwnerType';
+
 export const SETTINGS_TABS = [
   'perfil',
   'plano',
@@ -22,13 +24,9 @@ export const SETTINGS_TAB_LABELS: Record<SettingsTab, string> = {
   pacotes: 'Pacotes',
 };
 
-// Também usado por `pacotes` (US-006/US-007): o catálogo de pacotes de
-// sessão/consulta é a mesma dupla de papéis, mirando o filtro de `cobranca`
-// exatamente (ADR-002/ADR-010).
-const BILLING_PROFESSIONAL_TYPES = new Set([
-  'NUTRITIONIST',
-  'PHYSICAL_EDUCATOR',
-]);
+// `pacotes` (US-006/US-007): o catálogo de pacotes de sessão/consulta é só dos
+// profissionais independentes (ADR-002/ADR-010).
+const PACKAGES_TYPES = new Set(['NUTRITIONIST', 'PHYSICAL_EDUCATOR']);
 
 export function settingsTabsForType(
   productType?: string | null
@@ -36,9 +34,9 @@ export function settingsTabsForType(
   return SETTINGS_TABS.filter(tab => {
     if (tab === 'academia') return productType === 'ACADEMIA';
     if (tab === 'vinculos') return productType === 'PHYSICAL_EDUCATOR';
-    if (tab === 'cobranca' || tab === 'pacotes') {
-      return BILLING_PROFESSIONAL_TYPES.has(productType ?? '');
-    }
+    // `cobranca`: a academia ganha a aba de conexão, mas não o catálogo de pacotes.
+    if (tab === 'cobranca') return isBillingOwnerType(productType);
+    if (tab === 'pacotes') return PACKAGES_TYPES.has(productType ?? '');
     return true;
   });
 }

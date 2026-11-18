@@ -17,6 +17,7 @@ function makeMembership(
       remaining: null,
     },
     history: [],
+    fees: [],
     ...overrides,
   };
 }
@@ -89,5 +90,37 @@ describe('AcademiaMembershipCard', () => {
     expect(exhausted).toContain('Visitas esgotadas');
     expect(exhausted).not.toContain('<a ');
     expect(exhausted).not.toContain('<button');
+  });
+
+  it('financial-health US-017 lists the student own fees, with a way to pay the unpaid one', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaMembershipCard
+        membership={makeMembership({
+          fees: [
+            {
+              id: 'f1',
+              amountCents: 14990,
+              dueDate: '2026-12-10',
+              status: 'PENDING',
+              paymentUrl: 'https://pay.example.test/f1',
+            },
+          ],
+        })}
+      />
+    );
+
+    expect(html).toContain('Mensalidades');
+    expect(html).toContain('Pagar agora');
+    expect(html).toContain('10/12/2026');
+  });
+
+  it('financial-health US-017.EC-1 renders no fee section and no link or button when there are no fees', () => {
+    const html = renderToStaticMarkup(
+      <AcademiaMembershipCard membership={makeMembership({ fees: [] })} />
+    );
+
+    expect(html).not.toContain('Mensalidades');
+    expect(html).not.toContain('<a ');
+    expect(html).not.toContain('<button');
   });
 });

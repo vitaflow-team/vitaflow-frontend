@@ -3,6 +3,7 @@
 import { apiClient } from '@/_lib/apiClient';
 import { parseAcademiaId } from '@/_lib/idValidation';
 import { toSafeActionError } from '@/_lib/safeActionError';
+import type { ReceptionistCheckInResult } from '@/_types/receptionistCheckInResult';
 import { auth } from '@/auth';
 import { z } from 'zod';
 import { ZSAError, createServerAction } from 'zsa';
@@ -17,7 +18,7 @@ export const receptionistCheckIn = createServerAction()
     const id = parseAcademiaId(clientId);
 
     try {
-      return await apiClient<{ createdAt: string }>(
+      return await apiClient<ReceptionistCheckInResult>(
         `/academia/staff/students/${id}/checkin`,
         { method: 'POST' }
       );
