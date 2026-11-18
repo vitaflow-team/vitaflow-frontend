@@ -44,15 +44,17 @@ describe('restricted page titles', () => {
       'Check-in',
       'Convites recebidos',
       'Minhas turmas',
+      'Financeiro',
+      'Financeiro da academia',
     ]);
   });
 
   it('UT-032 contains non-empty, pairwise distinct values', () => {
     const titles = Object.values(PAGE_TITLES);
 
-    expect(titles).toHaveLength(40);
+    expect(titles).toHaveLength(42);
     expect(titles.every(title => title.length > 0)).toBe(true);
-    expect(new Set(titles).size).toBe(40);
+    expect(new Set(titles).size).toBe(42);
   });
 
   it('UT-158 includes the students list, the record and the not-found titles', () => {

@@ -163,6 +163,7 @@ describe('restricted shell navigation — getMenuGroups', () => {
       'Mensagens',
       'Agenda',
       'Convites',
+      'Financeiro',
     ]);
     expect(groups[1].items.map(item => item.title)).toEqual(['Configurações']);
   });
@@ -301,6 +302,7 @@ describe('professional personal use — navigation', () => {
         'Mensagens',
         'Agenda',
         ...(type === 'PHYSICAL_EDUCATOR' ? ['Convites'] : []),
+        'Financeiro',
       ]);
     }
   });
@@ -336,6 +338,7 @@ describe('professional personal use — navigation', () => {
         'Mensagens',
         'Agenda',
         ...(type === 'PHYSICAL_EDUCATOR' ? ['Convites'] : []),
+        'Financeiro',
       ]);
     }
 
@@ -354,6 +357,7 @@ describe('gym-foundation — Academia and receptionist navigation (US-002, US-00
       'Turmas',
       'Modelos',
       'Engajamento',
+      'Financeiro',
     ]);
     expect(menu[0].items.map(item => item.title)).not.toContain('Início');
     expect(menu[1].items.map(item => item.title)).toEqual(['Configurações']);

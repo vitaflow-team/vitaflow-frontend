@@ -20,6 +20,7 @@ import {
   User2,
   Users,
   UtensilsCrossed,
+  Wallet,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -204,6 +205,22 @@ const PRIVATE: AppRoute[] = [
     URL: '/restrict/turmas',
     ICON: Users,
     PRODUCT_TYPE: ['USER'],
+  },
+  {
+    // Depois de todos os destinos principais, pelo mesmo motivo dos itens
+    // acima: a barra inferior mantém as cinco primeiras seções de sempre. A
+    // rota do profissional e a da academia ficam separadas de propósito
+    // (ADR-001): cada tipo enxerga só a sua.
+    TITLE: 'Financeiro',
+    URL: '/restrict/financeiro',
+    ICON: Wallet,
+    PRODUCT_TYPE: ['NUTRITIONIST', 'PHYSICAL_EDUCATOR'],
+  },
+  {
+    TITLE: 'Financeiro',
+    URL: '/restrict/academia-financeiro',
+    ICON: Wallet,
+    PRODUCT_TYPE: ['ACADEMIA'],
   },
 ];
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { assertProfessional } from '@/_lib/billingAuthorization';
+import { assertBillingOwner } from '@/_lib/billingAuthorization';
 import { toBillingActionError } from '@/_lib/billingActionError';
 import { apiClient } from '@/_lib/apiClient';
 import { auth } from '@/auth';
@@ -11,7 +11,7 @@ export const disconnectAccount = createServerAction().handler(async () => {
   if (!session?.user) {
     throw new ZSAError('NOT_AUTHORIZED', 'Usuário não autenticado');
   }
-  await assertProfessional();
+  await assertBillingOwner();
 
   try {
     await apiClient('/billing/account', { method: 'DELETE' });

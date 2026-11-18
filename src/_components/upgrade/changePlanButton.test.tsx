@@ -94,7 +94,7 @@ describe('test coverage — change plan button summary', () => {
 
     expect(body).toContain('Plano atual: Premium .');
     expect(body).toContain('Novo plano: Profissional .');
-    expect(body).toContain('Você passa a ter acesso a: Pessoas .');
+    expect(body).toContain('Você passa a ter acesso a: Pessoas, Financeiro .');
     expect(body).not.toContain('Sua assinatura atual será atualizada');
   });
 

@@ -251,3 +251,43 @@ describe('pacotes tab — plan-pricing-management US-006, US-009', () => {
     );
   });
 });
+
+describe('cobranca tab — billing owners (ADR-008)', () => {
+  const ACCOUNT = {
+    premium: true,
+    connected: false,
+    status: 'NOT_CONNECTED',
+    accountName: null,
+    openInvoiceCount: 0,
+  } as const;
+
+  function renderBilling(productType: string | null | undefined) {
+    return renderToStaticMarkup(
+      <SettingsPanel
+        tab="cobranca"
+        profile={{ ...PROFILE, productType }}
+        plans={[]}
+        plansFailed={false}
+        preferences={null}
+        academiaData={null}
+        educatorEmployments={null}
+        billingAccount={ACCOUNT}
+        servicePackages={[]}
+      />
+    );
+  }
+
+  it('tells the billing panel a gym owner is looking, so it asks for a subscription', () => {
+    const props = sectionProps(renderBilling('ACADEMIA'));
+
+    expect(props).toMatchObject({ audience: 'GYM', account: ACCOUNT });
+  });
+
+  it('keeps the professional audience for educators and nutritionists', () => {
+    for (const type of ['NUTRITIONIST', 'PHYSICAL_EDUCATOR']) {
+      expect(sectionProps(renderBilling(type))).toMatchObject({
+        audience: 'PROFESSIONAL',
+      });
+    }
+  });
+});

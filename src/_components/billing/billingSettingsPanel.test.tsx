@@ -26,16 +26,23 @@ const ACCOUNT: BillingAccount = {
 describe('billing settings panel', () => {
   it('UT-123 shows the Premium invitation, with no connect control, when not Premium', () => {
     const html = renderToStaticMarkup(
-      <BillingSettingsPanel account={{ ...ACCOUNT, premium: false }} />
+      <BillingSettingsPanel
+        audience="PROFESSIONAL"
+        account={{ ...ACCOUNT, premium: false }}
+      />
     );
 
+    expect(html).toContain('recurso Premium');
     expect(html).not.toContain('Conectar');
     expect(html).not.toContain('Thiago Ramos');
   });
 
   it('UT-121 shows a connect form when Premium but not connected', () => {
     const html = renderToStaticMarkup(
-      <BillingSettingsPanel account={{ ...ACCOUNT, connected: false }} />
+      <BillingSettingsPanel
+        audience="PROFESSIONAL"
+        account={{ ...ACCOUNT, connected: false }}
+      />
     );
 
     expect(html).toContain('Conectar');
@@ -44,7 +51,7 @@ describe('billing settings panel', () => {
 
   it('UT-121 shows the connected account, never any key', () => {
     const html = renderToStaticMarkup(
-      <BillingSettingsPanel account={ACCOUNT} />
+      <BillingSettingsPanel audience="PROFESSIONAL" account={ACCOUNT} />
     );
 
     expect(html).toContain('Conectado: Thiago Ramos');
@@ -53,7 +60,52 @@ describe('billing settings panel', () => {
 
   it('shows a load failure message distinctly', () => {
     const html = renderToStaticMarkup(
-      <BillingSettingsPanel account="failed" />
+      <BillingSettingsPanel audience="PROFESSIONAL" account="failed" />
+    );
+
+    expect(html).toContain('Tente novamente');
+  });
+});
+
+describe('billing settings panel for a gym owner (ADR-008)', () => {
+  it('shows the paid-subscription message, never the Premium invitation, without a paid plan', () => {
+    const html = renderToStaticMarkup(
+      <BillingSettingsPanel
+        audience="GYM"
+        account={{ ...ACCOUNT, premium: false, connected: false }}
+      />
+    );
+
+    expect(html).toContain('assinatura ativa');
+    expect(html).not.toContain('Premium');
+    expect(html).not.toContain('Conectar');
+  });
+
+  it('offers the connect form with gym wording once the subscription is paid', () => {
+    const html = renderToStaticMarkup(
+      <BillingSettingsPanel
+        audience="GYM"
+        account={{ ...ACCOUNT, connected: false }}
+      />
+    );
+
+    expect(html).toContain('Conectar');
+    expect(html).toContain('conta Asaas da academia');
+    expect(html).toContain('mensalidade dos alunos');
+    expect(html).not.toContain('Premium');
+  });
+
+  it('shows the connected gym account like any other billing owner', () => {
+    const html = renderToStaticMarkup(
+      <BillingSettingsPanel audience="GYM" account={ACCOUNT} />
+    );
+
+    expect(html).toContain('Conectado: Thiago Ramos');
+  });
+
+  it('shows a load failure message distinctly', () => {
+    const html = renderToStaticMarkup(
+      <BillingSettingsPanel audience="GYM" account="failed" />
     );
 
     expect(html).toContain('Tente novamente');

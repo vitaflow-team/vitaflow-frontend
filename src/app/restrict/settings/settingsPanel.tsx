@@ -200,7 +200,12 @@ export function SettingsPanel({
   servicePackages,
 }: SettingsPanelProps) {
   if (tab === 'cobranca') {
-    return <BillingSettingsPanel account={billingAccount} />;
+    return (
+      <BillingSettingsPanel
+        account={billingAccount}
+        audience={profile?.productType === 'ACADEMIA' ? 'GYM' : 'PROFESSIONAL'}
+      />
+    );
   }
 
   if (tab === 'pacotes') {
